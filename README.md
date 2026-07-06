@@ -33,16 +33,19 @@
 
     ollama pull bge-m3
 
-跑首轮回测（全池 1,085 频道约 4 分钟，纯本地零 API 成本）：
+跑盲测回测（全池 1,085 频道约 1-4 分钟，纯本地零 API 成本）：
 
-    python3 src/score_backtest.py
+    python3 src/backtest.py --config config/insta360.json --pool data/pool/creator_pool.jsonl --out data/runs/my-run/
 
-产出：全池排序 `backtest_scores.json` + 指标 `backtest_metrics.json`。基线产物已存 `data/runs/2026-07-06-pilot/`。
+产出：全池排序 `backtest_scores.json` + 指标 `backtest_metrics.json`。基线产物存 `data/runs/2026-07-06-pilot/`。给任意新池子排序（不需要正例标注）用 `src/score.py`，参数相同。
+
+复现性说明：ollama 的 embedding 在不同服务实例间存在极微小浮点漂移，两次全量运行的正例中位百分位为 32.4% 与 32.3%（一个频道在 350/399 名间摆动），召回指标不受影响。所有指标应读作区间信号而非精确值。
 
 ## 目录
 
     config/    品牌配置（主题查询、权重、甜点参数、泄漏词表）
-    src/       打分与回测实现（python 标准库 + 本地 ollama，无第三方依赖）
+    src/       radar_lib.py 公共库 / score.py 产品路径 / backtest.py 验证路径
+               （python 标准库 + 本地 ollama，无第三方依赖）
     data/      池子、正例标注、每次运行的产物
     docs/      底层推荐逻辑设计书
     report/    对外报告
