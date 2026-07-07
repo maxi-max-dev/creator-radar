@@ -41,6 +41,26 @@
 
 复现性说明：ollama 的 embedding 在不同服务实例间存在极微小浮点漂移，两次全量运行的正例中位百分位为 32.4% 与 32.3%（一个频道在 350/399 名间摆动），召回指标不受影响。所有指标应读作区间信号而非精确值。
 
+## 常驻运行（每天自动跑）
+
+「跑一次」之外，雷达可以作为常驻系统每天自动运行：定时采集 → 重排 → 生成推荐卡 → 推送。
+
+一条命令跑全链（冒烟用小参数）：
+
+    python3 src/run_radar.py --budget 40 --discover-terms 2 --top-n 5
+
+流程：`collect.py`（yt-dlp 刷新池内频道元数据 + 多语言搜索词发现新频道入池）→ 全池重排 → 与上次运行排名 diff（新进前 100 / 窜升 ≥200 位）→ `explain.py`（本地 ollama chat 模型对候选精读，产可解释推荐卡）→ 日报 `reports/YYYY-MM-DD-radar.md` → 推送（iMessage）→ 追加 `logs/radar.log`。
+
+策略全在 `config/insta360.json` 的 `collect` / `explain` / `outputs` 三节：搜索词、每次预算、节流、推荐卡模型、分发出口。飞书多维表格出口留了接口（`outputs` 加 `"bitable"` 即走占位分支，等凭证接入）。
+
+定时器：`launchd/com.max.creator-radar.plist`，每天 08:30 跑默认参数。安装：
+
+    cp launchd/com.max.creator-radar.plist ~/Library/LaunchAgents/
+    launchctl load ~/Library/LaunchAgents/com.max.creator-radar.plist
+    launchctl list | grep creator-radar   # 验证在册
+
+前置：本机装 `yt-dlp` 与 `ollama`（含 bge-m3 embedding 与一个 chat 模型，默认 qwen3:8b）。一切产出（reports/logs/data）都留仓库目录内，不写 iCloud 路径（launchd 下 TCC 权限会静默失败）。
+
 ## 目录
 
     config/    品牌配置（主题查询、权重、甜点参数、泄漏词表）

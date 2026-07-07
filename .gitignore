@@ -2,3 +2,10 @@ __pycache__/
 .DS_Store
 *.log
 *.err
+
+# 常驻运行的每日产出(轮转/瞬时，不进版本库；基线 runs 仍手动 add)
+reports/
+data/history/
+data/backup/
+data/runs/daily/
+data/runs/verify-daemon/

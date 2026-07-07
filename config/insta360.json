@@ -78,5 +78,36 @@
   "platform_markers": {
     "pattern": "\\bpov\\b|onboard|helmet cam|first person|raw (?:audio|sound)|no music|4k ride",
     "cap": 3
-  }
+  },
+
+  "collect": {
+    "notes": "常驻采集器策略。search_terms 覆盖摩托/骑行的多语言检索词(英/西/日)，从既有池子构建思路延伸。refresh 轮转刷新最旧的 N 个频道，discover 每次跑 M 个搜索词发现新面孔。",
+    "search_terms": [
+      "motovlog helmet cam pov onboard",
+      "motorcycle adventure ride 360 camera",
+      "mountain bike pov helmet cam trail",
+      "long distance motorcycle travel vlog",
+      "moto vlog cámara casco onboard",
+      "ruta en moto aventura viaje",
+      "モトブログ ヘルメットカメラ バイク",
+      "自転車 ダウンヒル ヘルメットカム pov"
+    ],
+    "refresh_per_run": 120,
+    "discover_terms_per_run": 3,
+    "discover_results_per_term": 30,
+    "discover_max_new_per_run": 15,
+    "throttle_seconds": 2.5,
+    "videos_per_channel": 5
+  },
+
+  "explain": {
+    "notes": "推荐卡生成。用本地 ollama chat 模型精读候选元数据。qwen3:8b 支持 /no_think 抑制思维链，format:json 强制结构化输出。",
+    "endpoint": "http://127.0.0.1:11434/api/chat",
+    "model": "qwen3:8b",
+    "temperature": 0.2,
+    "max_cards": 12,
+    "top_n_scan": 100
+  },
+
+  "outputs": ["report", "imessage"]
 }
