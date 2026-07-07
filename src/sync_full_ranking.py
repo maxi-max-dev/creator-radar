@@ -2,7 +2,7 @@
 """达人雷达 · 飞书「全池榜单」表同步。
 
 把当日全池排序整表写进飞书多维表格的第二张表「全池榜单」(与「达人推荐」表分开)。
-列: 排名 / 频道名 / 频道链接 / 订阅数 / 总分 / 命中主题 / 垂类 / 语言 / 档案(top50) / 入池日期。
+列结构单一来源 = schema.FULL_RANKING_COLUMNS(三词化: 对路分/在涨分/潜力分/红绿灯 + 起势/浪/破圈证据列)。
 
 表 id 存 credentials 同目录的 feishu_tables.json (repo 外, 敏感标识符不进仓库):
   { "full_ranking_table_id": "...", "bili_ranking_table_id": "..." }
@@ -23,6 +23,8 @@ import urllib.request, urllib.error
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
+sys.path.insert(0, HERE)
+import schema
 
 # 飞书字段类型: 1=多行文本 2=数字 5=日期 15=超链接
 FT_TEXT, FT_NUMBER, FT_DATE, FT_URL = 1, 2, 5, 15
@@ -30,33 +32,24 @@ FT_TEXT, FT_NUMBER, FT_DATE, FT_URL = 1, 2, 5, 15
 FULL_RANKING_TABLE_NAME = "全池榜单"
 BILI_RANKING_TABLE_NAME = "B站榜单"
 
-# 全池榜单字段 schema (顺序即建表顺序). 档案列只有 top50 有值。
-# 2026-07-07 盲投审计后加 4 列: 行动分级/身份标签(身份过滤器) + 起势分/潜力分(momentum)。
-# 建字段幂等: _ensure_table 会先查已存在字段, 只补缺的(老表也能加新列)。
-FULL_RANKING_FIELDS = [
-    ("排名", FT_NUMBER),
-    ("频道名", FT_TEXT),
-    ("频道链接", FT_URL),
-    ("订阅数", FT_NUMBER),
-    ("总分", FT_NUMBER),
-    ("起势分", FT_NUMBER),
-    ("潜力分", FT_NUMBER),
-    ("浪层分", FT_NUMBER),
-    ("破圈比", FT_NUMBER),
-    ("行动分级", FT_TEXT),
-    ("身份标签", FT_TEXT),
-    ("拦截原因", FT_TEXT),
-    ("命中主题", FT_TEXT),
-    ("垂类", FT_TEXT),
-    ("语言", FT_TEXT),
-    ("档案", FT_URL),
-    ("入池日期", FT_TEXT),
-]
+# 列结构单一来源 = schema.py。这里只把列名映射到飞书字段类型(顺序即建表顺序)。
+# 三词化(2026-07-07): 总分->对路分, 行动分级->红绿灯, 新增在涨分; 起势/浪/破圈=工程证据列。
+# 建字段幂等: _ensure_table 会先查已存在字段, 只补缺的(老表也能加新列); 改名走 migrate_field_names。
+_FT = {
+    "排名": FT_NUMBER, "频道名": FT_TEXT, "频道链接": FT_URL, "订阅数": FT_NUMBER,
+    schema.COL_FIT: FT_NUMBER, schema.COL_RISING: FT_NUMBER, schema.COL_POTENTIAL: FT_NUMBER,
+    schema.COL_LIGHT: FT_TEXT, "身份标签": FT_TEXT, "拦截原因": FT_TEXT,
+    "起势分": FT_NUMBER, "浪层分": FT_NUMBER, "破圈比": FT_NUMBER,
+    "命中主题": FT_TEXT, "垂类": FT_TEXT, "语言": FT_TEXT, "档案": FT_URL, "入池日期": FT_TEXT,
+}
+FULL_RANKING_FIELDS = [(n, _FT[n]) for n in schema.FULL_RANKING_COLUMNS]
 
-# B站榜单 = 全池榜单去掉档案列 + 去掉起势/潜力/浪层/破圈(B站无 RSS 视频级数据, 免留永久空列)。
-# 保留 行动分级/身份标签/拦截原因(B站池正是身份过滤器价值最大的地方: 理财/玄学/带货/搬运)。
-_BILI_DROP = {"档案", "起势分", "潜力分", "浪层分", "破圈比"}
-BILI_RANKING_FIELDS = [(n, t) for (n, t) in FULL_RANKING_FIELDS if n not in _BILI_DROP]
+# B站榜单列集来自 schema(去掉档案 + 视频级证据)。
+_BILI_DROP = schema._BILI_DROP
+BILI_RANKING_FIELDS = [(n, _FT[n]) for n in schema.BILI_RANKING_COLUMNS]
+
+# 旧列名 -> 新列名(改名迁移用): 老表已有这些列, 用 update 字段名保住历史数据不删列。
+FIELD_RENAMES = {"总分": schema.COL_FIT, "行动分级": schema.COL_LIGHT}
 
 
 def _feishu_call(method, path, token=None, body=None):
@@ -131,6 +124,55 @@ def _list_field_names(token, app_token, tid):
     return names
 
 
+def _list_fields(token, app_token, tid):
+    """列出表现有字段的 {field_name: field_id} 映射(分页取全)。失败返回空 dict。
+    改名迁移要拿 field_id 调 update API, 故比 _list_field_names 多带 id。"""
+    out, page_token = {}, None
+    for _ in range(50):
+        path = "/bitable/v1/apps/%s/tables/%s/fields?page_size=100" % (app_token, tid)
+        if page_token:
+            path += "&page_token=" + page_token
+        r = _feishu_call("GET", path, token=token)
+        if r.get("code") != 0:
+            break
+        data = r.get("data", {})
+        for it in data.get("items", []):
+            if it.get("field_name") and it.get("field_id"):
+                out[it["field_name"]] = it["field_id"]
+        page_token = data.get("page_token")
+        if not data.get("has_more"):
+            break
+    return out
+
+
+def _migrate_field_names(token, app_token, tid, renames):
+    """列改名迁移(幂等): 老表若还叫旧名(总分/行动分级), 用字段 update API 原地改成新名,
+    **保住该列历史数据**(改名不动数据), 不删列、不加重复列。
+    幂等三态: 只有旧名在 -> 改名; 新名已在(旧名不在) -> 已迁过, 跳过; 旧名新名都在 ->
+    别人已手建了新列, 保守不动(避免冲突, 留给人工); 两者都无 -> 全新表由 _reconcile 建新列。
+    醒目日志: 每次真发出改名请求都打 RENAME 大写横幅(便于明早心跳日志一眼可查)。
+    构造正确性(旧名->新名 + field_id)由离线单测 test_field_rename.py 校验, 不发真请求。"""
+    existing = _list_fields(token, app_token, tid)   # {name: field_id}
+    migrated = []
+    for old_name, new_name in renames.items():
+        if old_name not in existing:
+            continue                                  # 旧名不在: 已迁过 or 全新表, 无需动
+        if new_name in existing:
+            print("  [RENAME-SKIP] 「%s」与「%s」同表并存, 保守不动(留人工)" % (old_name, new_name))
+            continue                                  # 两者并存: 保守不动
+        fid = existing[old_name]
+        print("  >>> RENAME 飞书列改名: 「%s」-> 「%s」 (field_id=%s, 保历史数据不删列)" % (old_name, new_name, fid))
+        r = _feishu_call("PUT", "/bitable/v1/apps/%s/tables/%s/fields/%s" % (app_token, tid, fid),
+                         token=token, body={"field_name": new_name})
+        if r.get("code") == 0:
+            print("  >>> RENAME 成功: 「%s」现名「%s」" % (old_name, new_name))
+            migrated.append((old_name, new_name))
+        else:
+            print("  >>> RENAME 失败 code=%s %s (下次心跳重试)" % (r.get("code"), str(r.get("msg"))[:80]))
+        time.sleep(0.1)
+    return migrated
+
+
 def _reconcile_fields(token, app_token, tid, fields):
     """幂等补字段: 查现有字段名, 只建缺的。返回本次新建的字段名列表。"""
     existing = _list_field_names(token, app_token, tid)
@@ -154,7 +196,10 @@ def _ensure_table(token, app_token, table_key, table_name, fields, tables_ledger
     if tid:
         chk = _feishu_call("GET", "/bitable/v1/apps/%s/tables/%s/fields?page_size=1" % (app_token, tid), token=token)
         if chk.get("code") == 0:
-            # 表在: 幂等补齐 schema 里但表上缺的字段(4 新列首跑在此补上)
+            # 表在: 先幂等改名迁移(老列名 总分/行动分级 -> 对路分/红绿灯, 保历史数据),
+            #        再幂等补齐 schema 里但表上缺的字段(在涨分等新列首跑在此补上)。
+            #        顺序要紧: 先改名(否则 reconcile 会把新名当"缺列"再建一个空列 = 重复)。
+            _migrate_field_names(token, app_token, tid, FIELD_RENAMES)
             _reconcile_fields(token, app_token, tid, fields)
             return tid, False
         # 账本里的 id 已失效, 落空重建
@@ -213,7 +258,8 @@ def _flags_zh(flags):
 def build_full_ranking_records(ranked, pool_by_url, dossier_links, top_dossier_n=50):
     """把排序产物 + 池子元数据 + 档案链接拼成飞书记录列表(fields dict)。
     档案列: 仅 rank<=top_dossier_n 且映射里有链接的行才写。
-    2026-07-07 起加 4 列: 行动分级/身份标签/起势分/潜力分 + 拦截原因(🔴 才写)。
+    列结构单一来源 = schema.FULL_RANKING_COLUMNS。三词化(2026-07-07): 展示名用
+      对路分(原总分) / 红绿灯(原行动分级) / 在涨分(新增合成) / 潜力分, 起势/浪/破圈=证据列。
     绝不物理删数据: 🔴 行照样进表, 带清楚的拦截原因列供人工终审。"""
     records = []
     for s in ranked:
@@ -224,7 +270,7 @@ def build_full_ranking_records(ranked, pool_by_url, dossier_links, top_dossier_n
             "排名": s.get("rank"),
             "频道名": s.get("channel_name", ""),
             "频道链接": {"link": url, "text": url},
-            "行动分级": s.get("action_grade") or "",
+            schema.COL_LIGHT: s.get("action_grade") or "",   # 红绿灯(原行动分级)
             "身份标签": _flags_zh(s.get("identity_flags")),
             "命中主题": "、".join(s.get("themes_hit") or []),
             "垂类": p.get("vertical") or "",
@@ -237,11 +283,13 @@ def build_full_ranking_records(ranked, pool_by_url, dossier_links, top_dossier_n
         if s.get("subscribers") is not None:
             f["订阅数"] = s["subscribers"]
         if s.get("score") is not None:
-            f["总分"] = round(s["score"], 4)
+            f[schema.COL_FIT] = round(s["score"], 4)          # 对路分(原总分)
+        if s.get("rising") is not None:
+            f[schema.COL_RISING] = round(s["rising"], 4)      # 在涨分(合成)
+        if s.get("potential") is not None:
+            f[schema.COL_POTENTIAL] = round(s["potential"], 5)
         if s.get("momentum") is not None:
             f["起势分"] = round(s["momentum"], 4)
-        if s.get("potential") is not None:
-            f["潜力分"] = round(s["potential"], 5)
         if s.get("trend") is not None:
             f["浪层分"] = round(s["trend"], 4)
         if s.get("breakout") is not None:
@@ -309,17 +357,17 @@ def ensure_green_view(cfg, view_name="🟢 外联终审队列"):
         tid = _load_tables(cfg).get("full_ranking_table_id")
         if not tid:
             return {"ok": False, "error": "全池榜单表 id 未知(先跑一次同步建表)"}
-        manual = ("在飞书全池榜单表手动两步筛: 新建视图 -> 添加筛选 [行动分级] 等于 🟢。")
+        manual = ("在飞书全池榜单表手动两步筛: 新建视图 -> 添加筛选 [%s] 等于 🟢。" % schema.COL_LIGHT)
 
-        # 找「行动分级」字段 id(过滤条件要用字段 id 而非名字)
+        # 找「红绿灯」字段 id(过滤条件要用字段 id 而非名字; 兼容尚未迁移的老表旧名「行动分级」)
         fld = _feishu_call("GET", "/bitable/v1/apps/%s/tables/%s/fields?page_size=100" % (app_token, tid), token=token)
         grade_fid = None
         for it in (fld.get("data", {}) or {}).get("items", []):
-            if it.get("field_name") == "行动分级":
+            if it.get("field_name") in (schema.COL_LIGHT, "行动分级"):
                 grade_fid = it.get("field_id")
                 break
         if not grade_fid:
-            return {"ok": False, "error": "找不到 行动分级 字段", "manual": manual}
+            return {"ok": False, "error": "找不到 %s 字段" % schema.COL_LIGHT, "manual": manual}
 
         # 复用同名视图或新建
         views = _feishu_call("GET", "/bitable/v1/apps/%s/tables/%s/views?page_size=100" % (app_token, tid), token=token)

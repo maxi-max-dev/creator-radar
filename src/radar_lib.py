@@ -107,6 +107,197 @@ def score_pool(rows, cfg):
     return scored
 
 
+def rising_evidence_lines(scored_row):
+    """把 rising_evidence(fuse_rising 存的原始证据) 翻成三条人话, 供日报/档案「证据」节 + 推荐卡提示词。
+    只列有证据的那几条(缺的不硬凑)。返回 list[str]。三条口径:
+      破自己纪录 = 最近一条视频 views/天 冲到自己历史 Nx; 骑在热点上 = 命中升温词 X 的视频跑赢自己基线;
+      播放远超粉丝盘 = 一条视频播放到粉丝盘的 Nx(算法在把他推给圈外人)。"""
+    ev = (scored_row or {}).get("rising_evidence") or {}
+    lines = []
+    m = ev.get("momentum")
+    if m and m.get("burst_ratio"):
+        title = (m.get("title") or "").strip()
+        tail = f"（《{title[:40]}》）" if title else ""
+        lines.append(f"破自己纪录：最近一条视频播放速度冲到自己历史的 {m['burst_ratio']:.1f} 倍{tail}")
+    t = ev.get("trend")
+    if t and t.get("matched_terms"):
+        terms = "、".join(t["matched_terms"][:3])
+        br = f"，跑赢自己基线 {t['burst_ratio']:.1f} 倍" if t.get("burst_ratio") else ""
+        lines.append(f"骑在热点上：内容命中正在升温的「{terms}」{br}")
+    b = ev.get("breakout")
+    if b and b.get("top_ratio"):
+        lines.append(f"播放远超粉丝盘：一条视频播放数达到粉丝总盘的 {b['top_ratio']:.1f} 倍（算法在把他推给圈外人）")
+    return lines
+
+
+def rising_score(momentum, m_cov, onwave, t_cov, breakout_score, b_cov, cfg):
+    """在涨分: 三信号合成一个数 ∈[0,1] = 「是不是正在被越来越多陌生人看到」。
+
+    选型论证(Max 2026-07-07 简化拍板):
+      三信号里 起势(momentum) 与 浪的 onwave 分量是**同一根轴**——两者都是「近期视频
+      views/天 相对该频道自身历史基线的爆发比(log 压缩归一)」, 只是 onwave 只看命中浪词
+      的视频。若把 momentum + trend_score 相加会**重复计数**这根「相对自己在加速」的轴。
+      故加速轴 = max(momentum, onwave)(取更亮的那个证据, 不叠加)。
+      破圈(breakout = 近期 views ÷ 粉丝盘) 是**独立的第二根轴**: 它衡量「算法把他推给了多少
+      圈外陌生人」, 与「他比自己更火」正交(大频道易 momentum 难破圈, 小频道一条爆款反之)。
+
+      两轴合成用 noisy-or: rising = 1 - (1-accel)×(1-breakout)。
+      为何 noisy-or 而非加权 max 或加权和:
+        - 两轴是同一潜变量(被更多陌生人看到)的**独立证据**。任一轴发火都应抬高在涨分
+          (加权 max 会让第二根轴完全无贡献, 浪费了独立信号)。
+        - 但不该像加权和那样可以冲破 1 或线性叠加(两个弱信号 ≠ 一个强信号)。
+          noisy-or 天然把两个独立概率式证据合成且封顶在 1, 正是这个语义。
+
+    数据不足处理(不冤杀): 某轴 coverage 非 ok 时该轴贡献取 0(只由有证据的轴抬升);
+    两轴都无证据时退回 neutral(未知不是差, 但也拿不出证据说在涨)。
+    """
+    sconf = cfg.get("rising", {}).get("synthesis", {})
+    neutral = sconf.get("neutral", 0.3)
+
+    # 加速轴: momentum 与 onwave 同源, 取 max(不叠加)。仅 coverage=ok 的分量参与。
+    accel_parts = []
+    if m_cov == "ok" and momentum is not None:
+        accel_parts.append(momentum)
+    if t_cov == "ok" and onwave is not None:
+        accel_parts.append(onwave)
+    accel = max(accel_parts) if accel_parts else None
+
+    # 破圈轴: 独立。仅 coverage=ok 参与。
+    brk = breakout_score if (b_cov == "ok" and breakout_score is not None) else None
+
+    if accel is None and brk is None:
+        return round(neutral, 4), "none"      # 两轴都无证据 → 中性
+    a = accel if accel is not None else 0.0
+    b = brk if brk is not None else 0.0
+    rising = 1.0 - (1.0 - a) * (1.0 - b)      # noisy-or
+    return round(rising, 4), "ok"
+
+
+def _single_video_driven(m, t, b, cfg):
+    """单视频驱动判定(Max 拍板采纳, 只标注不改分): 在涨证据是否 >80% 来自同一条视频。
+
+    加速轴的证据本就取自单条最亮视频(momentum.top_video / trend.top_evidence),
+    破圈轴证据也取自单条最亮视频(breakout.top_video)。因此判定逻辑:
+      - 只有一根轴有证据 → 该轴的最亮单条视频 = 100% 的在涨证据 → 触发。
+      - 两根轴都有证据但**指向同一条视频**(video_id 相同) → 仍是同一条视频承载 100% → 触发。
+      - 两根轴指向不同视频 → 证据分散在 >1 条视频上 → 不触发。
+    accel 轴的代表视频取 momentum.top_video 与 trend.top_evidence 里更亮的那条(与 rising 的
+    max 选择一致)。dominance_threshold 目前语义为「是否单条独占」, 保留为旋钮供将来细化。
+    """
+    m_ok = m and m.get("data_coverage") == "ok" and (m.get("momentum_score") or 0) > 0
+    t_ok = t and t.get("data_coverage") == "ok" and (t.get("onwave") or 0) > 0
+    b_ok = b and b.get("data_coverage") == "ok" and (b.get("breakout_score") or 0) > 0
+
+    # 加速轴代表视频 = momentum 与 trend 里 onwave/momentum 更大的那条
+    accel_vid = None
+    if m_ok or t_ok:
+        mv = (m or {}).get("top_video") or {}
+        tv = (t or {}).get("top_evidence") or {}
+        m_val = (m.get("momentum_score") or 0) if m_ok else -1
+        t_val = (t.get("onwave") or 0) if t_ok else -1
+        accel_vid = (mv.get("video_id") if m_val >= t_val else tv.get("video_id"))
+    brk_vid = ((b or {}).get("top_video") or {}).get("video_id") if b_ok else None
+
+    axes = [v for v, ok in ((accel_vid, m_ok or t_ok), (brk_vid, b_ok)) if ok]
+    if not axes:
+        return False
+    if len(axes) == 1:
+        return True                            # 唯一有证据的轴 = 单条视频独占
+    # 两轴都有证据: 指向同一条视频才算单视频驱动(video_id 都拿得到时才能判)
+    if accel_vid and brk_vid:
+        return accel_vid == brk_vid
+    return False                               # 拿不到 id 无法证明同源 → 保守不标
+
+
+def fuse_rising(scored, momentum_path, trend_path, breakout_path, cfg):
+    """产品路径专用(2026-07-07 简化): 三信号合成「在涨分」, 单段式融合出 potential。
+
+    替换原两段式(fuse_momentum 的 momentum fuse + fuse_trends 的 trend fuse)。
+      potential = fit × (1 + gain × rising)
+    对外只暴露一个「在涨分」(rising), 但原三个字段(momentum/trend/breakout 及其分量)照算
+    保留进 scored 行(供工程证据列与档案)。单视频驱动 ⚠️ 追加进 identity_flags(只标不改分)。
+
+    铁律(与 fuse_momentum/fuse_trends 同): 只改产品路径展示/排序, backtest 绝不 import 本函数,
+    冻结考试池官方指标零影响。任一信号文件缺失 → 该轴按无证据优雅降级(不冤杀)。
+
+    就地给每个 scored 行加:
+      momentum / momentum_cov         (起势, 原始值保留)
+      trend / trend_cov / trend_chaser(浪, 原始值保留)
+      breakout / breakout_score       (破圈, 原始值保留)
+      rising / rising_cov             (合成的在涨分)
+      potential / potential_rank / potential_pct
+      identity_flags 追加 trend_chaser / single_video_driven(如触发)
+    返回 scored。
+    """
+    fconf = cfg.get("rising", {}).get("fusion", {})
+    gain = fconf.get("gain", 0.75)
+
+    def _index(path):
+        d = {}
+        if path and os.path.exists(path):
+            for x in json.load(open(path)):
+                d[x["channel_url"]] = x
+        return d
+
+    m_by = _index(momentum_path)
+    t_by = _index(trend_path)
+    b_by = _index(breakout_path)
+
+    for s in scored:
+        url = s["channel_url"]
+        m = m_by.get(url)
+        t = t_by.get(url)
+        b = b_by.get(url)
+
+        mval = m["momentum_score"] if m else cfg["momentum"]["neutral_score"]
+        mcov = m["data_coverage"] if m else "none"
+        s["momentum"] = round(mval, 4)
+        s["momentum_cov"] = mcov
+
+        tval = t["trend_score"] if t else 0.0
+        tcov = t["data_coverage"] if t else "none"
+        onwave = t.get("onwave", 0.0) if t else 0.0
+        chaser = bool(t and t.get("trend_chaser"))
+        s["trend"] = round(tval, 4)
+        s["trend_cov"] = tcov
+        s["trend_chaser"] = chaser
+
+        s["breakout"] = round(b["top_ratio"], 3) if (b and b.get("top_ratio") is not None) else None
+        bscore = b.get("breakout_score") if b else None
+        bcov = b.get("data_coverage") if b else "none"
+        s["breakout_score"] = bscore
+
+        rising, rcov = rising_score(mval, mcov, onwave, tcov, bscore, bcov, cfg)
+        s["rising"] = rising
+        s["rising_cov"] = rcov
+        s["potential"] = round(s["score"] * (1 + gain * rising), 5)
+
+        # 在涨的三条人话证据(供日报/档案的「证据」节人话化, 只在有证据时带):
+        #   破自己纪录 = 起势(momentum) 的最亮爆发视频; 骑热点 = 浪(trend) 的命中浪词视频; 播放远超粉丝盘 = 破圈(breakout)。
+        ev = {}
+        if mcov == "ok" and m and m.get("top_video") and (m.get("momentum_score") or 0) > 0:
+            ev["momentum"] = m["top_video"]           # {title, views, age_days, burst_ratio, ...}
+        if tcov == "ok" and t and t.get("top_evidence") and (t.get("onwave") or 0) > 0:
+            ev["trend"] = t["top_evidence"]            # {title, matched_terms, burst_ratio, ...}
+        if bcov == "ok" and b and b.get("top_video") and (b.get("top_ratio") or 0) > 1:
+            ev["breakout"] = {"top_ratio": b.get("top_ratio"), **(b.get("top_video") or {})}
+        s["rising_evidence"] = ev
+
+        # ⚠️ 展示层徽章(不进分级判定, 只进身份标签列)
+        flags = s.setdefault("identity_flags", [])
+        if chaser and "trend_chaser" not in flags:
+            flags.append("trend_chaser")
+        if _single_video_driven(m, t, b, cfg) and "single_video_driven" not in flags:
+            flags.append("single_video_driven")
+
+    order = sorted(range(len(scored)), key=lambda i: -scored[i]["potential"])
+    n = len(scored)
+    for rank, i in enumerate(order, 1):
+        scored[i]["potential_rank"] = rank
+        scored[i]["potential_pct"] = round(rank / n * 100, 1)
+    return scored
+
+
 def fuse_momentum(scored, momentum_path, cfg):
     """产品路径专用: 把起势层(momentum)融进 fit 分, 产出 potential 分与 potential 排名。
 

@@ -9,8 +9,13 @@ from datetime import date, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-from radar_lib import load_config, load_pool, score_pool, fuse_momentum, fuse_trends
+from radar_lib import load_config, load_pool, score_pool, fuse_rising
 import identity_filter
+import schema
+
+# 引擎版本戳(打进 scoreboard picks, 让每期预测可追溯是哪版引擎下的注)。
+# fit 打分核仍是冻结考试池验证过的 v1.2; rising = 2026-07-07 三信号合成的在涨层(单段式融合)。
+ENGINE_VERSION = "v1.2-rising"
 
 POOL = os.path.join(ROOT, "data", "pool", "creator_pool.jsonl")
 RSS_DIR = os.path.join(ROOT, "data", "rss")
@@ -256,36 +261,41 @@ def run_trends_layer(cfg_path, pool_path, today, dry_run=False):
     return tp, bp
 
 
-# 表格列序固定，也是将来 bitable 出口的 schema 母版。
-# 起势分/潜力分(momentum) + 浪层分/破圈比(trends/breakout) + 行动分级/身份标签(身份过滤器)。
-CSV_COLUMNS = ["日期", "排名", "频道名", "频道链接", "订阅数", "排名百分位", "总分", "语义分", "甜点分",
-               "POV标记分", "起势分", "潜力分", "浪层分", "破圈比", "行动分级", "身份标签", "命中主题",
-               "是否新发现", "排名变动", "值得签1", "值得签2", "值得签3", "风险", "首次合作建议", "状态"]
+# 列结构单一来源在 schema.py。本地 CSV = 工程视图(全列); 飞书运营视图默认只显示 OPS 列。
+# 三词化(2026-07-07): 总分->对路分, 行动分级->红绿灯, 新增在涨分; 起势/浪/破圈下沉为证据列。
+CSV_COLUMNS = schema.CARDS_TABLE_COLUMNS
 
 
-def build_table_rows(today, cards, scored, pool_by_url):
-    """推荐行的单一数据源(原始类型值)。CSV 与 bitable 两个出口都从这里取数，保证同构不漂移。"""
+def build_table_rows(today, cards, scored, pool_by_url, dossier_links=None):
+    """推荐行的单一数据源(原始类型值)。CSV 与 bitable 两个出口都从这里取数，保证同构不漂移。
+    键名用 schema 的展示名(对路分/在涨分/潜力分/红绿灯), 数据含义不变。"""
     s_by_url = {s["channel_url"]: s for s in scored}
+    dl_map = dossier_links or {}
     rows = []
     for c in cards:
-        s = s_by_url.get(c.get("_channel_url"), {})
-        p = pool_by_url.get(c.get("_channel_url"), {})
+        url = c.get("_channel_url", "")
+        s = s_by_url.get(url, {})
+        p = pool_by_url.get(url, {})
         why = (c.get("why_worth_signing") or []) + ["", "", ""]
+        cid = url.rstrip("/").rsplit("/", 1)[-1]
         rows.append({
             "日期": today,
             "排名": s.get("rank", c.get("_rank")),
             "频道名": s.get("channel_name", c.get("channel_name", "")),
-            "频道链接": c.get("_channel_url", ""),
+            "频道链接": url,
             "订阅数": s.get("subscribers"),
             "排名百分位": s.get("pct"),
-            "总分": s.get("score"), "语义分": s.get("sem"),
-            "甜点分": s.get("sweet"), "POV标记分": s.get("pov"),
-            "起势分": s.get("momentum"), "潜力分": s.get("potential"),
-            "浪层分": s.get("trend"), "破圈比": s.get("breakout"),
-            "行动分级": s.get("action_grade") or "", "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
+            schema.COL_FIT: s.get("score"),            # 对路分(原总分)
+            schema.COL_RISING: s.get("rising"),        # 在涨分(合成)
+            schema.COL_POTENTIAL: s.get("potential"),  # 潜力分 = 对路 × 在涨
+            "语义分": s.get("sem"), "甜点分": s.get("sweet"), "POV标记分": s.get("pov"),
+            "起势分": s.get("momentum"), "浪层分": s.get("trend"), "破圈比": s.get("breakout"),
+            schema.COL_LIGHT: s.get("action_grade") or "",  # 红绿灯(原行动分级)
+            "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
             "命中主题": s.get("themes_hit") or [],
             "是否新发现": p.get("source") == "auto-discover",
             "排名变动": s.get("rank_delta"),
+            "档案": dl_map.get(cid, ""),
             "值得签1": why[0], "值得签2": why[1], "值得签3": why[2],
             "风险": c.get("risk", ""), "首次合作建议": c.get("first_collab", ""),
         })
@@ -296,79 +306,125 @@ def _fmt_delta(d):
     return (f"+{d}" if d > 0 else str(d)) if d is not None else ""
 
 
+# CSV 各列的格式化器(数值列保留原精度; None/缺失出空串)。缺省=原样 str。
+def _fmt_num(v, nd):
+    return f"{v:.{nd}f}" if v is not None else ""
+
+
 def write_cards_table(today, rows, out_dir):
-    """推荐卡表格化: 一行一个推荐人。utf-8-sig 保 Numbers/Excel 中文不乱码，状态列留空给运营填。"""
+    """推荐卡表格化: 一行一个推荐人。utf-8-sig 保 Numbers/Excel 中文不乱码，状态列留空给运营填。
+    列序来自 schema.CARDS_TABLE_COLUMNS(工程视图=全列)。"""
     path = os.path.join(out_dir, "cards_table.csv")
+    fmt = {  # 列名 -> 单元格文本
+        "日期": lambda r: r["日期"],
+        "排名": lambda r: r["排名"] if r["排名"] is not None else "",
+        "频道名": lambda r: r["频道名"],
+        "频道链接": lambda r: r["频道链接"],
+        "订阅数": lambda r: r["订阅数"] if r["订阅数"] is not None else "",
+        schema.COL_FIT: lambda r: _fmt_num(r[schema.COL_FIT], 4),
+        schema.COL_RISING: lambda r: _fmt_num(r[schema.COL_RISING], 4),
+        schema.COL_POTENTIAL: lambda r: _fmt_num(r[schema.COL_POTENTIAL], 5),
+        schema.COL_LIGHT: lambda r: r.get(schema.COL_LIGHT, ""),
+        "身份标签": lambda r: r.get("身份标签", ""),
+        "语义分": lambda r: _fmt_num(r["语义分"], 4),
+        "甜点分": lambda r: _fmt_num(r["甜点分"], 4),
+        "POV标记分": lambda r: _fmt_num(r["POV标记分"], 4),
+        "起势分": lambda r: _fmt_num(r["起势分"], 4),
+        "浪层分": lambda r: _fmt_num(r["浪层分"], 4),
+        "破圈比": lambda r: _fmt_num(r["破圈比"], 3),
+        "排名百分位": lambda r: f"{r['排名百分位']}%" if r["排名百分位"] is not None else "",
+        "命中主题": lambda r: "、".join(r["命中主题"]),
+        "是否新发现": lambda r: "是" if r["是否新发现"] else "否",
+        "排名变动": lambda r: _fmt_delta(r["排名变动"]),
+        "档案": lambda r: r.get("档案", ""),
+        "值得签1": lambda r: r["值得签1"], "值得签2": lambda r: r["值得签2"], "值得签3": lambda r: r["值得签3"],
+        "风险": lambda r: r["风险"], "首次合作建议": lambda r: r["首次合作建议"],
+        "状态": lambda r: "",
+    }
     with open(path, "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f)
         w.writerow(CSV_COLUMNS)
         for r in rows:
-            w.writerow([
-                r["日期"],
-                r["排名"] if r["排名"] is not None else "",
-                r["频道名"],
-                r["频道链接"],
-                r["订阅数"] if r["订阅数"] is not None else "",
-                f"{r['排名百分位']}%" if r["排名百分位"] is not None else "",
-                f"{r['总分']:.4f}" if r["总分"] is not None else "",
-                f"{r['语义分']:.4f}" if r["语义分"] is not None else "",
-                f"{r['甜点分']:.4f}" if r["甜点分"] is not None else "",
-                f"{r['POV标记分']:.4f}" if r["POV标记分"] is not None else "",
-                f"{r['起势分']:.4f}" if r.get("起势分") is not None else "",
-                f"{r['潜力分']:.5f}" if r.get("潜力分") is not None else "",
-                f"{r['浪层分']:.4f}" if r.get("浪层分") is not None else "",
-                f"{r['破圈比']:.3f}" if r.get("破圈比") is not None else "",
-                r.get("行动分级", ""),
-                r.get("身份标签", ""),
-                "、".join(r["命中主题"]),
-                "是" if r["是否新发现"] else "否",
-                _fmt_delta(r["排名变动"]),
-                r["值得签1"], r["值得签2"], r["值得签3"],
-                r["风险"], r["首次合作建议"],
-                "",
-            ])
+            w.writerow([fmt.get(col, lambda _r: "")(r) for col in CSV_COLUMNS])
     return path
 
 
 def write_scoreboard_picks(today, scored, cards, pool_by_url, note=None):
-    """记分板 picks 存档(每周一): 当日推荐 + top50 快照 + 全池订阅基线。
+    """记分板 picks 存档(每周一): 当日推荐 + top50 快照 + 全池双口径基线(订阅 + 播放总量)。
+    engine_version 版本戳让每期预测可追溯是哪版引擎下的注(对账时能分辨算法迭代的影响)。
     全池基线让文件自足: 到期结算时不依赖任何外部历史。幂等，同日已存在则跳过。"""
     os.makedirs(SCOREBOARD, exist_ok=True)
     path = os.path.join(SCOREBOARD, f"picks-{today}.json")
     if os.path.exists(path):
         return path
     s_by = {s["channel_url"]: s for s in scored}
+
+    def _views(url):  # 频道累计播放总量(池子里有才有; 缺则 None, 播放口径该行结算时降级)
+        p = pool_by_url.get(url, {})
+        return p.get("channel_view_count") or p.get("view_count")
+
     picks = []
     for c in cards:
-        s = s_by.get(c.get("_channel_url"), {})
+        url = c.get("_channel_url")
+        s = s_by.get(url, {})
         picks.append({
-            "channel_url": c.get("_channel_url"),
+            "channel_url": url,
             "channel_name": s.get("channel_name") or c.get("channel_name"),
             "rank_at_pick": s.get("rank", c.get("_rank")),
             "score_at_pick": s.get("score"),
             "subscribers_baseline": s.get("subscribers"),
-            "channel_view_count_baseline": pool_by_url.get(c.get("_channel_url"), {}).get("channel_view_count"),
+            "channel_view_count_baseline": _views(url),
         })
     doc = {
         "picked_date": today,
+        "engine_version": ENGINE_VERSION,
         "note": note,
         "picks": picks,
         "top50": [{"rank": s["rank"], "channel_url": s["channel_url"], "channel_name": s["channel_name"],
                    "score": s["score"], "subscribers": s.get("subscribers")} for s in scored[:50]],
         "pool_size": len(scored),
         "pool_subscribers_baseline": {s["channel_url"]: s.get("subscribers") for s in scored},
+        # 第二口径基线: 全池累计播放总量(池里有此字段才填, 用于播放速度对账)。
+        "pool_views_baseline": {s["channel_url"]: _views(s["channel_url"])
+                                for s in scored if _views(s["channel_url"]) is not None},
     }
     with open(path, "w") as f:
         json.dump(doc, f, ensure_ascii=False, indent=1)
     return path
 
 
+def _pool_median_growth(baseline_map, now_map):
+    """全池增速中位: 对 {url: 基线值} 与 {url: 现值}, 逐 url 算 (现-基)/基*100, 取中位。
+    基线或现值缺/为 0 的行不计入。样本不足返回 (None, 0)。"""
+    growths = []
+    for url, b in (baseline_map or {}).items():
+        n = now_map.get(url)
+        if b and n:
+            growths.append((n - b) / b * 100)
+    if not growths:
+        return None, 0
+    return sorted(growths)[len(growths) // 2], len(growths)
+
+
+def _verdict(g, median, margin):
+    """增速 g 相对全池中位给判词(跑赢/跑平/跑输), median=None(样本不足)时返回'基线缺失'。"""
+    if median is None:
+        return "基线缺失"
+    return "跑赢" if g > median + margin else ("跑输" if g < median - margin else "跑平")
+
+
 def check_scoreboard(today, scored, cfg):
-    """结算到期 picks: 每个 pick 的订阅增长对照全池中位增速给 verdict，写 verdicts 文件(结算一次不重复)。"""
+    """结算到期 picks: 双口径对账(订阅增速 + 播放速度)。每个 pick 的增长各自对照全池同口径中位
+    给 verdict，写 verdicts 文件(结算一次不重复)。
+    第一口径=订阅增速(向后兼容, 字段名不变: growth_pct/verdict/subscribers_*)。
+    第二口径=播放速度(累计播放总量增速, 池里有 channel_view_count 基线的行才算): views_growth_pct/views_verdict。
+    播放口径基线全缺(当前池未采集播放总量)时该口径整体优雅降级(picks 不带 views 字段, 报告不显示该列)。"""
     sb = cfg.get("scoreboard", {})
     due_days = sb.get("due_days", 28)
     margin = sb.get("verdict_margin_pct", 2.0)
     now_subs = {s["channel_url"]: s.get("subscribers") for s in scored}
+    # 现值播放总量(池里有才有; 打分产物 scored 未必带, 故也从池子取, 缺则该口径降级)
+    now_views = {s["channel_url"]: (s.get("channel_view_count") or s.get("view_count")) for s in scored}
     results = []
     for pf in sorted(glob.glob(os.path.join(SCOREBOARD, "picks-*.json"))):
         pdate = os.path.basename(pf)[len("picks-"):-len(".json")]
@@ -380,26 +436,36 @@ def check_scoreboard(today, scored, cfg):
         if age < due_days or os.path.exists(vf):
             continue
         doc = json.load(open(pf))
-        growths = []
-        for url, b in (doc.get("pool_subscribers_baseline") or {}).items():
-            n = now_subs.get(url)
-            if b and n:
-                growths.append((n - b) / b * 100)
-        median = sorted(growths)[len(growths) // 2] if growths else 0.0
+
+        sub_median, _ = _pool_median_growth(doc.get("pool_subscribers_baseline"), now_subs)
+        views_base = doc.get("pool_views_baseline") or {}
+        views_median, views_n = _pool_median_growth(views_base, now_views)
+        has_views = views_n > 0            # 播放口径是否有足够基线可结算
+
         verdicts = []
         for p in doc.get("picks", []):
-            b, n = p.get("subscribers_baseline"), now_subs.get(p.get("channel_url"))
+            url = p.get("channel_url")
+            b, n = p.get("subscribers_baseline"), now_subs.get(url)
+            row = {"channel_name": p.get("channel_name"), "channel_url": url}
             if not b or not n:
-                verdicts.append({"channel_name": p.get("channel_name"), "channel_url": p.get("channel_url"),
-                                 "verdict": "数据缺失"})
-                continue
-            g = (n - b) / b * 100
-            v = "跑赢" if g > median + margin else ("跑输" if g < median - margin else "跑平")
-            verdicts.append({"channel_name": p.get("channel_name"), "channel_url": p.get("channel_url"),
-                             "subscribers_baseline": b, "subscribers_now": n,
-                             "growth_pct": round(g, 2), "verdict": v})
+                row["verdict"] = "数据缺失"
+            else:
+                g = (n - b) / b * 100
+                row.update({"subscribers_baseline": b, "subscribers_now": n,
+                            "growth_pct": round(g, 2), "verdict": _verdict(g, sub_median, margin)})
+            # 第二口径: 播放速度(有基线 + 有现值才算; 否则该行不带 views 字段)
+            vb, vn = p.get("channel_view_count_baseline"), now_views.get(url)
+            if has_views and vb and vn:
+                vg = (vn - vb) / vb * 100
+                row.update({"views_baseline": vb, "views_now": vn,
+                            "views_growth_pct": round(vg, 2),
+                            "views_verdict": _verdict(vg, views_median, margin)})
+            verdicts.append(row)
         out = {"picked_date": pdate, "settled_date": today, "window_days": age,
-               "pool_median_growth_pct": round(median, 2), "verdicts": verdicts}
+               "engine_version": doc.get("engine_version"),
+               "pool_median_growth_pct": round(sub_median, 2) if sub_median is not None else None,
+               "pool_median_views_growth_pct": round(views_median, 2) if (has_views and views_median is not None) else None,
+               "verdicts": verdicts}
         with open(vf, "w") as f:
             json.dump(out, f, ensure_ascii=False, indent=1)
         results.append(out)
@@ -423,34 +489,56 @@ def commit_snapshots(today):
 
 
 def _scoreboard_oneliner(scoreboard_results):
-    """记分板一句话摘要(给日报开头的 callout 用)。"""
+    """对账一句话摘要(给日报开头三句话第③行用)。"""
     if not scoreboard_results:
-        return "记分板：本次无到期预测"
+        return "对账页：本次无到期预测"
     parts = []
     for r in scoreboard_results:
         won = sum(1 for v in r["verdicts"] if v.get("verdict") == "跑赢")
         parts.append(f"{r['picked_date']} 那期结算：{won}/{len(r['verdicts'])} 跑赢全池中位")
-    return "记分板：" + "；".join(parts)
+    return "对账页：" + "；".join(parts)
+
+
+def _blocked_reason_dist(blocked):
+    """拦截原因分布(给三行结论第②行): 按拦截原因标签的类别名聚合成「僵尸号 3 · 已合作 2」这种一句话。"""
+    from collections import Counter
+    cats = Counter()
+    for b in blocked or []:
+        r = b.get("reason") or ""
+        cat = r.split("(")[0] if r else "其他"
+        cats[cat] += 1
+    label = {"already_partner": "已合作", "competitor": "竞品", "brand_or_vendor": "品牌/厂商",
+             "reposter": "搬运号", "marketing_or_finance": "营销/理财/玄学", "dead_account": "僵尸/空号"}
+    return " · ".join(f"{label.get(k, k)} {v}" for k, v in cats.most_common())
 
 
 def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None,
                  scoreboard_results=None, dossier_links=None, blocked=None):
-    """日报 markdown(设计升级版)。开头 callout 摘要(blockquote)，推荐卡每张一个小节(heading3+分数表格+bullet)，
-    divider 分节。飞书 Drive 预览这份 .md 时 blockquote/表格/heading 都会渲染成样式块；纯文本降级也不丢内容。
+    """日报 markdown(三词化 · 结论先行)。开头三行结论(建议联系谁/拦下谁/对账状态)，
+    推荐卡每张一个小节(三词分数表 + 证据 + 值得签)，「窜升榜/排名 diff」已退役(起势层接班)。
     dossier_links: {channel_id: 档案飞书链接}(互链，拿不到就温和省略; 上传前 push 流程还会按最新映射刷新一遍)。"""
+    import radar_lib
     n = len(scored)
     delta = ""
     if collect_res.get("pool_before") is not None:
         d = collect_res["pool_after"] - collect_res["pool_before"]
         delta = f"+{d}" if d else "+0"
-    sb_line = _scoreboard_oneliner(scoreboard_results)
 
     L = [f"# 达人雷达日报 · {today}", ""]
-    # 开头 callout 摘要卡(blockquote 在飞书预览里渲染成高亮引用块)
-    L += ["> 📡 **今日摘要**  ",
-          f"> 池子 **{n}** 频道（{delta}） · 本次刷新 **{collect_res.get('refreshed', 0)}** · 新发现入池 **{collect_res.get('discovered', 0)}**  ",
-          f"> 推荐卡 **{len(cards)}** 张 · {'首次运行无排名对比' if first_run else f'新进前100 **{len(newcomers)}** 个'}  ",
-          f"> {sb_line}",
+
+    # === 三行结论先行(①建议联系 N 个 ②拦下 M 个 ③对账状态) ===
+    names = [c.get("channel_name", "?") for c in cards][:8]
+    names_str = "、".join(names) + ("…" if len(cards) > 8 else "") if names else "（本次无）"
+    line2 = (f"拦下 **{len(blocked)}** 个：{_blocked_reason_dist(blocked)}"
+             if blocked else "拦下 **0** 个（扫描区内无 🔴）")
+    if scoreboard_results:
+        line3 = _scoreboard_oneliner(scoreboard_results)
+    else:
+        line3 = "对账页：本次无到期预测（结算中）"
+    L += ["> 📡 **今日三句话**  ",
+          f"> ① 今天建议联系 **{len(cards)}** 个：{names_str}  ",
+          f"> ② {line2}  ",
+          f"> ③ {line3}",
           "", "---", ""]
 
     L += ["## 今日池子", "",
@@ -461,29 +549,12 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
         L.append(f"  - {', '.join(collect_res['discovered_names'][:15])}")
     L += ["", "---", ""]
 
-    if first_run:
-        L += ["## 排名 diff", "", "_首次运行，无历史排名可对比。下次运行起产出新进/窜升榜。_", "", "---", ""]
-    else:
-        L += ["## 新进前 100", ""]
-        if newcomers:
-            L += ["| 排名 | 频道 | 订阅 | 总分 |", "|---|---|---:|---:|"]
-            for s in newcomers[:20]:
-                L.append(f"| #{s['rank']} | **{s['channel_name']}** | {s.get('subscribers')} | {s['score']} |")
-        else:
-            L.append("_本次无新面孔进入前 100。_")
-        L += ["", "## 窜升榜（排名上升 ≥200 位）", ""]
-        if jumpers:
-            L += ["| 频道 | 上升 | 现排名 | 订阅 |", "|---|---:|---:|---:|"]
-            for s in jumpers[:20]:
-                L.append(f"| **{s['channel_name']}** | ↑{s['rank_delta']} | #{s['rank']} | {s.get('subscribers')} |")
-        else:
-            L.append("_本次无频道大幅窜升。_")
-        L += ["", "---", ""]
+    # 「窜升榜 / 排名 diff」已正式退役: 起势层(在涨分)已接班「谁正在被越来越多陌生人看到」。
 
-    # 今日拦截(身份过滤器 🔴): 列名字+原因, 不只个数, 让运营一眼复核。绝不物理删数据, 仅不进推荐卡。
+    # 今日拦截(红绿灯 🔴): 列名字+原因, 不只个数, 让运营一眼复核。绝不物理删数据, 仅不进推荐卡。
     L += ["## 今日拦截", ""]
     if blocked:
-        L.append(f"推荐卡扫描区内命中 🔴 自动拦截 **{len(blocked)}** 个，不进推荐卡"
+        L.append(f"推荐卡扫描区内亮 🔴 红灯自动拦截 **{len(blocked)}** 个，不进推荐卡"
                  f"（仍保留在全池榜单表 + 拦截原因列，人工终审自行决定去留）：")
         L.append("")
         L += ["| 频道 | 排名 | 身份标签 | 拦截原因 |", "|---|---:|---|---|"]
@@ -511,14 +582,18 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
             dl = (dossier_links or {}).get(cid)
             if dl:
                 L += [f"[🗂️ 达人档案]({dl})", ""]
-            # 分数表格: fit 三分量 + 起势/潜力 + 浪层/破圈(四层雷达各自透明)
-            _brk = s.get("breakout")
-            L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 | 起势分 | 潜力分 | 浪层分 | 破圈比 |",
-                  "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            # 三词分数表(运营视图): 对路分 × 在涨分 = 潜力分 + 红绿灯。工程证据(语义/甜点/起势/浪/破圈)见档案。
+            L += ["| 排名 | 订阅 | 对路分 | 在涨分 | 潜力分 | 红绿灯 |",
+                  "|---:|---:|---:|---:|---:|:--:|",
                   f"| #{s.get('rank', c.get('_rank', '?'))} | {s.get('subscribers', '?')} | "
-                  f"{s.get('score', '?')} | {s.get('sem', '?')} | {s.get('sweet', '?')} | {s.get('pov', '?')} | "
-                  f"{s.get('momentum', '?')} | {s.get('potential', '?')} | "
-                  f"{s.get('trend', '?')} | {(_brk if _brk is not None else '?')} |", ""]
+                  f"{s.get('score', '?')} | {s.get('rising', '?')} | {s.get('potential', '?')} | {grade or '?'} |", ""]
+            # 在涨的三条人话证据(有才列)
+            ev_lines = radar_lib.rising_evidence_lines(s)
+            if ev_lines:
+                L.append("在涨证据：")
+                for e in ev_lines:
+                    L.append(f"- 📈 {e}")
+                L.append("")
             for r in (c.get("why_worth_signing") or []):
                 L.append(f"- ✅ 值得签：{r}")
             if c.get("risk"):
@@ -527,30 +602,48 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
                 L.append(f"- 🤝 首次合作：{c['first_collab']}")
             L.append("")
     else:
-        L += ["_本次未生成推荐卡（无符合条件的新面孔/窜升候选，或模型不可用）。_", ""]
+        L += ["_本次未生成推荐卡（无符合条件的候选，或模型不可用）。_", ""]
     L += ["---", ""]
 
-    L += ["## 记分板", ""]
+    L += ["## 对账页", ""]
     if scoreboard_results:
         for r in scoreboard_results:
-            L.append(f"**{r['picked_date']} 那期预测到期**（{r['window_days']} 天窗口，全池中位增速 {r['pool_median_growth_pct']}%）")
+            ev = f" · 引擎 {r['engine_version']}" if r.get("engine_version") else ""
+            has_views = any("views_growth_pct" in v for v in r["verdicts"])
+            vhdr = (f"，播放中位 {r['pool_median_views_growth_pct']}%" if has_views and r.get("pool_median_views_growth_pct") is not None else "")
+            L.append(f"**{r['picked_date']} 那期预测到期**（{r['window_days']} 天窗口，"
+                     f"全池订阅中位增速 {r['pool_median_growth_pct']}%{vhdr}{ev}）")
             L.append("")
-            L += ["| 频道 | 订阅(下注时→现在) | 增长 | 结论 |", "|---|---|---:|---|"]
-            for v in r["verdicts"]:
-                if v["verdict"] == "数据缺失":
-                    L.append(f"| {v.get('channel_name', '?')} | 数据缺失 | - | 数据缺失 |")
-                else:
-                    L.append(f"| **{v['channel_name']}** | {v['subscribers_baseline']} → {v['subscribers_now']} | "
-                             f"{v['growth_pct']:+.2f}% | {v['verdict']} |")
+            if has_views:
+                # 双口径: 订阅增速 + 播放速度并列
+                L += ["| 频道 | 订阅(下注时→现在) | 订阅增长 | 播放增长 | 结论(订阅/播放) |",
+                      "|---|---|---:|---:|---|"]
+                for v in r["verdicts"]:
+                    if v.get("verdict") == "数据缺失":
+                        L.append(f"| {v.get('channel_name', '?')} | 数据缺失 | - | - | 数据缺失 |")
+                    else:
+                        vg = f"{v['views_growth_pct']:+.2f}%" if "views_growth_pct" in v else "—"
+                        vv = v.get("views_verdict", "—")
+                        L.append(f"| **{v['channel_name']}** | {v['subscribers_baseline']} → {v['subscribers_now']} | "
+                                 f"{v['growth_pct']:+.2f}% | {vg} | {v['verdict']} / {vv} |")
+            else:
+                # 播放口径无基线(当前池未采集播放总量), 只出订阅口径
+                L += ["| 频道 | 订阅(下注时→现在) | 增长 | 结论 |", "|---|---|---:|---|"]
+                for v in r["verdicts"]:
+                    if v.get("verdict") == "数据缺失":
+                        L.append(f"| {v.get('channel_name', '?')} | 数据缺失 | - | 数据缺失 |")
+                    else:
+                        L.append(f"| **{v['channel_name']}** | {v['subscribers_baseline']} → {v['subscribers_now']} | "
+                                 f"{v['growth_pct']:+.2f}% | {v['verdict']} |")
             L.append("")
     else:
-        L += ["记分板：无到期预测", ""]
+        L += ["对账页：无到期预测", ""]
     L += ["---", ""]
 
     L += ["## 运行统计", "",
           f"- 时间：{datetime.now().isoformat(timespec='seconds')}",
-          f"- 推荐卡：{len(cards)} 张",
-          f"- 新进前 100：{len(newcomers)} 个" if not first_run else "- 新进前 100：n/a（首次运行）"]
+          f"- 池子规模：{len(scored)} 频道",
+          f"- 推荐卡：{len(cards)} 张"]
     if csv_path:
         L.append(f"- 当日推荐表格：data/runs/daily/{today}/cards_table.csv")
     L += ["", "_本日报每天 08:30 自动生成并同步到飞书总部（达人雷达 / 日报）。_"]
@@ -605,14 +698,18 @@ def push_bitable(cfg, rows):
                 "日期": _date_ms(r["日期"]),
                 "频道名": r["频道名"],
                 "频道链接": {"link": r["频道链接"], "text": r["频道链接"]},
+                schema.COL_LIGHT: r.get(schema.COL_LIGHT, ""),        # 红绿灯(原行动分级)
+                "身份标签": r.get("身份标签", ""),
                 "排名百分位": f"{r['排名百分位']}%" if r["排名百分位"] is not None else "",
                 "命中主题": "、".join(r["命中主题"]),
                 "是否新发现": "是" if r["是否新发现"] else "否",
                 "值得签1": r["值得签1"], "值得签2": r["值得签2"], "值得签3": r["值得签3"],
                 "风险": r["风险"], "首次合作建议": r["首次合作建议"],
             }
-            for k in ("排名", "订阅数", "总分", "语义分", "甜点分", "POV标记分"):
-                if r[k] is not None:
+            # 数值列(新名: 对路分/在涨分/潜力分 + 证据列 起势/浪/破圈)。None 不写(留空胜过写 0 误导)。
+            for k in ("排名", "订阅数", schema.COL_FIT, schema.COL_RISING, schema.COL_POTENTIAL,
+                      "语义分", "甜点分", "POV标记分", "起势分", "浪层分", "破圈比"):
+                if r.get(k) is not None:
                     f[k] = r[k]
             if r["排名变动"] is not None:
                 f["排名变动"] = _fmt_delta(r["排名变动"])
@@ -743,7 +840,7 @@ def append_bili_section(report_path, bili_res):
             L += [f"- B站池子：**{bili_res.get('pool_size', 0)}** UP 主", ""]
             top5 = bili_res.get("top5") or []
             if top5:
-                L += ["| 排名 | UP 主 | 粉丝 | 总分 |", "|---:|---|---:|---:|"]
+                L += ["| 排名 | UP 主 | 粉丝 | 对路分 |", "|---:|---|---:|---:|"]
                 for t in top5:
                     L.append(f"| #{t['rank']} | **{t['name']}** | {t.get('subs')} | {t['score']:.4f} |")
             tb = bili_res.get("table") or {}
@@ -870,22 +967,24 @@ def main():
     with open(ranked_path, "w") as f:
         json.dump(scored, f, ensure_ascii=False, indent=1)
 
-    # 起势层(momentum)集成: RSS 采集(只读, dry-run 保留) -> momentum 打分 -> 融合出 potential。
-    # ranked.json 已落盘(collect_rss 按 fit 排名决定拉取优先级)。momentum 缺失时 fuse 优雅降级为全中性。
+    # 三信号采集(起势 momentum + 浪 trend + 破圈 breakout), 都是产品路径专用。
+    # momentum: RSS 采集(只读, dry-run 保留) -> 打分。trend/breakout: 趋势采集(dry-run 掐外部三路留 pool_wave) -> 打分。
+    # ranked.json 已落盘(collect_rss/浪层按 fit 排名决定拉取优先级)。任一信号缺失时融合优雅降级(不冤杀)。
     momentum_path = run_rss_momentum(args.config, POOL, ranked_path, today)
-    fuse_momentum(scored, momentum_path, cfg)
+    trend_path, breakout_path = run_trends_layer(args.config, POOL, today, dry_run=args.dry_run)
 
     # 身份过滤器(产品路径): 给每个 scored 行贴 identity_flags / action_grade / grade_reasons。
+    # 必须在 fuse_rising 之前(annotate 会重置 identity_flags, ⚠️ 徽章由随后的 fuse_rising 用 setdefault+append 追加, 不被覆盖)。
     # 铁律: 只在产品展示层跑, backtest 官方指标不经此。词典可看品牌 token(already_partner 需要)。
     identity_filter.annotate_scored(scored, pool_by_url, cfg)
 
-    # 浪层+破圈比集成(TRENDS.md 第7节): 趋势采集(dry-run 掐外部三路留 pool_wave) -> 打分 -> 融合。
-    # 必须在 annotate_scored 之后(trend_chaser ⚠️ 徽章追加进 identity_flags)。
-    # 铁律: 放大器不是独立加分, trend=0/数据不足不动 potential; fit 的 score/rank 永远不动。
-    trend_path, breakout_path = run_trends_layer(args.config, POOL, today, dry_run=args.dry_run)
-    fuse_trends(scored, trend_path, breakout_path, cfg)
+    # 在涨分合成 + 单段式融合(2026-07-07 简化): 三信号合成一个「在涨分」rising, potential = fit × (1 + gain × rising)。
+    # 替换原两段式(momentum fuse + trend fuse)。原三信号字段照算保留进证据列/档案。
+    # trend_chaser + single_video_driven ⚠️ 徽章在此追加进 identity_flags(setdefault+append, 保留 annotate 已贴的身份标签, 只标不改分)。
+    # 铁律: 只改产品路径展示/排序, fit 的 score/rank 永远不动; backtest 官方指标零引用。
+    fuse_rising(scored, momentum_path, trend_path, breakout_path, cfg)
 
-    # 融合+身份标注后重写 ranked.json(含 momentum/potential/trend/breakout/action_grade, 供下游取用)
+    # 融合+身份标注后重写 ranked.json(含 momentum/trend/breakout/rising/potential/action_grade, 供下游取用)
     with open(ranked_path, "w") as f:
         json.dump(scored, f, ensure_ascii=False, indent=1)
 
@@ -911,14 +1010,7 @@ def main():
     comments_res = run_comments(args.config, top_n=smoke_top_n)
     transcripts_res = run_transcripts(args.config, today, top_n=smoke_top_n)
 
-    table_rows = build_table_rows(today, cards, scored, pool_by_url)
-    csv_path = write_cards_table(today, table_rows, out_dir)
-
-    if date.today().weekday() == 0:  # 周一存本周 picks(可证伪预测)
-        write_scoreboard_picks(today, scored, cards, pool_by_url)
-    scoreboard_results = check_scoreboard(today, scored, cfg)
-
-    # 互链: 日报卡片里放该达人档案的飞书链接(映射读不到就温和省略; 上传前 push 流程还会按最新映射刷新)
+    # 互链: 日报/表格里放该达人档案的飞书链接(映射读不到就温和省略; 上传前 push 流程还会按最新映射刷新)
     dossier_links = {}
     try:
         import feishu_docs
@@ -928,6 +1020,13 @@ def main():
     except Exception:
         pass
 
+    table_rows = build_table_rows(today, cards, scored, pool_by_url, dossier_links=dossier_links)
+    csv_path = write_cards_table(today, table_rows, out_dir)
+
+    if date.today().weekday() == 0:  # 周一存本周 picks(可证伪预测)
+        write_scoreboard_picks(today, scored, cards, pool_by_url)
+    scoreboard_results = check_scoreboard(today, scored, cfg)
+
     report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run,
                                csv_path, scoreboard_results, dossier_links=dossier_links, blocked=blocked)
 
@@ -935,8 +1034,7 @@ def main():
     dtxt = ""
     if collect_res.get("pool_before") is not None:
         dtxt = f"+{collect_res['pool_after'] - collect_res['pool_before']}"
-    msg = (f"📡 达人雷达日报：池子{n}({dtxt})，新进前100 {len(newcomers)} 个，"
-           f"推荐卡 {len(cards)} 张 → reports/{today}-radar.md")
+    msg = (f"📡 达人雷达日报：池子{n}({dtxt})，今天建议联系 {len(cards)} 个 → reports/{today}-radar.md")
     # 主页仪表盘大数字随日报刷新的实时口径
     sb_status = ("首份 picks 已存档，2026-08-04 结算" if not scoreboard_results
                  else f"最近结算 {len(scoreboard_results)} 期")

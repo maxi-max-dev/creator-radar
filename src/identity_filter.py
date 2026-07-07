@@ -257,8 +257,10 @@ FLAG_LABELS = {
     "stale": "久未更新",
     "no_upload_date": "无上传日期",
     "org_account": "媒体/机构",
-    # 浪层的蹭热点标记(radar_lib.fuse_trends 追加, 非本层判定): 只做展示层 ⚠️ 徽章, 不进分级
+    # 浪层的蹭热点标记(radar_lib.fuse_rising/fuse_trends 追加, 非本层判定): 只做展示层 ⚠️ 徽章, 不进分级
     "trend_chaser": "⚠️蹭热点",
+    # 在涨证据 >80% 来自同一条视频(radar_lib.fuse_rising 追加): 只标注不改分(Max 拍板采纳)
+    "single_video_driven": "⚠️单视频驱动",
 }
 
 

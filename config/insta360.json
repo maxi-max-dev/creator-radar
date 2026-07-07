@@ -126,10 +126,27 @@
     "short_weight": 0.5,
     "short_notes": "shorts 单独降权到 0.5: 短视频播放量体系和长视频不同(推荐流打法, 动辄百万但不代表内容势能), 直接混进长视频历史会污染中位。降权而非剔除, 因为纯 shorts 创作者的爆发也是真信号。",
     "fusion": {
-      "notes": "融合公式: potential = fit × (1 + gain × momentum)。乘性温和放大: momentum 高时最多把 fit 分放大 (1+gain) 倍, momentum=中性时几乎不动 fit 排名。选乘性不选加性, 因为'对的时机'是对'对的人'的放大器而非独立加分项(一个 fit=0 的人再火也不该被这层捞进来)。gain 是运营策略旋钮。",
+      "notes": "融合公式: potential = fit × (1 + gain × momentum)。乘性温和放大: momentum 高时最多把 fit 分放大 (1+gain) 倍, momentum=中性时几乎不动 fit 排名。选乘性不选加性, 因为'对的时机'是对'对的人'的放大器而非独立加分项(一个 fit=0 的人再火也不该被这层捞进来)。gain 是运营策略旋钮。【2026-07-07 简化后此节仅保留给 fuse_momentum 老路径与向后兼容; 主链已切 rising.fusion 单段式, 见下。】",
       "gain": 0.6,
       "momentum_pivot": 0.3,
       "pivot_notes": "融合时用 (momentum - pivot) 作放大量: momentum 高于 pivot(=neutral) 才正向放大, 低于则轻微压制, 保证'数据不足=中性=不动 fit'这个铁律。"
+    }
+  },
+
+  "rising": {
+    "notes": "在涨分(2026-07-07 简化): 把 起势(momentum)/浪(trend)/破圈(breakout) 三信号合成一个数 ∈[0,1] = 「是不是正在被越来越多陌生人看到」。原三个字段照算保留(进工程证据列与档案), 只是对外合成为一个「在涨分」。潜力 = 对路 × 在涨(单段式, 替换原 momentum fuse + trend fuse 两段放大)。铁律不变: 只进产品路径, backtest 官方指标零引用。",
+    "synthesis": {
+      "notes": "合成选型(论证见 radar_lib.rising_score 注释): 起势(momentum) 与 浪(trend.onwave) 同源(都是 views/天 相对自身基线的爆发), 若相加会重复计数 → 取二者 max 作『加速轴』。破圈(breakout=views÷粉丝盘) 是独立轴(算法把他推给圈外人)。两轴用 noisy-or 合成: rising = 1-(1-accel)×(1-breakout)。noisy-or 选型理由: 两轴是同一潜变量(被更多陌生人看到)的独立证据, 任一轴发火都该抬高在涨分, 但不该简单相加冲破 1; 且缺一轴不冤杀(数据不足=中性 0.3 不参与, 见下)。",
+      "neutral": 0.3,
+      "neutral_notes": "任一轴数据不足(coverage 非 ok, 或值为中性)时该轴贡献取 0(不是 neutral), 让在涨分只由『有证据的轴』抬升; 全部无证据时在涨分退回 neutral(=起势层中性分, 表示未知不是差)。"
+    },
+    "fusion": {
+      "notes": "单段式融合(替换 momentum fuse + trend fuse 两段放大): potential = fit × (1 + gain × rising)。乘性温和放大: rising 高时最多把 fit 放大 (1+gain) 倍, rising=中性/无证据时几乎不动 fit 排名。选乘性同原因: 在涨是对『对的人』的放大器, fit 极低的人再涨也不该被这层捞进来。gain 默认 0.75, 标定目标 = 让今天的 potential top20 与切换前(momentum fuse gain=0.6 后接 trend fuse gain=0.3)大体一致(回归验证: 新旧 top20 重叠度写进报告)。",
+      "gain": 0.75
+    },
+    "single_video": {
+      "notes": "单视频驱动 ⚠️(Max 2026-07-07 拍板采纳, 只标注不改分): 当一个频道的在涨证据 >80% 来自同一条视频时, 身份标签列追加『⚠️单视频驱动』徽章。判定: 加速轴(起势/浪)取自单条最亮视频=天然单条; 破圈轴也取自单条最亮视频。若两轴的最亮证据指向同一条视频(或只有一轴有证据), 则该频道的在涨证据 100% 由该条视频承载 → 触发。阈值 dominance_threshold=0.8。",
+      "dominance_threshold": 0.8
     }
   },
 

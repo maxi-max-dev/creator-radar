@@ -124,11 +124,28 @@ def build_md(card, scored_row, pool_row, cross_rec, timeline, cstats, today):
           f"- 订阅数：{_fmt_int(scored_row.get('subscribers'))}",
           f"- 雷达排名：第 {scored_row.get('rank', '?')} 名 / 全池 {scored_row.get('_pool_size', '?')}"
           f"（前 {scored_row.get('pct', '?')}%）",
-          f"- 总分：{scored_row.get('score', '?')}"
-          f"（语义 {scored_row.get('sem', '?')} · 甜点 {scored_row.get('sweet', '?')} · POV标记 {scored_row.get('pov', '?')}）"]
+          f"- 对路分：{scored_row.get('score', '?')}"
+          f"（内容像不像影石会签的人; 证据: 语义 {scored_row.get('sem', '?')} · 甜点 {scored_row.get('sweet', '?')} · POV标记 {scored_row.get('pov', '?')}）"]
+    if scored_row.get("rising") is not None:
+        L.append(f"- 在涨分：{scored_row.get('rising')}"
+                 f"（是不是正在被越来越多陌生人看到; 潜力 = 对路 × 在涨 = {scored_row.get('potential', '?')}）")
     themes = scored_row.get("themes_hit") or []
     L.append(f"- 命中主题：{('、'.join(themes)) if themes else '无'}")
     L.append("")
+
+    # --- 在涨证据(把起势/浪/破圈翻成人话, 只列有证据的; 无证据整节温和省略) ---
+    try:
+        import radar_lib
+        _ev_lines = radar_lib.rising_evidence_lines(scored_row)
+    except Exception:
+        _ev_lines = []
+    if _ev_lines:
+        L += ["## 在涨证据", ""]
+        for _e in _ev_lines:
+            L.append(f"- 📈 {_e}")
+        if "single_video_driven" in (scored_row.get("identity_flags") or []):
+            L.append("- ⚠️ 单视频驱动：在涨证据 >80% 来自同一条视频，热度可能是单点爆发而非持续起势，需人工看是否可复制。")
+        L.append("")
 
     # --- 订阅快照史 ---
     L += ["## 订阅快照史", ""]

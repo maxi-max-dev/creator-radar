@@ -1030,7 +1030,7 @@ def _parse_dossier_basics(md_text):
             mp = re.search(r"前\s*([\d.]+%)", v)
             if mp:
                 out["pct"] = mp.group(1)
-        elif s.startswith("- 总分："):
+        elif s.startswith("- 对路分：") or s.startswith("- 总分："):  # 三词化后是「对路分」, 兼容旧档「总分」
             v = s.split("：", 1)[1].strip()
             m = re.match(r"([\d.]+)", v)
             out["score"] = m.group(1) if m else v
@@ -1066,7 +1066,7 @@ def build_dossier_items(md_body, doc_map):
     if basics.get("subs"):
         cards.append(_big_number_card(basics["subs"], "订阅数", "👥"))
     if basics.get("score"):
-        cards.append(_big_number_card(basics["score"], "综合总分", "🎯"))
+        cards.append(_big_number_card(basics["score"], "对路分", "🎯"))
     if basics.get("pct"):
         cards.append(_big_number_card(basics["pct"], "全池百分位", "📊"))
     if len(cards) >= 2:
