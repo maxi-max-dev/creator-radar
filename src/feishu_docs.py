@@ -127,6 +127,26 @@ def _split_row(line):
     return [c.strip() for c in line.strip().strip("|").split("|")]
 
 
+# blockquote -> 高亮块配色语义: 看首行 emoji / 关键词自动上色(内容一个字不改，只决定块的颜色)。
+# 设计取经 sspai/96170「用色即语义」。摘要/结论=蓝，风险/警告=橙，亮点/结论要点=绿，其余=蓝(中性提示)。
+_WARN_HINT = ("⚠️", "风险", "警告", "注意", "坑", "失败")
+_KEY_HINT = ("✅", "🎯", "值得", "结论", "亮点", "证明", "关键")
+_SUMMARY_HINT = ("📡", "📊", "🛰️", "摘要", "今日", "先看", "一句话", "概览")
+
+
+def _infer_callout_style(body_lines):
+    """从 blockquote 正文推断配色语义(见 CALLOUT_STYLE 键)。首行权重最高。"""
+    head = body_lines[0] if body_lines else ""
+    joined = " ".join(body_lines)
+    if any(h in head for h in _WARN_HINT) or any(h in head for h in ("⚠️",)):
+        return "warn"
+    if any(h in head for h in _SUMMARY_HINT):
+        return "info"
+    if any(h in joined for h in _KEY_HINT):
+        return "key"
+    return "info"
+
+
 def _md_to_block_items(md_text, drop_title=None):
     """markdown -> 块序列 [(kind, payload)]。kind: flat(单块)/callout(引用行组)/table(行组)。
     认真转: 标题 1-3/正文/无序有序列表/表格/callout(blockquote)/divider/代码块; frontmatter 跳过
@@ -180,7 +200,8 @@ def _md_to_block_items(md_text, drop_title=None):
             while i < len(lines) and lines[i].strip().startswith(">"):
                 buf.append(lines[i].strip()[1:].strip())
                 i += 1
-            items.append(("callout", [b for b in buf if b] or [" "]))
+            body = [b for b in buf if b] or [" "]
+            items.append(("callout", (body, _infer_callout_style(body))))
             continue
         if s.startswith("|") and s.endswith("|") and i + 1 < len(lines) and _TABLE_SEP.match(lines[i + 1].strip()):
             rows = [_split_row(lines[i])]
@@ -205,17 +226,102 @@ def _md_to_block_items(md_text, drop_title=None):
     return items
 
 
+# ----- 卡片块构造(供 grid 列内使用: 大数字卡 / 导航卡) -----
+
+def _t(text, bold=False, color=None, size=None):
+    """构造一个 text block payload(可加粗/着色)。size 未用(飞书 docx 不支持任意字号，靠加粗/标题分级)。"""
+    st = {}
+    if bold:
+        st["bold"] = True
+    if color:
+        st["text_color"] = color
+    run = {"text_run": {"content": text}}
+    if st:
+        run["text_run"]["text_element_style"] = st
+    return {"block_type": 2, "text": {"elements": [run]}}
+
+
+def _big_number_card(number, label, emoji=""):
+    """大数字卡(grid 列内): 一行超粗大数字 + 一行小标签。设计取经 sspai/96170「大数字+小标签」。
+    数字用 H2 块放大(飞书唯一能显著放大字号的手段就是标题级)，标签用灰色小字。"""
+    head = "%s %s" % (emoji, number) if emoji else str(number)
+    return [
+        {"block_type": 4, "heading2": {"elements": [{"text_run": {"content": head}}]}},
+        _t(label, color=7),  # 灰色小标签
+    ]
+
+
+def _nav_card(emoji, title, desc, link_text, link_url):
+    """导航卡(grid 列内): emoji+粗标题 / 一句话说明 / 一个直达链接。主页『往哪点』的原子单位。"""
+    blocks = [
+        {"block_type": 4, "heading2": {"elements": [{"text_run": {"content": "%s %s" % (emoji, title)}}]}},
+        _t(desc, color=7),
+    ]
+    if link_url:
+        blocks.append({"block_type": 2, "text": {"elements": [
+            {"text_run": {"content": link_text, "text_element_style": {"link": {"url": link_url}, "bold": True}}}]}})
+    else:
+        blocks.append(_t(link_text, color=7))
+    return blocks
+
+
 # ----- docx 写入(建块/嵌套块/清空) -----
 
-def _docx_add_callout(token, doc_id, index, text_lines):
-    """callout 高亮块(嵌套块 API 一次带出子文本块)。返回 True/False。"""
+# 高亮块配色语义(飞书 docx callout 浅色档 1-7，经读回验证映射)。设计取经 sspai/96170:
+# 用色即语义，别花哨。这里只用四种，覆盖「定位/提示/关键/警告」四类语义，其余场景一律走灰。
+CALLOUT_STYLE = {
+    "cover": {"bg": 6, "border": 6, "emoji": "satellite"},        # 蓝：封面/定位区
+    "info": {"bg": 6, "border": 6, "emoji": "information_source"},  # 蓝：中性提示
+    "key": {"bg": 5, "border": 5, "emoji": "dart"},               # 绿：关键结论/亮点
+    "metric": {"bg": 4, "border": 4, "emoji": "bar_chart"},       # 黄：数据卡
+    "warn": {"bg": 3, "border": 3, "emoji": "warning"},           # 橙：提醒/风险
+    "quiet": {"bg": 1, "border": 1, "emoji": "memo"},             # 灰：旁注(不与上面抢眼)
+}
+
+
+def _docx_add_callout(token, doc_id, index, text_lines, style="key"):
+    """callout 高亮块(嵌套块 API 一次带出子文本块)。style 决定配色语义(见 CALLOUT_STYLE)。
+    text_lines: 纯文本行列表; 若某行以 __EMOJI:name__ 打头则该行不注 emoji_id(留给块级 emoji)。返回 True/False。"""
+    st = CALLOUT_STYLE.get(style, CALLOUT_STYLE["key"])
     kids = ["co%d" % k for k in range(len(text_lines))]
-    desc = [{"block_id": "co_root", "block_type": 19,
-             "callout": {"background_color": 5, "border_color": 5}, "children": kids}]
+    callout = {"background_color": st["bg"], "border_color": st["border"]}
+    if st.get("emoji"):
+        callout["emoji_id"] = st["emoji"]
+    desc = [{"block_id": "co_root", "block_type": 19, "callout": callout, "children": kids}]
     for k, q in zip(kids, text_lines):
         desc.append({"block_id": k, "block_type": 2, "text": {"elements": _text_elements(q)}, "children": []})
     r = _feishu_call("POST", "/docx/v1/documents/%s/blocks/%s/descendant" % (doc_id, doc_id),
                      token=token, body={"children_id": ["co_root"], "index": index, "descendants": desc})
+    return r.get("code") == 0
+
+
+def _docx_add_grid(token, doc_id, index, columns):
+    """分栏(Grid, block 24) + N 个分栏列(GridColumn, block 25)，每列装一小叠块。
+    columns: [ [block_dict, ...], ... ] 每个子列表是一列内的块序列(已是最终 docx block payload，不含 block_id/children)。
+    列数范围 [2,4](飞书 grid column_size 上限保守到 4，超了上层降级)。失败返回 False 让上层降级为平铺。
+    设计取经 sspai/96170「分栏做导航卡/三栏并排」: 这是主页『往哪点』一眼可扫的关键。"""
+    C = len(columns)
+    if C < 2 or C > 4:
+        return False
+    ratio = max(1, round(99 / C))
+    root_id = "grid"
+    col_ids = ["gc%d" % i for i in range(C)]
+    desc = [{"block_id": root_id, "block_type": 24, "grid": {"column_size": C}, "children": col_ids}]
+    total = 1
+    for i, (cid, blocks) in enumerate(zip(col_ids, columns)):
+        kid_ids = []
+        for j, blk in enumerate(blocks):
+            kid = "g%d_%d" % (i, j)
+            kid_ids.append(kid)
+            desc.append(dict(blk, block_id=kid, children=[]))
+            total += 1
+        desc.append({"block_id": cid, "block_type": 25,
+                     "grid_column": {"width_ratio": ratio}, "children": kid_ids})
+        total += 1
+    if total > 220:  # 嵌套块单次上限保护
+        return False
+    r = _feishu_call("POST", "/docx/v1/documents/%s/blocks/%s/descendant" % (doc_id, doc_id),
+                     token=token, body={"children_id": [root_id], "index": index, "descendants": desc})
     return r.get("code") == 0
 
 
@@ -270,13 +376,28 @@ def _docx_write_blocks(token, doc_id, items):
         if not flush():
             return state["written"], degraded, state["err"]
         if kind == "callout":
-            if _docx_add_callout(token, doc_id, state["idx"], payload):
+            # payload 兼容两形: 旧=纯行列表; 新=(行列表, style)
+            if isinstance(payload, tuple):
+                lines, style = payload
+            else:
+                lines, style = payload, "key"
+            if _docx_add_callout(token, doc_id, state["idx"], lines, style=style):
                 state["idx"] += 1
                 state["written"] += 1
             else:
                 degraded += 1
-                for q in payload:
+                for q in lines:
                     buf.append({"block_type": 2, "text": {"elements": _text_elements(q)}})
+        elif kind == "grid":
+            # payload = [ [block_dict,...], ... ] 每子列表一列。失败降级为逐列平铺(内容不丢)。
+            if _docx_add_grid(token, doc_id, state["idx"], payload):
+                state["idx"] += 1
+                state["written"] += 1
+            else:
+                degraded += 1
+                for col in payload:
+                    for blk in col:
+                        buf.append(blk)
         elif kind == "table":
             if _docx_add_table(token, doc_id, state["idx"], payload):
                 state["idx"] += 1
@@ -410,11 +531,13 @@ def _save_map(map_path, m):
     os.replace(tmp, p)  # 原子写
 
 
-def _put_doc(token, folder_token, file_name, md_text, key, doc_map, open_id=""):
-    """把一份 markdown 写成飞书原生 docx 文档(幂等原地更新)。
+def _put_doc(token, folder_token, file_name, md_text, key, doc_map, open_id="", items=None):
+    """把一份内容写成飞书原生 docx 文档(幂等原地更新)。
     key 首次出现: 建档一次拿稳定 document_id(链接从此永久，建档即回写映射防孤儿)。
-    已存在: 原地清旧块写新块，URL 不变。markdown 认真转 blocks(标题/正文/列表/表格/callout/divider)，
-    callout/表格失败降级纯文本，内容不丢。每次都补一遍 Max 的 full_access(幂等，不赌文件夹继承)。
+    已存在: 原地清旧块写新块，URL 不变。
+    items 给定时直接用这组预构块(主页/日报/档案的分栏卡+彩色高亮块走这条，md 表达不了);
+    不给时把 md_text 认真转 blocks(标题/正文/列表/表格/callout/divider)。
+    callout/表格/分栏失败降级纯文本，内容不丢。每次都补一遍 Max 的 full_access(幂等，不赌文件夹继承)。
     返回 (ok:bool, url或错误串)。"""
     title = file_name[:-3] if file_name.endswith(".md") else file_name
     try:
@@ -431,7 +554,8 @@ def _put_doc(token, folder_token, file_name, md_text, key, doc_map, open_id=""):
                             "name": file_name, "updated": date.today().isoformat()}
         if not _docx_wipe(token, doc_id):
             return False, "wipe failed: %s" % doc_id
-        items = _md_to_block_items(md_text, drop_title=title)
+        if items is None:
+            items = _md_to_block_items(md_text, drop_title=title)
         written, degraded, err = _docx_write_blocks(token, doc_id, items)
         if err:
             return False, "write blocks: %s" % err
@@ -498,57 +622,97 @@ def _folder_url(tok):
     return "https://my.feishu.cn/drive/folder/%s" % tok if tok else ""
 
 
-def build_homepage_md(cfg, stats, ctx):
-    """主页仪表盘 markdown(团队唯一入口，互链枢纽)。顶部真 callout 放四个大数字，
-    分区导航配说明，底部更新机制+时间。stats: {pool_size, cards_today, blind_test_multiple, scoreboard_status}。
-    原生 docx 后当日日报直链文档本体(永久 id，当天还没建时退回文件夹)。"""
+def _h(level, text):
+    """标题块 payload(level 1/2/3)。"""
+    return {"block_type": {1: 3, 2: 4, 3: 5}[level], {1: "heading1", 2: "heading2", 3: "heading3"}[level]:
+            {"elements": _text_elements(text)}}
+
+
+def _p(md_line):
+    """正文块 payload(走行内 md: 链接/加粗/代码)。"""
+    return {"block_type": 2, "text": {"elements": _text_elements(md_line)}}
+
+
+def _divider():
+    return {"block_type": 22, "divider": {}}
+
+
+def build_homepage_items(cfg, stats, ctx):
+    """主页仪表盘: 直接产 docx 块序列(分栏卡/彩色高亮块 md 表达不了，故不走 md)。
+    重设计目标(Max 反馈『找不到东西』=最大失败): 让第一次打开的人 10 秒内知道往哪点。
+    结构: 封面区 → 『今天看什么』三步导航卡(grid) → 数据大数字卡(grid) → 完整目录区(分组) → 底部机制。
+    设计取经 sspai/96170(封面定位/大数字卡/分栏导航/用色语义/分隔)。当日日报直链文档本体(永久 id)。"""
     f = ctx["folders"]
     doc_map = ctx["doc_map"]
     cred = ctx["cred"]
     bitable_url = cred.get("base_url") or ("https://my.feishu.cn/base/%s" % cred["app_token"])
     daily_url = doc_map.get("daily/%s" % date.today().isoformat(), {}).get("url", "")
+    daily_link = daily_url or _folder_url(f.get("日报"))
+    system_url = doc_map.get("system/overview", {}).get("url", "")
     now = datetime.now().isoformat(timespec="minutes")
-    L = ["# 达人雷达 · 总部", ""]
-    # 开场 callout(转换器把 blockquote 渲染成真高亮块)
-    L += ["> 🛰️ **达人雷达 · 团队总部**",
-          "> 给品牌方的达人主动发现引擎。所有人看的产物都在这里，按类分好，每天自动更新。",
-          "", "---", ""]
-    # 核心数字: 真 callout 大数字块
-    L += ["## 核心数字", "",
-          f"> 🗂️ 候选池规模 **{stats.get('pool_size', '?')}** 频道",
-          f"> ⭐ 今日推荐 **{stats.get('cards_today', '?')}** 位达人",
-          f"> 🗃️ 达人档案 **{stats.get('dossier_count', '?')}** 份（top50 全量建档）",
-          f"> 🎯 盲测密度 **{stats.get('blind_test_multiple', '4.6')} 倍** 于随机基线(前 5%)",
-          f"> 📊 记分板 {stats.get('scoreboard_status', '首份 picks 已存档，2026-08-04 结算')}",
-          "", "---", ""]
-    # 分区导航
-    L += ["## 分区导航", ""]
-    L += ["### 📊 多维表格（运营主战场）",
-          f"[打开多维表格]({bitable_url})",
-          "_每日推荐自动灌进这张表，运营在这里做终审、流转评审状态、跟踪投放。每行的「档案」列直达该达人档案。_", ""]
-    L += ["### 📰 当日日报",
-          (f"[打开今日日报]({daily_url})" if daily_url else f"[打开日报文件夹]({_folder_url(f.get('日报'))})"),
-          f"_每天 08:30 的池子动态、推荐卡、记分板结算，一页看完。历史日报在[日报文件夹]({_folder_url(f.get('日报'))})。_", ""]
-    L += ["### 🗃️ 达人档案区",
-          f"[打开达人档案文件夹]({_folder_url(f.get('达人档案'))})",
-          f"_榜单前 {stats.get('dossier_count', '?')} 名每位一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵。"
-          "进前 5 名的附当日推荐卡（值得签/风险/首次合作建议），其余仅数据不含推荐语。每篇头部可一键回本页。_", ""]
-    L += ["### 📁 报告区",
-          f"[打开报告文件夹]({_folder_url(f.get('报告'))})",
-          "_方法论与验证：行业方法对比、盲测验证报告、删除实验裁判。给评委和队友看的深度材料。_", ""]
-    L += ["### 📖 系统说明",
-          (f"[打开系统说明]({doc_map.get('system/overview', {}).get('url', '')})"
-           if doc_map.get("system/overview", {}).get("url") else "（待生成）"),
-          "_是什么 / 怎么跑 / 三层雷达 / 技术栈，给队友快速上手。_", ""]
-    L += ["### 📈 全池榜单",
-          "（扩容合并后上线）",
-          "_全池 1000+ 频道的完整排序，将以多维表格第二张表形式上线。_", "", "---", ""]
-    L += ["## 数据更新机制", "",
-          "达人雷达每天 **08:30** 自动运行：刷新池子 → 全池重排 → 生成推荐卡 → 原地更新本页大数字与当日日报 → 同步档案。",
-          "所有文档原地更新，链接永久不变，可放心收藏与互链。",
-          "",
-          f"_最后更新：{now}_"]
-    return "\n".join(L) + "\n"
+    items = []
+
+    # --- 封面区: 大标题 + 一句话定位(蓝色 callout) ---
+    items.append(("flat", _h(1, "达人雷达 · 总部")))
+    items.append(("callout", (["**给品牌方的达人主动发现引擎。**",
+                               "所有人要看的产物都在这一页，按用途分好，每天 08:30 自动更新。第一次来？先看下面「今天看什么」三张卡。"],
+                              "cover")))
+    items.append(("flat", _divider()))
+
+    # --- 今天看什么: 三步导航卡(grid 三栏)。这是『往哪点』的核心，放最显眼位置 ---
+    items.append(("flat", _h(2, "今天看什么")))
+    items.append(("flat", _p("_不知道从哪看起，就按这三张卡的顺序：先看今天推荐，再去表格里筛，想深挖点开档案。_")))
+    items.append(("grid", [
+        _nav_card("📰", "① 今日日报", "今天池子动了什么、推荐了谁、为什么。一页看完，5 分钟。",
+                  "打开今日日报", daily_link),
+        _nav_card("📊", "② 推荐表格", "所有推荐自动灌进这张多维表，在这里筛选、终审、流转评审、跟投放。",
+                  "打开多维表格", bitable_url),
+        _nav_card("🗃️", "③ 最新档案", "看中谁想深挖，点开他的档案：数据全貌 + 值得签/风险/合作建议。",
+                  "打开档案文件夹", _folder_url(f.get("达人档案"))),
+    ]))
+    items.append(("flat", _divider()))
+
+    # --- 数据大数字卡: grid 四栏「大数字+小标签」 ---
+    items.append(("flat", _h(2, "核心数据")))
+    items.append(("grid", [
+        _big_number_card(stats.get("pool_size", "?"), "候选池频道数", "🗂️"),
+        _big_number_card(stats.get("cards_today", "?"), "今日推荐达人", "⭐"),
+        _big_number_card(stats.get("dossier_count", "?"), "已建达人档案", "🗃️"),
+        _big_number_card("%s×" % stats.get("blind_test_multiple", "4.6"), "盲测密度 / 随机基线", "🎯"),
+    ]))
+    items.append(("callout", (["📊 **记分板**：%s" % stats.get("scoreboard_status",
+                              "首份 picks 已存档，2026-08-04 结算")], "info")))
+    items.append(("flat", _divider()))
+
+    # --- 完整目录区(分组): API 无目录块，这就是人工目录。分三组，一眼看清全站有什么 ---
+    items.append(("flat", _h(2, "全部内容")))
+
+    items.append(("flat", _h(3, "🎯 每天产出")))
+    items.append(("flat", _p("[今日日报](%s)　当天池子动态、推荐卡、记分板结算，一页读完。" % daily_link)))
+    items.append(("flat", _p("[历史日报文件夹](%s)　往期每日快照，按日期归档。" % _folder_url(f.get("日报")))))
+
+    items.append(("flat", _h(3, "🔨 运营主战场")))
+    items.append(("flat", _p("[多维表格](%s)　推荐自动入表，做终审与评审流转；每行「档案」列直达该达人档案。" % bitable_url)))
+    items.append(("flat", _p("[达人档案文件夹](%s)　榜单前 %s 名各一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵；前 5 名附推荐卡。"
+                             % (_folder_url(f.get("达人档案")), stats.get("dossier_count", "?")))))
+
+    items.append(("flat", _h(3, "📁 深度材料")))
+    items.append(("flat", _p("[报告文件夹](%s)　方法论与验证：行业方法对比、盲测验证报告、删除实验裁判。给评委和队友看。" % _folder_url(f.get("报告")))))
+    if system_url:
+        items.append(("flat", _p("[系统说明](%s)　是什么 / 怎么跑 / 三层雷达 / 技术栈，队友快速上手。" % system_url)))
+    else:
+        items.append(("flat", _p("系统说明（待生成）　是什么 / 怎么跑 / 三层雷达 / 技术栈。")))
+    items.append(("flat", _p("全池榜单（扩容合并后上线）　全池 1000+ 频道完整排序，将以多维表格第二张表上线。")))
+    items.append(("flat", _divider()))
+
+    # --- 底部机制说明(灰色 quiet callout，不与上面抢眼) ---
+    items.append(("flat", _h(2, "更新机制")))
+    items.append(("callout", ([
+        "达人雷达每天 **08:30** 自动跑：刷新池子 → 全池重排 → 生成推荐卡 → 原地更新本页与当日日报 → 同步档案。",
+        "所有文档原地更新，链接永久不变，可放心收藏与互链。",
+        "最后更新：%s" % now,
+    ], "quiet")))
+    return items
 
 
 def push_homepage(cfg, stats=None):
@@ -563,9 +727,9 @@ def push_homepage(cfg, stats=None):
     stats.setdefault("dossier_count", _guess_dossier_count())
     stats.setdefault("blind_test_multiple", "4.6")
     stats.setdefault("scoreboard_status", "首份 picks 已存档，2026-08-04 结算")
-    md = build_homepage_md(cfg, stats, ctx)
-    ok, info = _put_doc(ctx["token"], ctx["folders"].get(TOP_FOLDER), "达人雷达 · 总部.md", md,
-                        "home/index", ctx["doc_map"], open_id=ctx["oid"])
+    items = build_homepage_items(cfg, stats, ctx)
+    ok, info = _put_doc(ctx["token"], ctx["folders"].get(TOP_FOLDER), "达人雷达 · 总部.md", "",
+                        "home/index", ctx["doc_map"], open_id=ctx["oid"], items=items)
     _save_map(ctx["map_path"], ctx["doc_map"])
     return {"ok": ok, "kind": "homepage", "url_or_err": info,
             "folder": _folder_url(ctx["folders"].get(TOP_FOLDER))}
@@ -840,6 +1004,117 @@ def _report_title(md_text, fallback):
     return fallback
 
 
+# ----- 档案模板: 头部信息卡 + 分节视觉分隔(只作用于飞书副本，本地 md 格式不变) -----
+
+# 档案节名 -> emoji 锚点(sspai/96170: emoji 作视觉锚点，节节可扫)。
+_DOSSIER_SECTION_EMOJI = {
+    "频道基本盘": "📇", "订阅快照史": "📈", "近期视频": "🎬",
+    "评论区概况": "💬", "跨平台矩阵": "🌐", "当日推荐卡": "⭐",
+}
+
+
+def _parse_dossier_basics(md_text):
+    """从档案「频道基本盘」小节抽头部信息卡要素: 排名/订阅/总分/前百分比/频道链接。
+    解析失败返回 {}(上层回退纯 md，内容不丢)。纯正则，不依赖行序。"""
+    out = {}
+    for line in md_text.splitlines():
+        s = line.strip()
+        if s.startswith("- 频道链接："):
+            out["url"] = s.split("：", 1)[1].strip()
+        elif s.startswith("- 订阅数："):
+            out["subs"] = s.split("：", 1)[1].strip()
+        elif s.startswith("- 雷达排名："):
+            v = s.split("：", 1)[1].strip()
+            m = re.search(r"第\s*(\d+)\s*名", v)
+            out["rank"] = m.group(1) if m else v
+            mp = re.search(r"前\s*([\d.]+%)", v)
+            if mp:
+                out["pct"] = mp.group(1)
+        elif s.startswith("- 总分："):
+            v = s.split("：", 1)[1].strip()
+            m = re.match(r"([\d.]+)", v)
+            out["score"] = m.group(1) if m else v
+        elif s.startswith("- 命中主题："):
+            out["themes"] = s.split("：", 1)[1].strip()
+    return out
+
+
+def build_dossier_items(md_body, doc_map):
+    """把一篇档案 md(已去 frontmatter)渲染成飞书块序列: 顶部导航 + 头部信息卡(排名/订阅/总分一眼见)
+    + 分节(每节 emoji 锚点 + divider)。解析不出基本盘就整篇走普通 md 转换(内容不丢)。
+    md_body 里若已含注入的导航行(以 [🛰️ 返回)开头)，原样保留在最前。设计取经 sspai/96170。"""
+    basics = _parse_dossier_basics(md_body)
+    if not basics.get("rank") and not basics.get("subs") and not basics.get("score"):
+        return _md_to_block_items(md_body)  # 解析失败: 老路兜底
+
+    items = []
+    lines = md_body.splitlines()
+
+    # 提取顶部已注入的导航行(返回总部/日报)，放最前作 info callout
+    nav = [ln.strip() for ln in lines[:4] if ln.strip().startswith("[🛰️ 返回") or ln.strip().startswith("[📰")]
+
+    # 标题(第一个 # )
+    title = next((ln.strip()[2:].strip() for ln in lines if ln.strip().startswith("# ")), "达人档案")
+    items.append(("flat", _h(1, title)))
+    if nav:
+        items.append(("callout", (["　".join(n.strip() for n in nav)], "info")))
+
+    # 头部信息卡: 三/四栏大数字(排名/订阅/总分/前百分比)
+    cards = []
+    if basics.get("rank"):
+        cards.append(_big_number_card("#%s" % basics["rank"], "雷达排名", "🏅"))
+    if basics.get("subs"):
+        cards.append(_big_number_card(basics["subs"], "订阅数", "👥"))
+    if basics.get("score"):
+        cards.append(_big_number_card(basics["score"], "综合总分", "🎯"))
+    if basics.get("pct"):
+        cards.append(_big_number_card(basics["pct"], "全池百分位", "📊"))
+    if len(cards) >= 2:
+        items.append(("grid", cards[:4]))
+    # 频道链接 + 命中主题 放一条 info callout(基本盘要点，一眼带走)
+    meta = []
+    if basics.get("url"):
+        meta.append("🔗 频道链接：%s" % basics["url"])
+    if basics.get("themes"):
+        meta.append("🏷️ 命中主题：%s" % basics["themes"])
+    if meta:
+        items.append(("callout", (meta, "info")))
+    items.append(("flat", _divider()))
+
+    # 正文分节: 跳过已在信息卡呈现的「频道基本盘」小节，其余节加 emoji 锚点 + 节前 divider
+    i = 0
+    first_section = True
+    while i < len(lines):
+        s = lines[i].rstrip()
+        st = s.strip()
+        if st.startswith("# "):  # 标题已单独处理
+            i += 1
+            continue
+        if st.startswith("## "):
+            name = st[3:].strip()
+            if name == "频道基本盘":
+                # 跳过整节(其内容已进信息卡)
+                i += 1
+                while i < len(lines) and not lines[i].strip().startswith("## "):
+                    i += 1
+                continue
+            if not first_section:
+                items.append(("flat", _divider()))
+            first_section = False
+            emoji = _DOSSIER_SECTION_EMOJI.get(name, "")
+            items.append(("flat", _h(2, ("%s %s" % (emoji, name)).strip())))
+            i += 1
+            continue
+        # 非标题行: 收集到下一个 ## 或文件尾，交给 md 转换器(表格/列表/正文都在这条链路)
+        buf = []
+        while i < len(lines) and not lines[i].strip().startswith("## ") and not lines[i].strip().startswith("# "):
+            buf.append(lines[i])
+            i += 1
+        if any(b.strip() for b in buf):
+            items += _md_to_block_items("\n".join(buf))
+    return items
+
+
 def _run_uploads(cfg, kind, today=None, explicit_paths=None):
     """统一编排: 建/复用文件夹树 -> 逐份 _put_doc(幂等) -> 回写映射。
     kind ∈ {daily, dossiers, reports}. 返回结果 dict(可 JSON 序列化，进 run 汇总/log)。"""
@@ -888,7 +1163,9 @@ def _run_uploads(cfg, kind, today=None, explicit_paths=None):
             title = _dossier_title(md, cid)
             fname = "%s.md" % _safe(title)
             body = nav + _strip_frontmatter(md)  # frontmatter 字段正文均有，原生文档里不留 yaml 噪音
-            ok, info = _put_doc(token, target, fname, body, "dossier/%s" % cid, doc_map, open_id=oid)
+            d_items = build_dossier_items(body, doc_map)  # 头部信息卡 + 分节锚点(飞书副本专属美化)
+            ok, info = _put_doc(token, target, fname, body, "dossier/%s" % cid, doc_map,
+                                open_id=oid, items=d_items)
             (uploaded if ok else failed).append({"name": fname, "key": "dossier/%s" % cid, "url_or_err": info})
 
     elif kind == "reports":
