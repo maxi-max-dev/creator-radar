@@ -41,6 +41,18 @@ DEFAULTS = {
 
 VERTICALS = ["moto", "cycling", "surf", "ski", "climb", "dive", "fpv", "hike", "run", "skate", "other"]
 
+# tagger v1.1(2026-07-08): competitors 数组噪声治理白名单。下游身份路径以 insta360 布尔 + quotes 为准
+# (现状保持不动), 但 parse 时过滤模型幻觉项——只保留真·运动相机/摄影器材竞品品牌, 剔除:
+#   ①非相机竞品词(GPS 表 Coros、露营装备 Durston/Cedar Summit 等载具/周边幻觉)
+#   ②空串 ③大小写重复 ④insta360/影石(本品牌, 属 insta360 布尔字段, 绝不该出现在 competitors)
+# 词表与 config/insta360.json 的 competitor_pattern 同源(相机厂商 + 其相机产品线关键词)。
+COMPETITOR_CAMERA_RE = re.compile(
+    r"\bgopro\b|\bdji\b|大疆|\bakaso\b|\bsjcam\b|\bosmo\b|\bhero\s*\d|\binsta\s*360\b|影石",
+    re.I,
+)
+# insta360/影石 命中相机竞品正则但它是本品牌, 单独排除出 competitors。
+_HOME_BRAND_RE = re.compile(r"\binsta\s*360\b|影石", re.I)
+
 SYS_PROMPT = (
     "你是内容打标分析师，服务对象是运动影像相机品牌的选人分析工作。"
     "给你一个 YouTube 户外/骑行类创作者的真实字幕语料、频道简介、近期视频标题(可能还有观众评论样本)，"
@@ -48,8 +60,10 @@ SYS_PROMPT = (
     "字段语义(必须严格按这里的含义):\n"
     "- content_themes: 内容主题标签数组，3-6 个，中文，具体到可操作的分类粒度"
     "(如 长途摩旅/机车测评/滑雪教学/装备安装，不要写宽泛词如'户外''运动')\n"
-    f"- vertical: 垂类单选，只能是这些之一: {'/'.join(VERTICALS)}。fpv 专指无人机穿越机内容，"
-    "不确定或跨多个垂类时选 other\n"
+    f"- vertical: 垂类单选，只能是这些之一: {'/'.join(VERTICALS)}(严格从此表取值，不得自造)。"
+    "fpv 专指无人机穿越机内容。vertical 必须与你上面填的 content_themes 一致——"
+    "主题是摩旅/机车就选 moto，是骑行/公路车/山地车就选 cycling，别把摩托内容误判成 cycling。"
+    "不确定、跨多个垂类、或内容主轴与运动影像无关(如以露营/汽车/相机器材评测为主)时一律选 other\n"
     "- content_forms: 内容形态数组(如 教程/vlog/竞速/长途游记/装备评测/剪辑集/纪录片)\n"
     "- pov_style: 拍摄视角，只能是: pov 为主 / 第三人称为主 / 混合\n"
     "- brand_traces: 只关注运动相机/摄影器材品牌，不是骑行载具品牌(摩托车/自行车品牌名不算，"
@@ -205,10 +219,57 @@ def _norm_tag_array(v):
     return [str(v)]
 
 
+def _clean_competitors(raw_list):
+    """tagger v1.1: competitors 数组噪声治理。只保留真·相机竞品品牌(COMPETITOR_CAMERA_RE 命中),
+    剔除本品牌 insta360/影石 与非相机幻觉词(GPS 表/载具/露营装备), 去空串, 大小写去重(保留首见原样)。"""
+    seen, out = set(), []
+    for x in _norm_tag_array(raw_list):
+        s = str(x).strip()
+        if not s:
+            continue
+        if _HOME_BRAND_RE.search(s):        # insta360/影石 属 insta360 布尔, 不进 competitors
+            continue
+        if not COMPETITOR_CAMERA_RE.search(s):  # 非相机竞品幻觉项(Coros/Durston/Cedar Summit…)剔除
+            continue
+        key = s.lower()
+        if key in seen:                     # 大小写去重(GoPro/gopro 只留首见)
+            continue
+        seen.add(key)
+        out.append(s)
+    return out[:10]
+
+
+# 内容主题 → 垂类的**无歧义**强指示词(仅用于'明显矛盾时降级为 other'的保守后处理校验, 不猜具体垂类)。
+# 刻意只收互不重叠、语义唯一的词: 中文「骑行/骑车」对摩托和自行车都适用(Lali 是 motovlogger 却写
+# '长途骑行'), 故排除, 只留 moto 的 摩托/机车/摩旅 与 cycling 的 公路车/山地车/自行车/单车 等载具唯一词。
+_THEME_VERTICAL_HINTS = {
+    "moto": ["摩旅", "摩托", "机车", "motovlog", "motorcycle"],
+    "cycling": ["公路车", "山地车", "自行车", "单车", "bikepacking", "mountain bike", "road bike"],
+}
+
+
+def _vertical_contradicts_themes(vertical, themes):
+    """保守矛盾检测: 若 themes 明确指向 A 垂类, 而模型选了 B(≠A 且 B 也是强指示垂类之一), 判矛盾。
+    只在两个强指示垂类互相打架时触发(如 themes 全是'摩旅'却判 cycling), 其余一律不干预。
+    返回 True=应降级为 other(交 off_topic 兜底人工核验), 不猜具体垂类避免二次误判。"""
+    if vertical not in _THEME_VERTICAL_HINTS:
+        return False
+    joined = " ".join(themes).lower()
+    hit_verts = {v for v, kws in _THEME_VERTICAL_HINTS.items()
+                 if any(kw.lower() in joined for kw in kws)}
+    # themes 指向某强指示垂类, 但模型选的 vertical 不在其中 → 矛盾。
+    return bool(hit_verts) and vertical not in hit_verts
+
+
 def validate_and_normalize(raw_tag, channel_id):
     """校验模型输出的关键字段，容错归一化(数组/枚举越界)，不合规的枚举值落 other。"""
+    themes = _norm_tag_array(raw_tag.get("content_themes"))[:6]
     vertical = raw_tag.get("vertical")
-    if vertical not in VERTICALS:
+    if vertical not in VERTICALS:            # 枚举越界 → other(原有)
+        vertical = "other"
+    # tagger v1.1(2026-07-08): vertical 与 content_themes 明显矛盾时保守降级为 other
+    # (如 Brent Pearson themes=长途摩旅/露营却判 cycling)。只在两强指示垂类互殴时触发, 不猜具体垂类。
+    elif _vertical_contradicts_themes(vertical, themes):
         vertical = "other"
     pov = raw_tag.get("pov_style")
     if pov not in ("pov 为主", "第三人称为主", "混合"):
@@ -218,14 +279,14 @@ def validate_and_normalize(raw_tag, channel_id):
         bt = {}
     brand_traces = {
         "insta360": bool(bt.get("insta360", False)),
-        "competitors": _norm_tag_array(bt.get("competitors"))[:10],
+        "competitors": _clean_competitors(bt.get("competitors")),  # v1.1: 幻觉/本品牌/重复过滤
         "quotes": _norm_tag_array(bt.get("quotes"))[:2],
     }
     audience_notes = raw_tag.get("audience_notes")
     if audience_notes in ("null", "None", ""):
         audience_notes = None
     return {
-        "content_themes": _norm_tag_array(raw_tag.get("content_themes"))[:6],
+        "content_themes": themes,
         "vertical": vertical,
         "content_forms": _norm_tag_array(raw_tag.get("content_forms"))[:6],
         "pov_style": pov,
