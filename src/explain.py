@@ -9,20 +9,23 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from radar_lib import load_config, load_pool
 
 SYS_PROMPT = (
-    "你是品牌达人营销的选人分析师。给你一个 YouTube 创作者的真实元数据和雷达打分信号，"
+    "你是品牌达人营销的选人分析师，服务的品牌方是{brand_context}。"
+    "给你一个 YouTube 创作者的真实元数据和雷达打分信号，"
     "输出一张 JSON 推荐卡。\n\n"
     "信号语义字典(解释任何信号时必须严格按这里的含义，不许自由发挥因果关系):\n"
     "- subscribers: 频道订阅数\n"
     "- radar_rank / radar_percentile: 雷达全池排名和排名百分位，百分位越小排名越靠前。引用它时只能陈述位置事实(如'全池排名第2、前0.2%')，不许引申为内容质量、竞争力或同质化\n"
     "- semantic_score: 频道文本与品牌主题查询的语义相似度(0-1)\n"
-    "- sweet_spot_score: 订阅规模落在品牌偏好的中腰部甜点区的程度(0-1)，越接近1表示订阅规模越接近约8万粉的理想值(是正中甜点，不是上限或下限)。它只关于粉丝规模，与内容质量、平台算法、受众匹配都无关\n"
+    "- sweet_spot_score: 订阅规模落在品牌偏好的中腰部甜点区的程度(0-1)，越接近1表示订阅规模越接近理想值(是正中甜点，不是上限或下限)。它只关于粉丝规模，与内容质量、平台算法、受众匹配都无关\n"
+    "- subs_vs_brand_ideal: 订阅数在品牌理想规模的低侧还是高侧。谈规模方向(上限/下限/增长空间)时必须与这个字段一致，不许反着说\n"
     "- pov_marker_score: 标题和简介里第一视角拍摄标记(POV/onboard/helmet cam等)的密度(0-1)\n"
     "- top_themes_hit: 频道文本关键词命中的品牌主题名列表\n"
     "- is_new_discovery / first_seen: 是否本轮搜索新发现入池，及入池日期\n"
     "- rank_delta: 相比上次运行排名上升的位数，null 表示无历史可比\n\n"
     "铁律: 只能用我给你的字段，任何我没给的事实(具体合作过谁、真实观看量、私人信息)都不许编，不确定就不写。"
     "风险点只允许写数据里真实可推断的角度(如订阅规模上限、垂类宽窄、缺少历史排名数据、近期表现在数据里看不到)，"
-    "禁止写'平台算法''内容同质化''算法匹配度''竞争力'这类数据推不出来的判断。/no_think"
+    "禁止写'平台算法''内容同质化''算法匹配度''竞争力'这类数据推不出来的判断。"
+    "first_collab 必须是该品牌方与这位创作者的首次合作形式，禁止点名其他厂商的设备或品牌名，禁止建议与第三方品牌联名。/no_think"
 )
 
 CARD_SCHEMA_HINT = (
@@ -34,7 +37,19 @@ CARD_SCHEMA_HINT = (
 )
 
 
-def build_meta(scored_row, pool_by_url):
+def subs_direction(subs, ideal):
+    """订阅数相对理想规模的方向，确定性给出，防模型把'高分'误读成'接近上限'。±25% 算正中。"""
+    if not subs or subs <= 0:
+        return "未知"
+    r = subs / ideal
+    if r < 0.8:
+        return "低于品牌理想规模"
+    if r > 1.25:
+        return "高于品牌理想规模"
+    return "接近品牌理想规模(正中甜点)"
+
+
+def build_meta(scored_row, pool_by_url, ideal_subs):
     """把打分行 + 池子原始行拼成喂给模型的真实事实块。"""
     p = pool_by_url.get(scored_row["channel_url"], {})
     themes = scored_row.get("themes_hit", [])
@@ -42,6 +57,7 @@ def build_meta(scored_row, pool_by_url):
     return {
         "channel_name": scored_row["channel_name"],
         "subscribers": scored_row.get("subscribers"),
+        "subs_vs_brand_ideal": subs_direction(scored_row.get("subscribers"), ideal_subs),
         "radar_rank": scored_row.get("rank"),
         "radar_percentile": scored_row.get("pct"),
         "semantic_score": scored_row.get("sem"),
@@ -57,10 +73,11 @@ def build_meta(scored_row, pool_by_url):
 
 
 def call_ollama(meta, ecfg):
+    sys_prompt = SYS_PROMPT.format(brand_context=ecfg.get("brand_context", "一家消费品牌"))
     prompt = f"{CARD_SCHEMA_HINT}\n\n创作者真实元数据(只能用这些):\n{json.dumps(meta, ensure_ascii=False, indent=1)}"
     body = json.dumps({
         "model": ecfg["model"],
-        "messages": [{"role": "system", "content": SYS_PROMPT}, {"role": "user", "content": prompt}],
+        "messages": [{"role": "system", "content": sys_prompt}, {"role": "user", "content": prompt}],
         "stream": False, "format": "json",
         "options": {"temperature": ecfg["temperature"]},
     }).encode()
@@ -92,13 +109,14 @@ def select_candidates(scored, pool_by_url, top_n, max_cards):
 
 def generate_cards(scored, pool_rows, cfg, out_dir):
     ecfg = cfg["explain"]
+    ideal_subs = round(10 ** cfg["sweet_spot"]["log10_mu"])  # 理想规模来自甜点函数峰值，不另设数
     pool_by_url = {r["channel_url"]: r for r in pool_rows}
     cands = select_candidates(scored, pool_by_url, ecfg["top_n_scan"], ecfg["max_cards"])
     print(f"explain: {len(cands)} candidates", file=sys.stderr)
 
     cards = []
     for s in cands:
-        meta = build_meta(s, pool_by_url)
+        meta = build_meta(s, pool_by_url, ideal_subs)
         try:
             card = call_ollama(meta, ecfg)
             card["_channel_url"] = s["channel_url"]

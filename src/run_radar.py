@@ -3,7 +3,7 @@
 collect(refresh+discover) -> 全池重排 -> 与上次运行 diff -> 生成推荐卡 -> 日报 markdown -> 推送 -> 写 logs/radar.log。
 一切产出留仓库目录(reports/logs/data)，绝不写 iCloud 路径(launchd 下 TCC 会静默失败)。
 """
-import argparse, json, os, subprocess, sys, glob
+import argparse, csv, json, os, subprocess, sys, glob
 from datetime import date, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -101,7 +101,47 @@ def gen_cards(cfg_path, ranked_path, out_dir, top_n=None, max_cards=None):
     return json.load(open(cards_path)) if os.path.exists(cards_path) else []
 
 
-def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run):
+# 表格列序固定，也是将来 bitable 出口的 schema 母版
+CSV_COLUMNS = ["日期", "排名", "频道名", "频道链接", "订阅数", "排名百分位", "总分", "语义分", "甜点分",
+               "POV标记分", "命中主题", "是否新发现", "排名变动", "值得签1", "值得签2", "值得签3",
+               "风险", "首次合作建议", "状态"]
+
+
+def write_cards_table(today, cards, scored, pool_by_url, out_dir):
+    """推荐卡表格化: 一行一个推荐人。utf-8-sig 保 Numbers/Excel 中文不乱码，状态列留空给运营填。"""
+    s_by_url = {s["channel_url"]: s for s in scored}
+    path = os.path.join(out_dir, "cards_table.csv")
+    with open(path, "w", encoding="utf-8-sig", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(CSV_COLUMNS)
+        for c in cards:
+            s = s_by_url.get(c.get("_channel_url"), {})
+            p = pool_by_url.get(c.get("_channel_url"), {})
+            why = (c.get("why_worth_signing") or []) + ["", "", ""]
+            delta = s.get("rank_delta")
+            w.writerow([
+                today,
+                s.get("rank", c.get("_rank", "")),
+                s.get("channel_name", c.get("channel_name", "")),
+                c.get("_channel_url", ""),
+                s.get("subscribers", ""),
+                f"{s['pct']}%" if s.get("pct") is not None else "",
+                f"{s['score']:.4f}" if s.get("score") is not None else "",
+                f"{s['sem']:.4f}" if s.get("sem") is not None else "",
+                f"{s['sweet']:.4f}" if s.get("sweet") is not None else "",
+                f"{s['pov']:.4f}" if s.get("pov") is not None else "",
+                "、".join(s.get("themes_hit") or []),
+                "是" if p.get("source") == "auto-discover" else "否",
+                (f"+{delta}" if delta > 0 else str(delta)) if delta is not None else "",
+                why[0], why[1], why[2],
+                c.get("risk", ""),
+                c.get("first_collab", ""),
+                "",
+            ])
+    return path
+
+
+def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None):
     n = len(scored)
     delta = ""
     if collect_res.get("pool_before") is not None:
@@ -151,6 +191,8 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
           f"- 时间：{datetime.now().isoformat(timespec='seconds')}",
           f"- 推荐卡：{len(cards)} 张",
           f"- 新进前 100：{len(newcomers)} 个" if not first_run else "- 新进前 100：n/a（首次运行）"]
+    if csv_path:
+        L.append(f"- 当日推荐表格：data/runs/daily/{today}/cards_table.csv")
 
     os.makedirs(REPORTS, exist_ok=True)
     path = os.path.join(REPORTS, f"{today}-radar.md")
@@ -172,7 +214,9 @@ def push(cfg, msg, report_path):
             else:
                 results["imessage"] = "skipped: notify-imessage.sh not found"
         elif out == "bitable":
-            # NotConfigured: 飞书多维表格出口留接口不实现，等 app_token/table_id 凭证接入(见 config outputs)
+            # NotConfigured: 飞书多维表格出口留接口不实现，等 app_token/table_id 凭证接入。
+            # 灌表字段 = CSV_COLUMNS(cards_table.csv 同一套 schema): 日期/排名/频道名/频道链接/订阅数/
+            # 排名百分位/总分/语义分/甜点分/POV标记分/命中主题/是否新发现/排名变动/值得签1-3/风险/首次合作建议/状态
             results["bitable"] = "NotConfigured"
     return results
 
@@ -215,7 +259,9 @@ def main():
 
     cards = gen_cards(args.config, ranked_path, out_dir, top_n=smoke_top_n, max_cards=smoke_max_cards)
 
-    report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run)
+    csv_path = write_cards_table(today, cards, scored, pool_by_url, out_dir)
+
+    report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path)
 
     n = len(scored)
     dtxt = ""

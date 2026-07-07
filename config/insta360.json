@@ -101,9 +101,10 @@
   },
 
   "explain": {
-    "notes": "推荐卡生成。用本地 ollama chat 模型精读候选元数据。qwen3:8b 支持 /no_think 抑制思维链，format:json 强制结构化输出。",
+    "notes": "推荐卡生成。用本地 ollama chat 模型精读候选元数据。qwen3:8b 支持 /no_think 抑制思维链，format:json 强制结构化输出。brand_context 只给品类语境不给品牌名(打分层泄漏防护不受影响，这是产品路径)。",
     "endpoint": "http://127.0.0.1:11434/api/chat",
     "model": "qwen3:8b",
+    "brand_context": "运动影像相机品牌（第一视角与全景运动相机厂商）",
     "temperature": 0.2,
     "max_cards": 12,
     "top_n_scan": 100
