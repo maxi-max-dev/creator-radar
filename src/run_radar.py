@@ -151,6 +151,21 @@ def run_comments(cfg_path, top_n=None):
         return {"error": str(e)}
 
 
+def run_transcripts(cfg_path, today, top_n=None):
+    """top N 频道字幕采集(受预算+video 级去重账本约束)。温和降级: 失败只返回错误串。
+    字幕采集含真实网络请求(yt-dlp 探测+拉字幕，禁下载本体)，超时给足(单频道多视频)。"""
+    cmd = ["python3", os.path.join(HERE, "transcripts.py"), "--config", cfg_path, "--date", today]
+    if top_n is not None:
+        cmd += ["--top-n", str(top_n)]
+    try:
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        sys.stderr.write(p.stderr)
+        res = _last_json_line(p.stdout)
+        return res if res is not None else {"error": "no json output"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 # 表格列序固定，也是将来 bitable 出口的 schema 母版
 CSV_COLUMNS = ["日期", "排名", "频道名", "频道链接", "订阅数", "排名百分位", "总分", "语义分", "甜点分",
                "POV标记分", "命中主题", "是否新发现", "排名变动", "值得签1", "值得签2", "值得签3",
@@ -515,9 +530,12 @@ def push_feishu_docs(cfg, report_path, stats=None):
         return f"error: {e}"
 
 
-def sync_full_ranking_table(cfg, scored, pool_by_url):
+def sync_full_ranking_table(cfg, scored, pool_by_url, dry_run=False):
     """全池榜单同步(飞书第二张表): 当日全池排序整表重写。复用 sync_full_ranking 模块。
+    dry_run: 这是绕过 cfg.outputs 的独立真实推送路径(直读 bitable 凭证)，--dry-run 下必须跳过, 否则试跑仍会真灌表。
     温和降级: 模块导入或调用失败只返回错误 dict, 不中断主链。"""
+    if dry_run:
+        return {"ok": False, "skipped": "dry-run"}
     try:
         import sync_full_ranking as sfr
         dossier_links = sfr._load_dossier_links(cfg)
@@ -528,9 +546,10 @@ def sync_full_ranking_table(cfg, scored, pool_by_url):
         return {"ok": False, "error": str(e)}
 
 
-def run_bili_line(bili_cfg_path, today, budget=None):
+def run_bili_line(bili_cfg_path, today, budget=None, dry_run=False):
     """B站(国内侧)线: 小预算刷新采集 -> 打分排序 -> B站榜单(飞书第三张表) -> 返回摘要供日报。
     与 YouTube 线串行(主跑完再跑)。B站采集器 CLI = collect_bilibili.py --config <bili配置> [--reset]。
+    dry_run: 采集(只读公开元数据)与打分照常跑，只跳过第 3 步真实灌表(同 sync_full_ranking_table 的理由)。
     温和降级: 任何阶段失败只把错误塞进返回 dict, 绝不中断主链。返回:
       {ok, pool_size, top5:[{rank,name,subs,score}...], table:<sync结果>, error?}"""
     res = {"ok": False, "pool_size": 0, "top5": [], "table": None}
@@ -564,16 +583,19 @@ def run_bili_line(bili_cfg_path, today, budget=None):
         os.makedirs(bout, exist_ok=True)
         with open(os.path.join(bout, "ranked.json"), "w") as f:
             json.dump(bscored, f, ensure_ascii=False, indent=1)
-        # 3) B站榜单(飞书第三张表, 列同全池榜单去掉档案列)
-        try:
-            import sync_full_ranking as sfr
-            brecords = sfr.build_full_ranking_records(bscored, bpool_by_url, {}, top_dossier_n=0)
-            for rec in brecords:
-                rec["fields"].pop("档案", None)
-            res["table"] = sfr.sync_ranking_table(bcfg, brecords, "bili_ranking_table_id",
-                                                  sfr.BILI_RANKING_TABLE_NAME, sfr.BILI_RANKING_FIELDS)
-        except Exception as e:
-            res["table"] = {"ok": False, "error": str(e)}
+        # 3) B站榜单(飞书第三张表, 列同全池榜单去掉档案列)。dry-run 下跳过, 只在此处判断(采集/打分照跑)。
+        if dry_run:
+            res["table"] = {"ok": False, "skipped": "dry-run"}
+        else:
+            try:
+                import sync_full_ranking as sfr
+                brecords = sfr.build_full_ranking_records(bscored, bpool_by_url, {}, top_dossier_n=0)
+                for rec in brecords:
+                    rec["fields"].pop("档案", None)
+                res["table"] = sfr.sync_ranking_table(bcfg, brecords, "bili_ranking_table_id",
+                                                      sfr.BILI_RANKING_TABLE_NAME, sfr.BILI_RANKING_FIELDS)
+            except Exception as e:
+                res["table"] = {"ok": False, "error": str(e)}
         res["ok"] = True
         return res
     except Exception as e:
@@ -622,6 +644,49 @@ def push(cfg, msg, report_path, bitable_rows=None, stats=None):
     return results
 
 
+ALL_OUTPUTS = ["report", "imessage", "bitable", "feishu_docs"]
+
+
+def format_push_summary(push_res, active_outputs):
+    """把 push() 的结果整理成逐行大写标注，一眼分清「空转/真发/失败」。
+    active_outputs 是本次实际跑的 cfg.outputs(dry-run 下只有 report)；
+    不在其中的出口标 SKIPPED(dry-run 未执行)，让人知道不是凭证问题。"""
+    lines = []
+    for out in ALL_OUTPUTS:
+        if out not in active_outputs:
+            lines.append(f"PUSH {out}: SKIPPED(dry-run 未执行)")
+            continue
+        val = push_res.get(out)
+        if out == "report":
+            lines.append(f"PUSH report: WRITTEN(本地日报) -> {val}")
+        elif val is None:
+            lines.append(f"PUSH {out}: SKIPPED(未在 outputs 中)")
+        elif out == "imessage":
+            if val == "sent":
+                lines.append("PUSH imessage: SENT(真实发送)")
+            elif str(val).startswith("skipped"):
+                lines.append(f"PUSH imessage: SKIPPED(无凭证/脚本缺失) {val}")
+            else:
+                lines.append(f"PUSH imessage: FAILED {val}")
+        elif out == "bitable":
+            sval = str(val)
+            if sval.startswith("appended"):
+                lines.append(f"PUSH bitable: SENT(真实灌表) {val}")
+            elif sval.startswith("NotConfigured"):
+                lines.append(f"PUSH bitable: SKIPPED(无凭证) {val}")
+            else:
+                lines.append(f"PUSH bitable: FAILED {val}")
+        elif out == "feishu_docs":
+            sval = str(val)
+            if sval.startswith("error"):
+                lines.append(f"PUSH feishu_docs: FAILED {val}")
+            else:
+                lines.append(f"PUSH feishu_docs: SENT(真实推送) {val}")
+        else:
+            lines.append(f"PUSH {out}: {val}")
+    return lines
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", default=os.path.join(ROOT, "config", "insta360.json"))
@@ -631,9 +696,18 @@ def main():
     ap.add_argument("--bili-config", default=os.path.join(ROOT, "config", "insta360_bilibili.json"),
                     help="B站线品牌配置(YouTube 主跑完串行跑 B站线)")
     ap.add_argument("--skip-bili", action="store_true", help="跳过 B站线(只跑 YouTube 主线)")
+    ap.add_argument("--dry-run", action="store_true",
+                    help="安全试跑: 强制 outputs=[report]，跳过 iMessage/飞书真实推送与数据快照 commit/push")
     args = ap.parse_args()
 
+    if args.dry_run:
+        print("\n" + "=" * 60)
+        print("DRY RUN: 只产日报，不推送不提交")
+        print("=" * 60 + "\n")
+
     cfg = load_config(args.config)
+    if args.dry_run:
+        cfg["outputs"] = ["report"]  # 强制只产日报，跳过 imessage/bitable/feishu_docs 全部真实出口
     # 池子路径由 config.pool_path 决定(缺省回退到默认 creator_pool.jsonl)。
     # 反射进模块全局 POOL, 让下游各处(gen_cards/write_scoreboard_picks)统一取到同一份。
     global POOL
@@ -673,6 +747,7 @@ def main():
     cross_res = run_cross_platform(args.config) if cfg.get("cross_platform", {}).get("enabled", True) else {"skipped": True}
     dossier_res = run_dossiers(args.config) if cfg.get("dossiers", {}).get("enabled", True) else {"skipped": True}
     comments_res = run_comments(args.config, top_n=smoke_top_n)
+    transcripts_res = run_transcripts(args.config, today, top_n=smoke_top_n)
 
     table_rows = build_table_rows(today, cards, scored, pool_by_url)
     csv_path = write_cards_table(today, table_rows, out_dir)
@@ -708,35 +783,45 @@ def main():
     push_res = push(cfg, msg, report_path, bitable_rows=table_rows, stats=docs_stats)
 
     # 全池榜单同步(飞书第二张表): 每日跑完用当日全池排序整表重写(先清后写, 表 id 稳定)。
+    # 这条路径直读 bitable 凭证, 不受 cfg.outputs 管控, dry-run 下单独传 dry_run 跳过, 否则试跑仍会真灌表。
     # 温和降级: 失败只记结果不中断主链(照 push_bitable 惯例)。
-    full_rank_res = sync_full_ranking_table(cfg, scored, pool_by_url)
+    full_rank_res = sync_full_ranking_table(cfg, scored, pool_by_url, dry_run=args.dry_run)
 
     # B站线: YouTube 主线跑完后串行跑(小预算刷新+打分+B站榜单+日报追加一节)。
     # 只在主 config 非 bilibili 时跑(避免自递归); --skip-bili 可关。温和降级不中断主链。
+    # dry-run 下采集/打分照常跑(只读公开元数据), 只跳过榜单真实灌表(同上一条理由)。
     bili_res = None
     if not args.skip_bili and cfg.get("platform") != "bilibili" and os.path.exists(args.bili_config):
-        bili_res = run_bili_line(args.bili_config, today, budget=args.budget)
+        bili_res = run_bili_line(args.bili_config, today, budget=args.budget, dry_run=args.dry_run)
         append_bili_section(report_path, bili_res)
 
-    git_res = commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
+    git_res = "skipped: dry-run" if args.dry_run else commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
 
     os.makedirs(LOGS, exist_ok=True)
     cross_txt = f"{cross_res.get('with_any', '?')}/{cross_res.get('total', '?')}" if "error" not in cross_res else "err"
     comm_txt = (f"{comments_res.get('channels_ok', '?')}ok/{comments_res.get('comments_written', '?')}c"
                 if "error" not in comments_res else "err")
-    full_rank_txt = (f"{full_rank_res.get('written', '?')}/{full_rank_res.get('total', '?')}"
-                     if full_rank_res.get("ok") else f"err:{str(full_rank_res.get('error'))[:40]}")
+    trans_txt = (f"{transcripts_res.get('videos_ok', '?')}ok/{transcripts_res.get('videos_no_subs', '?')}nosubs"
+                 if "error" not in transcripts_res else "err")
+    if full_rank_res.get("ok"):
+        full_rank_txt = f"{full_rank_res.get('written', '?')}/{full_rank_res.get('total', '?')}"
+    elif full_rank_res.get("skipped"):
+        full_rank_txt = f"skipped:{full_rank_res['skipped']}"
+    else:
+        full_rank_txt = f"err:{str(full_rank_res.get('error'))[:40]}"
     if bili_res is None:
         bili_txt = "skip"
     elif bili_res.get("ok"):
         _bt = bili_res.get("table") or {}
-        bili_txt = f"pool={bili_res.get('pool_size', 0)},table={_bt.get('written', 'err')}"
+        _bt_txt = _bt.get("written", f"skipped:{_bt['skipped']}" if _bt.get("skipped") else "err")
+        bili_txt = f"pool={bili_res.get('pool_size', 0)},table={_bt_txt}"
     else:
         bili_txt = f"err:{str(bili_res.get('error'))[:40]}"
     summary = (f"{datetime.now().isoformat(timespec='seconds')} pool={n} {dtxt or '+?'} "
                f"refreshed={collect_res.get('refreshed', 0)} discovered={collect_res.get('discovered', 0)} "
                f"newcomers={len(newcomers)} jumpers={len(jumpers)} cards={len(cards)} "
                f"cross={cross_txt} dossiers={dossier_res.get('generated', 'err')} comments={comm_txt} "
+               f"transcripts={trans_txt} "
                f"settled={len(scoreboard_results)} push={push_res} full_rank={full_rank_txt} "
                f"bili={bili_txt} git={git_res}")
     with open(os.path.join(LOGS, "radar.log"), "a") as f:
@@ -745,7 +830,36 @@ def main():
     print("\n=== RUN SUMMARY ===")
     print(summary)
     print("report:", report_path)
-    print("push:", push_res)
+    print("\n--- PUSH RESULTS ---")
+    for line in format_push_summary(push_res, cfg.get("outputs", [])):
+        print(line)
+    # 这两条不受 cfg.outputs 管控(独立直读 bitable 凭证的真实推送路径)，单独醒目标注。
+    if full_rank_res.get("skipped"):
+        print(f"PUSH full_rank_table: SKIPPED({full_rank_res['skipped']})")
+    elif full_rank_res.get("ok"):
+        print(f"PUSH full_rank_table: SENT(真实灌表) {full_rank_txt}")
+    else:
+        print(f"PUSH full_rank_table: FAILED {full_rank_txt}")
+    if bili_res is None:
+        print("PUSH bili_table: SKIPPED(B站线未跑)")
+    else:
+        _bt = bili_res.get("table") or {}
+        if _bt.get("skipped"):
+            print(f"PUSH bili_table: SKIPPED({_bt['skipped']})")
+        elif _bt.get("ok"):
+            print(f"PUSH bili_table: SENT(真实灌表) written={_bt.get('written', '?')}")
+        else:
+            print(f"PUSH bili_table: FAILED {_bt.get('error', 'unknown')}")
+    if args.dry_run:
+        print("PUSH git_commit_push: SKIPPED(dry-run)")
+    elif git_res == "committed+pushed":
+        print(f"PUSH git_commit_push: SENT(真实提交并推送) {git_res}")
+    else:
+        print(f"PUSH git_commit_push: FAILED/PARTIAL {git_res}")
+    if args.dry_run:
+        print("\n" + "=" * 60)
+        print("DRY RUN 完成: 只产日报，不推送不提交")
+        print("=" * 60)
 
 
 if __name__ == "__main__":

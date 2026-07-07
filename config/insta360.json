@@ -125,6 +125,14 @@
     "budget_requests_per_day": 120
   },
 
+  "transcripts": {
+    "notes": "字幕记录层(内容打标地基语料+原始数据全记录)。对当日排序 top_channels 频道每频道最近 videos_per_channel 视频拉字幕清洗落盘。语言优先人工字幕命中 langs，否则自动字幕原声轨(*-orig 真源语言，非机翻)，再退回 langs 兜底。预算红线每天<=budget_videos_per_day 视频，节流复用 collect.throttle_seconds，单视频失败跳过。video 级去重账本 fetched_index.json 抓过永不重抓，无字幕记占位防重试。禁下载视频/音频本体(--skip-download 恒开)。产出 data/transcripts/ 保持 gitignore(整段字幕=第三方版权内容)。",
+    "top_channels": 50,
+    "videos_per_channel": 3,
+    "budget_videos_per_day": 150,
+    "langs": ["en"]
+  },
+
   "dossiers": {
     "notes": "达人档案 MD。对当日推荐卡(cards)的每个频道生成一页 data/dossiers/<channel_id>.md，进公开仓库与飞书文档。含基本盘/订阅快照史/近期视频表/评论区概况(只写统计禁引原文)/跨平台矩阵/当日推荐卡，顶部带 YAML frontmatter。幂等重跑覆盖。数量跟随当日推荐卡数(explain.max_cards)，此节仅作说明与开关。",
     "enabled": true
