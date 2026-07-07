@@ -515,6 +515,94 @@ def push_feishu_docs(cfg, report_path, stats=None):
         return f"error: {e}"
 
 
+def sync_full_ranking_table(cfg, scored, pool_by_url):
+    """全池榜单同步(飞书第二张表): 当日全池排序整表重写。复用 sync_full_ranking 模块。
+    温和降级: 模块导入或调用失败只返回错误 dict, 不中断主链。"""
+    try:
+        import sync_full_ranking as sfr
+        dossier_links = sfr._load_dossier_links(cfg)
+        records = sfr.build_full_ranking_records(scored, pool_by_url, dossier_links)
+        return sfr.sync_ranking_table(cfg, records, "full_ranking_table_id",
+                                      sfr.FULL_RANKING_TABLE_NAME, sfr.FULL_RANKING_FIELDS)
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
+def run_bili_line(bili_cfg_path, today, budget=None):
+    """B站(国内侧)线: 小预算刷新采集 -> 打分排序 -> B站榜单(飞书第三张表) -> 返回摘要供日报。
+    与 YouTube 线串行(主跑完再跑)。B站采集器 CLI = collect_bilibili.py --config <bili配置> [--reset]。
+    温和降级: 任何阶段失败只把错误塞进返回 dict, 绝不中断主链。返回:
+      {ok, pool_size, top5:[{rank,name,subs,score}...], table:<sync结果>, error?}"""
+    res = {"ok": False, "pool_size": 0, "top5": [], "table": None}
+    try:
+        bcfg = load_config(bili_cfg_path)
+        bili_pool = os.path.join(ROOT, bcfg.get("pool_path", "data/pool/bilibili_pool.jsonl"))
+        # 1) 采集(小预算刷新+发现). collect_bilibili 自带断点续跑与预算封顶, 失败不致命继续用现有池。
+        cmd = ["python3", os.path.join(HERE, "collect_bilibili.py"), "--config", bili_cfg_path]
+        try:
+            p = subprocess.run(cmd, capture_output=True, text=True, timeout=(budget or 90) * 60 + 120)
+            sys.stderr.write(p.stderr[-2000:] if p.stderr else "")
+            res["collect_rc"] = p.returncode
+        except Exception as e:
+            res["collect_err"] = str(e)
+        # 2) 打分排序(用 B站 config, 吃 bilibili 池)
+        if not os.path.exists(bili_pool):
+            res["error"] = f"bilibili pool 不存在: {bili_pool}"
+            return res
+        brows = load_pool(bili_pool)
+        res["pool_size"] = len(brows)
+        bscored = score_pool(brows, bcfg)
+        # themes_hit 富化(日报/表格命中主题列用)
+        tkw = theme_keywords(bcfg)
+        bpool_by_url = {r["channel_url"]: r for r in brows}
+        for s in bscored:
+            s["themes_hit"] = themes_hit(bpool_by_url.get(s["channel_url"], {}), tkw)
+        res["top5"] = [{"rank": s["rank"], "name": s["channel_name"],
+                        "subs": s.get("subscribers"), "score": s["score"]} for s in bscored[:5]]
+        # 落一份 B站排序产物到 runs(便于复现与排查)
+        bout = os.path.join(ROOT, "data", "runs", f"{today}-bilibili")
+        os.makedirs(bout, exist_ok=True)
+        with open(os.path.join(bout, "ranked.json"), "w") as f:
+            json.dump(bscored, f, ensure_ascii=False, indent=1)
+        # 3) B站榜单(飞书第三张表, 列同全池榜单去掉档案列)
+        try:
+            import sync_full_ranking as sfr
+            brecords = sfr.build_full_ranking_records(bscored, bpool_by_url, {}, top_dossier_n=0)
+            for rec in brecords:
+                rec["fields"].pop("档案", None)
+            res["table"] = sfr.sync_ranking_table(bcfg, brecords, "bili_ranking_table_id",
+                                                  sfr.BILI_RANKING_TABLE_NAME, sfr.BILI_RANKING_FIELDS)
+        except Exception as e:
+            res["table"] = {"ok": False, "error": str(e)}
+        res["ok"] = True
+        return res
+    except Exception as e:
+        res["error"] = str(e)
+        return res
+
+
+def append_bili_section(report_path, bili_res):
+    """把「B站雷达」一节追加到日报 markdown 末尾(top5 + 池子数)。温和降级: 失败静默。"""
+    try:
+        L = ["", "---", "", "## B站雷达", ""]
+        if not bili_res or not bili_res.get("ok"):
+            L += [f"_B站线本次未产出（{(bili_res or {}).get('error', '未运行')}）。_", ""]
+        else:
+            L += [f"- B站池子：**{bili_res.get('pool_size', 0)}** UP 主", ""]
+            top5 = bili_res.get("top5") or []
+            if top5:
+                L += ["| 排名 | UP 主 | 粉丝 | 总分 |", "|---:|---|---:|---:|"]
+                for t in top5:
+                    L.append(f"| #{t['rank']} | **{t['name']}** | {t.get('subs')} | {t['score']:.4f} |")
+            tb = bili_res.get("table") or {}
+            L += ["", f"_B站榜单已同步飞书（写入 {tb.get('written', '?')} 行）。_" if tb.get("ok")
+                  else "_B站榜单飞书同步未完成。_", ""]
+        with open(report_path, "a") as f:
+            f.write("\n".join(L) + "\n")
+    except Exception:
+        pass
+
+
 def push(cfg, msg, report_path, bitable_rows=None, stats=None):
     """按 config.outputs 分发。report 已写盘; imessage 调 notify 脚本; bitable 灌飞书多维表格; feishu_docs 传日报+档案+主页上飞书云空间。"""
     results = {}
@@ -540,9 +628,17 @@ def main():
     ap.add_argument("--budget", type=int, help="覆盖 refresh 频道数(冒烟用小值)")
     ap.add_argument("--discover-terms", type=int, help="覆盖 discover 搜索词数")
     ap.add_argument("--top-n", type=int, help="覆盖推荐卡扫描的 top N(冒烟用小值)")
+    ap.add_argument("--bili-config", default=os.path.join(ROOT, "config", "insta360_bilibili.json"),
+                    help="B站线品牌配置(YouTube 主跑完串行跑 B站线)")
+    ap.add_argument("--skip-bili", action="store_true", help="跳过 B站线(只跑 YouTube 主线)")
     args = ap.parse_args()
 
     cfg = load_config(args.config)
+    # 池子路径由 config.pool_path 决定(缺省回退到默认 creator_pool.jsonl)。
+    # 反射进模块全局 POOL, 让下游各处(gen_cards/write_scoreboard_picks)统一取到同一份。
+    global POOL
+    if cfg.get("pool_path"):
+        POOL = os.path.join(ROOT, cfg["pool_path"])
     # --top-n 冒烟时缩小扫描面; max_cards 同步收到不超过 top_n(否则 backup 补足会超采)
     smoke_top_n = args.top_n
     smoke_max_cards = None
@@ -611,17 +707,38 @@ def main():
                   "scoreboard_status": sb_status}
     push_res = push(cfg, msg, report_path, bitable_rows=table_rows, stats=docs_stats)
 
+    # 全池榜单同步(飞书第二张表): 每日跑完用当日全池排序整表重写(先清后写, 表 id 稳定)。
+    # 温和降级: 失败只记结果不中断主链(照 push_bitable 惯例)。
+    full_rank_res = sync_full_ranking_table(cfg, scored, pool_by_url)
+
+    # B站线: YouTube 主线跑完后串行跑(小预算刷新+打分+B站榜单+日报追加一节)。
+    # 只在主 config 非 bilibili 时跑(避免自递归); --skip-bili 可关。温和降级不中断主链。
+    bili_res = None
+    if not args.skip_bili and cfg.get("platform") != "bilibili" and os.path.exists(args.bili_config):
+        bili_res = run_bili_line(args.bili_config, today, budget=args.budget)
+        append_bili_section(report_path, bili_res)
+
     git_res = commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
 
     os.makedirs(LOGS, exist_ok=True)
     cross_txt = f"{cross_res.get('with_any', '?')}/{cross_res.get('total', '?')}" if "error" not in cross_res else "err"
     comm_txt = (f"{comments_res.get('channels_ok', '?')}ok/{comments_res.get('comments_written', '?')}c"
                 if "error" not in comments_res else "err")
+    full_rank_txt = (f"{full_rank_res.get('written', '?')}/{full_rank_res.get('total', '?')}"
+                     if full_rank_res.get("ok") else f"err:{str(full_rank_res.get('error'))[:40]}")
+    if bili_res is None:
+        bili_txt = "skip"
+    elif bili_res.get("ok"):
+        _bt = bili_res.get("table") or {}
+        bili_txt = f"pool={bili_res.get('pool_size', 0)},table={_bt.get('written', 'err')}"
+    else:
+        bili_txt = f"err:{str(bili_res.get('error'))[:40]}"
     summary = (f"{datetime.now().isoformat(timespec='seconds')} pool={n} {dtxt or '+?'} "
                f"refreshed={collect_res.get('refreshed', 0)} discovered={collect_res.get('discovered', 0)} "
                f"newcomers={len(newcomers)} jumpers={len(jumpers)} cards={len(cards)} "
                f"cross={cross_txt} dossiers={dossier_res.get('generated', 'err')} comments={comm_txt} "
-               f"settled={len(scoreboard_results)} push={push_res} git={git_res}")
+               f"settled={len(scoreboard_results)} push={push_res} full_rank={full_rank_txt} "
+               f"bili={bili_txt} git={git_res}")
     with open(os.path.join(LOGS, "radar.log"), "a") as f:
         f.write(summary + "\n")
 

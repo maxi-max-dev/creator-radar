@@ -1,6 +1,7 @@
 {
   "brand": "insta360",
   "platform": "bilibili",
+  "pool_path": "data/pool/bilibili_pool.jsonl",
   "notes": "达人雷达 B站(国内侧)品牌配置 v0。与 config/insta360.json 同构，仅把策略数值换成中文生态语境：themes 变体改中文创作者措辞、platform_markers 改中文拍摄信号、sweet_spot 峰值上调到 B站中腰部规模。主题内核仍来自影石官方选人逻辑逆向工程（vault: AI先锋大赛-影石/AI先锋大赛-影石选人逻辑-逆向工程），8 主题中可被账号级文本(UP名/签名/近期标题)承载的 6 个入选，其余(垂类权威性/早期潜力增长斜率)需时序或跨账号基准数据，排 v2。未用任何正例标签调参。",
 
   "leak_tokens_pattern": "insta\\s*360|insta360|影石|antigravity|think\\s*bold|一镜到底|全景相机x5|带着影石",
@@ -105,6 +106,11 @@
     "target_max_authors": 800,
     "budget_minutes": 90,
     "state_file": "data/pool/bilibili_collect_state.json"
+  },
+
+  "bitable": {
+    "notes": "飞书多维表格出口。B站榜单(第三张表)复用与 YouTube 线同一份 base 凭证(app_id/app_secret/app_token 相同)，表 id 存 credentials 同目录的 feishu_tables.json(bili_ranking_table_id 键)。敏感标识符不进 repo。",
+    "credentials_path": "~/.config/creator-radar/feishu.json"
   },
 
   "outputs": ["report"]

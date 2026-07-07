@@ -1,0 +1,112 @@
+{
+  "brand": "insta360",
+  "notes": "达人雷达的第一个品牌配置。引擎本体品牌无关，换品牌=换这份配置。主题措辞来自影石官方选人文章的逆向工程（vault: AI先锋大赛-影石选人逻辑-逆向工程），未用任何正例标签调参。",
+  "leak_tokens_pattern": "insta\\s*360|insta360|影石|antigravity|think\\s*bold",
+  "embedding": {
+    "endpoint": "http://127.0.0.1:11434/api/embed",
+    "model": "bge-m3",
+    "batch_size": 32
+  },
+  "doc_fields": {
+    "description_chars": 600,
+    "recent_titles_chars": 600
+  },
+  "verticals": [
+    "moto",
+    "cycling"
+  ],
+  "themes": {
+    "pov_native": {
+      "weight": 0.294117,
+      "variants": [
+        "first-person POV onboard action camera footage, helmet cam riding perspective, immersive 360 degree motorcycle video",
+        "first-person POV mountain bike trail footage, chest mount cycling perspective, immersive 360 degree riding video"
+      ]
+    },
+    "adventure_bold": {
+      "weight": 0.176471,
+      "variants": [
+        "bold adventurous challenge, extreme stunts, pushing limits, epic motorcycle adventure in wild terrain",
+        "bold adventurous challenge, extreme downhill stunts, pushing limits, epic bicycle adventure in wild terrain"
+      ]
+    },
+    "authentic_vlog": {
+      "weight": 0.235294,
+      "variants": [
+        "authentic self-filmed motovlog, personal storytelling, solo creator sharing real daily riding life",
+        "authentic self-filmed cycling vlog, personal storytelling, solo creator sharing real daily cycling life"
+      ]
+    },
+    "gear_native": {
+      "weight": 0.176471,
+      "variants": [
+        "camera gear mounting review for motorcycle riding, filming technique tutorial for riders",
+        "camera gear mounting review for cycling, filming technique tutorial for mountain bikers"
+      ]
+    },
+    "vertical_craft": {
+      "weight": 0.117647,
+      "variants": [
+        "professional riding skill, motorcycle racing track technique, expert level riding",
+        "professional cycling skill, downhill mountain bike racing technique, expert level bike handling"
+      ]
+    }
+  },
+  "signal_weights": {
+    "semantic": 0.7,
+    "sweet_spot": 0.18,
+    "platform_markers": 0.12
+  },
+  "sweet_spot": {
+    "log10_mu": 4.9,
+    "log10_sigma": 1.1,
+    "unknown_subs_score": 0.3,
+    "notes": "中腰部甜点，峰值约 8 万粉。这是「早期下注」策略的数学表达，峰值和宽度是运营可调的策略旋钮。"
+  },
+  "platform_markers": {
+    "pattern": "\\bpov\\b|onboard|helmet cam|first person|raw (?:audio|sound)|no music|4k ride",
+    "cap": 3
+  },
+  "collect": {
+    "notes": "常驻采集器策略。search_terms 覆盖摩托/骑行的多语言检索词(英/西/日)，从既有池子构建思路延伸。refresh 轮转刷新最旧的 N 个频道，discover 每次跑 M 个搜索词发现新面孔。",
+    "search_terms": [
+      "motovlog helmet cam pov onboard",
+      "motorcycle adventure ride 360 camera",
+      "mountain bike pov helmet cam trail",
+      "long distance motorcycle travel vlog",
+      "moto vlog cámara casco onboard",
+      "ruta en moto aventura viaje",
+      "モトブログ ヘルメットカメラ バイク",
+      "自転車 ダウンヒル ヘルメットカム pov"
+    ],
+    "refresh_per_run": 120,
+    "discover_terms_per_run": 3,
+    "discover_results_per_term": 30,
+    "discover_max_new_per_run": 15,
+    "throttle_seconds": 2.5,
+    "videos_per_channel": 5
+  },
+  "explain": {
+    "notes": "推荐卡生成。用本地 ollama chat 模型精读候选元数据。qwen3:8b 支持 /no_think 抑制思维链，format:json 强制结构化输出。brand_context 只给品类语境不给品牌名(打分层泄漏防护不受影响，这是产品路径)。",
+    "endpoint": "http://127.0.0.1:11434/api/chat",
+    "model": "qwen3:8b",
+    "brand_context": "运动影像相机品牌（第一视角与全景运动相机厂商）",
+    "temperature": 0.2,
+    "max_cards": 12,
+    "top_n_scan": 100
+  },
+  "scoreboard": {
+    "notes": "预测记分板 v0。每周一存 picks，到期(due_days)后用订阅增长对照全池中位增速结算；增速差在 ±verdict_margin_pct 个百分点内算跑平。",
+    "due_days": 28,
+    "verdict_margin_pct": 2.0
+  },
+  "bitable": {
+    "notes": "飞书多维表格出口。敏感凭证(app_id/app_secret/app_token/table_id)一律不进 repo，全在下面这个本机文件里(chmod 600)。字段 schema 与 cards_table.csv 同构，状态列永远不写。",
+    "credentials_path": "~/.config/creator-radar/feishu.json"
+  },
+  "outputs": [
+    "report",
+    "imessage",
+    "bitable"
+  ]
+}

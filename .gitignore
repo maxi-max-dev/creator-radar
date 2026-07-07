@@ -11,3 +11,5 @@ data/runs/verify-daemon/
 
 # 评论采样是第三方用户内容，绝不进仓库(仓库转公开)。达人档案 data/dossiers/ 反而要进库，不在此列。
 data/comments/
+# 字幕记录整段=第三方版权内容，绝不进仓库(仓库转公开)。
+data/transcripts/

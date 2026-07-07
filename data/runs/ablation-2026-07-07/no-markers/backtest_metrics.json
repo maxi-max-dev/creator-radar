@@ -1,0 +1,11 @@
+{
+ "recall@top5%_all": "3/26 = 12%",
+ "recall@top5%_midtail": "3/20 = 15%",
+ "recall@top10%_all": "5/26 = 19%",
+ "recall@top10%_midtail": "5/20 = 25%",
+ "recall@top20%_all": "8/26 = 31%",
+ "recall@top20%_midtail": "7/20 = 35%",
+ "median_pct_all": "30.8%",
+ "median_pct_midtail": "25.8%",
+ "chance_baseline": "top5%=5%, top10%=10%, top20%=20%"
+}

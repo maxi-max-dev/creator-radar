@@ -1,0 +1,5544 @@
+{
+ "_notes": "第一波(多语言 68 词)采集在 60 分钟处被外部信号截停,1828 个候选吃掉 887 个后剩余部分的重建清单。由 2026-07-07 收兵时重跑同批搜索词并剔除(主池+暂存两波+去重账本)得到;YouTube 搜索结果逐次漂移,与截停时内存中的原始剩余候选是近似同一批(±10-15%)。用途: 将来日常 discover 慢慢消化;每条只有 id/url/垂类,元数据尚未拉取。",
+ "_rebuilt": "2026-07-07",
+ "count": 1105,
+ "vertical_distribution": {
+  "fpv_drone": 202,
+  "hiking_bikepacking": 199,
+  "paragliding_skydiving": 185,
+  "skateboarding": 168,
+  "kayak_whitewater": 150,
+  "surfing": 61,
+  "ski_snowboard": 60,
+  "trail_running": 46,
+  "climbing_bouldering": 21,
+  "diving_freediving": 13
+ },
+ "candidates": [
+  {
+   "vertical": "surfing",
+   "channel_id": "UCLf6Q5J361c83SCMxTHY78A",
+   "channel_url": "https://www.youtube.com/channel/UCLf6Q5J361c83SCMxTHY78A"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCthJsiw6hcTGtBPOzewvv3A",
+   "channel_url": "https://www.youtube.com/channel/UCthJsiw6hcTGtBPOzewvv3A"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCtHk2HJAr2QC5dx9zN3MYyw",
+   "channel_url": "https://www.youtube.com/channel/UCtHk2HJAr2QC5dx9zN3MYyw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCt00EqAvaQGfU5lgFaXnEvA",
+   "channel_url": "https://www.youtube.com/channel/UCt00EqAvaQGfU5lgFaXnEvA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCqNPXwry8-6OoHEpXUtfFcA",
+   "channel_url": "https://www.youtube.com/channel/UCqNPXwry8-6OoHEpXUtfFcA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCPkylf8PRBZWR1qc1PTWbBQ",
+   "channel_url": "https://www.youtube.com/channel/UCPkylf8PRBZWR1qc1PTWbBQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCNIFWHrhdWdMQBLGI8QlaZQ",
+   "channel_url": "https://www.youtube.com/channel/UCNIFWHrhdWdMQBLGI8QlaZQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC2HlsXXTc1TFEMaT0xC3ohA",
+   "channel_url": "https://www.youtube.com/channel/UC2HlsXXTc1TFEMaT0xC3ohA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCLKpRUifAxWqRBTd5g7N3cQ",
+   "channel_url": "https://www.youtube.com/channel/UCLKpRUifAxWqRBTd5g7N3cQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCVkF9cp5Yk1A2X5Tr_mtGcg",
+   "channel_url": "https://www.youtube.com/channel/UCVkF9cp5Yk1A2X5Tr_mtGcg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UChAEtPnBnz-OQNosEDKWumw",
+   "channel_url": "https://www.youtube.com/channel/UChAEtPnBnz-OQNosEDKWumw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCCwNE5x07-8qaJFunEJAWBw",
+   "channel_url": "https://www.youtube.com/channel/UCCwNE5x07-8qaJFunEJAWBw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCjPlz5RJ8pZE0HR0L2zd6XA",
+   "channel_url": "https://www.youtube.com/channel/UCjPlz5RJ8pZE0HR0L2zd6XA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCtfA-ln767FDjSSoAvcnhqw",
+   "channel_url": "https://www.youtube.com/channel/UCtfA-ln767FDjSSoAvcnhqw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCkYJb_7McYCVUDYlB6-ZzSQ",
+   "channel_url": "https://www.youtube.com/channel/UCkYJb_7McYCVUDYlB6-ZzSQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCT_A6vHi5Mh6210HOsBDYFA",
+   "channel_url": "https://www.youtube.com/channel/UCT_A6vHi5Mh6210HOsBDYFA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCfCwE9LlUf_ExQuW-Kgi1tw",
+   "channel_url": "https://www.youtube.com/channel/UCfCwE9LlUf_ExQuW-Kgi1tw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCKd4dwJdoya-U3yZNlA8UfQ",
+   "channel_url": "https://www.youtube.com/channel/UCKd4dwJdoya-U3yZNlA8UfQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC4jRlg1htZ6wmOQj5xe-rGg",
+   "channel_url": "https://www.youtube.com/channel/UC4jRlg1htZ6wmOQj5xe-rGg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCsert8exifX1uUnqaoY3dqA",
+   "channel_url": "https://www.youtube.com/channel/UCsert8exifX1uUnqaoY3dqA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCvpt2lT70xGVX1OiA2RDxOw",
+   "channel_url": "https://www.youtube.com/channel/UCvpt2lT70xGVX1OiA2RDxOw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCBuw3F9B-zT9clk1hIizKNg",
+   "channel_url": "https://www.youtube.com/channel/UCBuw3F9B-zT9clk1hIizKNg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCmlAdDEZdCbb3IY9_VeFQHg",
+   "channel_url": "https://www.youtube.com/channel/UCmlAdDEZdCbb3IY9_VeFQHg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCBh_svP8VPv_C70bu8656QA",
+   "channel_url": "https://www.youtube.com/channel/UCBh_svP8VPv_C70bu8656QA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC0cGXf_oSPWApAKM6L3IHRQ",
+   "channel_url": "https://www.youtube.com/channel/UC0cGXf_oSPWApAKM6L3IHRQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCg0hDytqHvQoiGh7LethyjA",
+   "channel_url": "https://www.youtube.com/channel/UCg0hDytqHvQoiGh7LethyjA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC2-bd1I9TuuJICSpZkfvMNQ",
+   "channel_url": "https://www.youtube.com/channel/UC2-bd1I9TuuJICSpZkfvMNQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCZ7Z3v7D4inuu1Ig2jwL7kw",
+   "channel_url": "https://www.youtube.com/channel/UCZ7Z3v7D4inuu1Ig2jwL7kw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCLp6ouW_E9GotLh0uYo1vBw",
+   "channel_url": "https://www.youtube.com/channel/UCLp6ouW_E9GotLh0uYo1vBw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCiAvghAsN1HkflH_AWHYl8A",
+   "channel_url": "https://www.youtube.com/channel/UCiAvghAsN1HkflH_AWHYl8A"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCOi64-_MFNI9AlMGChHif0g",
+   "channel_url": "https://www.youtube.com/channel/UCOi64-_MFNI9AlMGChHif0g"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC-m_yC6FkrNINNuyhKsY7-Q",
+   "channel_url": "https://www.youtube.com/channel/UC-m_yC6FkrNINNuyhKsY7-Q"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCJ-LxCyP6KMqWR7LND1ImhA",
+   "channel_url": "https://www.youtube.com/channel/UCJ-LxCyP6KMqWR7LND1ImhA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCxex7QI05YfFSdN7jvXY1BA",
+   "channel_url": "https://www.youtube.com/channel/UCxex7QI05YfFSdN7jvXY1BA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCG0OX_65R7y5YeqCbdnjuUA",
+   "channel_url": "https://www.youtube.com/channel/UCG0OX_65R7y5YeqCbdnjuUA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCmL2G0yeBZynVO5WX9tN6pg",
+   "channel_url": "https://www.youtube.com/channel/UCmL2G0yeBZynVO5WX9tN6pg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCl5EEBc2l-b7S63m8RimEWA",
+   "channel_url": "https://www.youtube.com/channel/UCl5EEBc2l-b7S63m8RimEWA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCnRYgz7nASPDl3sr_qni1qQ",
+   "channel_url": "https://www.youtube.com/channel/UCnRYgz7nASPDl3sr_qni1qQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC8H1ozgFOrV60l8g-kk4I_Q",
+   "channel_url": "https://www.youtube.com/channel/UC8H1ozgFOrV60l8g-kk4I_Q"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC1xKXaAvChUL6e1_LJ2NLOQ",
+   "channel_url": "https://www.youtube.com/channel/UC1xKXaAvChUL6e1_LJ2NLOQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC-M3fUPhd_idjOnnkKJboVQ",
+   "channel_url": "https://www.youtube.com/channel/UC-M3fUPhd_idjOnnkKJboVQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCvxETpHyKSOmA45BZ6_-yiQ",
+   "channel_url": "https://www.youtube.com/channel/UCvxETpHyKSOmA45BZ6_-yiQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCLdPicN16eAKPKir8EY1UXQ",
+   "channel_url": "https://www.youtube.com/channel/UCLdPicN16eAKPKir8EY1UXQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCe0AEzfL63M0TASEaZpq2hw",
+   "channel_url": "https://www.youtube.com/channel/UCe0AEzfL63M0TASEaZpq2hw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCFmkoDo-WmQqfWtzGBAq5OQ",
+   "channel_url": "https://www.youtube.com/channel/UCFmkoDo-WmQqfWtzGBAq5OQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCsKzUN929_e6hsKf88zennA",
+   "channel_url": "https://www.youtube.com/channel/UCsKzUN929_e6hsKf88zennA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UClhyaoiq3ntyAnIRDghtgRw",
+   "channel_url": "https://www.youtube.com/channel/UClhyaoiq3ntyAnIRDghtgRw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCm9NnEJTi7_B86QWgQiUCJA",
+   "channel_url": "https://www.youtube.com/channel/UCm9NnEJTi7_B86QWgQiUCJA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCgnuagHB0LFct4VqFd0BHLg",
+   "channel_url": "https://www.youtube.com/channel/UCgnuagHB0LFct4VqFd0BHLg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCmE6ZDrJl1eil6K2MgnV_lA",
+   "channel_url": "https://www.youtube.com/channel/UCmE6ZDrJl1eil6K2MgnV_lA"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCOs9VeOfSPcSxZvSklxRJiw",
+   "channel_url": "https://www.youtube.com/channel/UCOs9VeOfSPcSxZvSklxRJiw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCRjfpmrghs2shu5rrH8EsKQ",
+   "channel_url": "https://www.youtube.com/channel/UCRjfpmrghs2shu5rrH8EsKQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCudBY9goQvsrTH-EJaxmJ5A",
+   "channel_url": "https://www.youtube.com/channel/UCudBY9goQvsrTH-EJaxmJ5A"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UC39xdDp7W7Z3FozWWF0j-0w",
+   "channel_url": "https://www.youtube.com/channel/UC39xdDp7W7Z3FozWWF0j-0w"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCZoo9vYOdY4pS7g7L-5UBsQ",
+   "channel_url": "https://www.youtube.com/channel/UCZoo9vYOdY4pS7g7L-5UBsQ"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCP0dXPukjzJRmLEN7ZtePZg",
+   "channel_url": "https://www.youtube.com/channel/UCP0dXPukjzJRmLEN7ZtePZg"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCOLbA9SHJ6zpLQRpJnJzJVw",
+   "channel_url": "https://www.youtube.com/channel/UCOLbA9SHJ6zpLQRpJnJzJVw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCw3m9ocHvCGsLL0TETOWGog",
+   "channel_url": "https://www.youtube.com/channel/UCw3m9ocHvCGsLL0TETOWGog"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCGgkBjhpNxD7CZpla2FspXw",
+   "channel_url": "https://www.youtube.com/channel/UCGgkBjhpNxD7CZpla2FspXw"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UCFhVaJoDXQllbBzEaEkr71Q",
+   "channel_url": "https://www.youtube.com/channel/UCFhVaJoDXQllbBzEaEkr71Q"
+  },
+  {
+   "vertical": "surfing",
+   "channel_id": "UClc6zSAgZ3a8mU-EVsKQNPQ",
+   "channel_url": "https://www.youtube.com/channel/UClc6zSAgZ3a8mU-EVsKQNPQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCCf9za9Mmi_BKiwWOkguJVg",
+   "channel_url": "https://www.youtube.com/channel/UCCf9za9Mmi_BKiwWOkguJVg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCxlheonAOf3NpCi2Rm-hDHw",
+   "channel_url": "https://www.youtube.com/channel/UCxlheonAOf3NpCi2Rm-hDHw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCggIVegjAF8JIfyqqHLlrtQ",
+   "channel_url": "https://www.youtube.com/channel/UCggIVegjAF8JIfyqqHLlrtQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCNXQ__HcHMYhqEkoOSvhokg",
+   "channel_url": "https://www.youtube.com/channel/UCNXQ__HcHMYhqEkoOSvhokg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCrxUuWkgwf7UJ8qC_nI9RQw",
+   "channel_url": "https://www.youtube.com/channel/UCrxUuWkgwf7UJ8qC_nI9RQw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCsipY_IcagbtafzG5deCPAQ",
+   "channel_url": "https://www.youtube.com/channel/UCsipY_IcagbtafzG5deCPAQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCGBrnv7EPkXLerC5I1qC2Dg",
+   "channel_url": "https://www.youtube.com/channel/UCGBrnv7EPkXLerC5I1qC2Dg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCnEaAkDCqYbogN7zxDg2UaQ",
+   "channel_url": "https://www.youtube.com/channel/UCnEaAkDCqYbogN7zxDg2UaQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC6cACXjd4TGrsY6XIQl0uaA",
+   "channel_url": "https://www.youtube.com/channel/UC6cACXjd4TGrsY6XIQl0uaA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCCShEpTSqRwI2tl3quZt2iQ",
+   "channel_url": "https://www.youtube.com/channel/UCCShEpTSqRwI2tl3quZt2iQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCAiSCA3b7bxT09V4qngjlMA",
+   "channel_url": "https://www.youtube.com/channel/UCAiSCA3b7bxT09V4qngjlMA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCbb7agnOylL5HklpT7KVN1A",
+   "channel_url": "https://www.youtube.com/channel/UCbb7agnOylL5HklpT7KVN1A"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC8E-4hbJSUQWna3Szo4TJsw",
+   "channel_url": "https://www.youtube.com/channel/UC8E-4hbJSUQWna3Szo4TJsw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCi-ahMG_BEeK8kE93azGRlw",
+   "channel_url": "https://www.youtube.com/channel/UCi-ahMG_BEeK8kE93azGRlw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCgDeQ6UVakgfergduB2hl2A",
+   "channel_url": "https://www.youtube.com/channel/UCgDeQ6UVakgfergduB2hl2A"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCX8mkI-_7MtlxdC65T3UeiQ",
+   "channel_url": "https://www.youtube.com/channel/UCX8mkI-_7MtlxdC65T3UeiQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCvrT-LiUzWP1f0JsrnoVlFQ",
+   "channel_url": "https://www.youtube.com/channel/UCvrT-LiUzWP1f0JsrnoVlFQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCTvZ-f9cIUdErd9Ivc3oiJA",
+   "channel_url": "https://www.youtube.com/channel/UCTvZ-f9cIUdErd9Ivc3oiJA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCALPS445SgOFBVKlf1gllZw",
+   "channel_url": "https://www.youtube.com/channel/UCALPS445SgOFBVKlf1gllZw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UChEM5NXcp6S2NSg_HjE6mMg",
+   "channel_url": "https://www.youtube.com/channel/UChEM5NXcp6S2NSg_HjE6mMg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCRdxHocpSqI7IQhIuP0MtLQ",
+   "channel_url": "https://www.youtube.com/channel/UCRdxHocpSqI7IQhIuP0MtLQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC7SorB9QpFLs9hROyyeUpZg",
+   "channel_url": "https://www.youtube.com/channel/UC7SorB9QpFLs9hROyyeUpZg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC1yS0brMyh4Ss5ybcGcovbw",
+   "channel_url": "https://www.youtube.com/channel/UC1yS0brMyh4Ss5ybcGcovbw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCC8pyQcMtBwDEfY0-3GJVIQ",
+   "channel_url": "https://www.youtube.com/channel/UCC8pyQcMtBwDEfY0-3GJVIQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC0tNKy22K_76H_XY4hWmpLg",
+   "channel_url": "https://www.youtube.com/channel/UC0tNKy22K_76H_XY4hWmpLg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCZRHIcrqggttkzkStro3BNQ",
+   "channel_url": "https://www.youtube.com/channel/UCZRHIcrqggttkzkStro3BNQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCpQ50Wus2dU_JeiHp13fb1A",
+   "channel_url": "https://www.youtube.com/channel/UCpQ50Wus2dU_JeiHp13fb1A"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCVp3oFs7KeHk_7Bl3jK2IOA",
+   "channel_url": "https://www.youtube.com/channel/UCVp3oFs7KeHk_7Bl3jK2IOA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCA5ykpJCw2DEErfTH0jO6SA",
+   "channel_url": "https://www.youtube.com/channel/UCA5ykpJCw2DEErfTH0jO6SA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC8pzVIpoiC75I9rSL_yutpg",
+   "channel_url": "https://www.youtube.com/channel/UC8pzVIpoiC75I9rSL_yutpg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCPNBngZD7JoecYuVAaUV_KA",
+   "channel_url": "https://www.youtube.com/channel/UCPNBngZD7JoecYuVAaUV_KA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCP-ysR2YbwjCpYI15ZLdHQQ",
+   "channel_url": "https://www.youtube.com/channel/UCP-ysR2YbwjCpYI15ZLdHQQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCmQ0I9oKZgptre_iNyq3ciw",
+   "channel_url": "https://www.youtube.com/channel/UCmQ0I9oKZgptre_iNyq3ciw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCmpkf9MXz_vZ9v438IpkJdA",
+   "channel_url": "https://www.youtube.com/channel/UCmpkf9MXz_vZ9v438IpkJdA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCc_v9dFNhQrAywKfw89-g0A",
+   "channel_url": "https://www.youtube.com/channel/UCc_v9dFNhQrAywKfw89-g0A"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC6Pynm70K91vJ3PDyED6VMA",
+   "channel_url": "https://www.youtube.com/channel/UC6Pynm70K91vJ3PDyED6VMA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCRi7uUVYn34_pZWEXNai08Q",
+   "channel_url": "https://www.youtube.com/channel/UCRi7uUVYn34_pZWEXNai08Q"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCKO5c4HmLfBwSFD0zS46jyw",
+   "channel_url": "https://www.youtube.com/channel/UCKO5c4HmLfBwSFD0zS46jyw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCXmbtkZiDoED0vyhYq6N4DA",
+   "channel_url": "https://www.youtube.com/channel/UCXmbtkZiDoED0vyhYq6N4DA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCsFkInl7eWF0mkBbT2ATbNA",
+   "channel_url": "https://www.youtube.com/channel/UCsFkInl7eWF0mkBbT2ATbNA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCtao0k3KRU8kur7pyPJPK0w",
+   "channel_url": "https://www.youtube.com/channel/UCtao0k3KRU8kur7pyPJPK0w"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCu8wbE6lFOmw_RVgrAChVeg",
+   "channel_url": "https://www.youtube.com/channel/UCu8wbE6lFOmw_RVgrAChVeg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCUaDgqrA3RIeLIj09EPeEvw",
+   "channel_url": "https://www.youtube.com/channel/UCUaDgqrA3RIeLIj09EPeEvw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCoThciojnJxEyhq3Zn32R-Q",
+   "channel_url": "https://www.youtube.com/channel/UCoThciojnJxEyhq3Zn32R-Q"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCkKwiMwQ-ErcTqG93NAbWXQ",
+   "channel_url": "https://www.youtube.com/channel/UCkKwiMwQ-ErcTqG93NAbWXQ"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCunOATPtaDbXTyXcn9LRQtw",
+   "channel_url": "https://www.youtube.com/channel/UCunOATPtaDbXTyXcn9LRQtw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UClGYctmyfsQaAPWkyAo3BXg",
+   "channel_url": "https://www.youtube.com/channel/UClGYctmyfsQaAPWkyAo3BXg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCvI3UiwJL5h5wyfz_c-6DLA",
+   "channel_url": "https://www.youtube.com/channel/UCvI3UiwJL5h5wyfz_c-6DLA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UChHfk-K8KhjafVvHn36QYbA",
+   "channel_url": "https://www.youtube.com/channel/UChHfk-K8KhjafVvHn36QYbA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCNSqvS3ESS24QmjjYSVeAvg",
+   "channel_url": "https://www.youtube.com/channel/UCNSqvS3ESS24QmjjYSVeAvg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCB_QDRNPBK3gjDx0y8MVK2g",
+   "channel_url": "https://www.youtube.com/channel/UCB_QDRNPBK3gjDx0y8MVK2g"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UC7vCEdDkkhrJiEyWFrF0mhA",
+   "channel_url": "https://www.youtube.com/channel/UC7vCEdDkkhrJiEyWFrF0mhA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCqD-5Y_mZnV0DtW1GWIfa_A",
+   "channel_url": "https://www.youtube.com/channel/UCqD-5Y_mZnV0DtW1GWIfa_A"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCCv7MD99N1NfbkNolycFXWw",
+   "channel_url": "https://www.youtube.com/channel/UCCv7MD99N1NfbkNolycFXWw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCKCy9lRqpXSYIV5pHrjFciw",
+   "channel_url": "https://www.youtube.com/channel/UCKCy9lRqpXSYIV5pHrjFciw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCHJmGCUY7Zhr-bMQj4G80kA",
+   "channel_url": "https://www.youtube.com/channel/UCHJmGCUY7Zhr-bMQj4G80kA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCn8nCiOJV644Lo26ZDMZFyw",
+   "channel_url": "https://www.youtube.com/channel/UCn8nCiOJV644Lo26ZDMZFyw"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCtvP9npKP418uM7y7hdv2qg",
+   "channel_url": "https://www.youtube.com/channel/UCtvP9npKP418uM7y7hdv2qg"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCPX1a7c-4s_6Lk4WBewygSA",
+   "channel_url": "https://www.youtube.com/channel/UCPX1a7c-4s_6Lk4WBewygSA"
+  },
+  {
+   "vertical": "ski_snowboard",
+   "channel_id": "UCaeWo4uteXQJNTMJbyl6tjA",
+   "channel_url": "https://www.youtube.com/channel/UCaeWo4uteXQJNTMJbyl6tjA"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCVbZxCoIof1UAFIGeJgJKtA",
+   "channel_url": "https://www.youtube.com/channel/UCVbZxCoIof1UAFIGeJgJKtA"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCeD_FgCDfV7LrEb-w4JzRhg",
+   "channel_url": "https://www.youtube.com/channel/UCeD_FgCDfV7LrEb-w4JzRhg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCtGOcO4Qivt_KrbjmwDeyQA",
+   "channel_url": "https://www.youtube.com/channel/UCtGOcO4Qivt_KrbjmwDeyQA"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCXgrm8c8lC7YJKFBGmdzLYA",
+   "channel_url": "https://www.youtube.com/channel/UCXgrm8c8lC7YJKFBGmdzLYA"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCrfkFpAJUeHP0Y5JEMmIXXw",
+   "channel_url": "https://www.youtube.com/channel/UCrfkFpAJUeHP0Y5JEMmIXXw"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCwnJt7UaBGzQZ87f8PyC8KA",
+   "channel_url": "https://www.youtube.com/channel/UCwnJt7UaBGzQZ87f8PyC8KA"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCq-xa72Rbsn24TZ8aqwQrdw",
+   "channel_url": "https://www.youtube.com/channel/UCq-xa72Rbsn24TZ8aqwQrdw"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCiWFHBP-d3GNxg_U3NYJKyg",
+   "channel_url": "https://www.youtube.com/channel/UCiWFHBP-d3GNxg_U3NYJKyg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCVz_TbWRCw826-0VZSHBMGg",
+   "channel_url": "https://www.youtube.com/channel/UCVz_TbWRCw826-0VZSHBMGg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCzh0X0e16FoSGs2fv5akmJQ",
+   "channel_url": "https://www.youtube.com/channel/UCzh0X0e16FoSGs2fv5akmJQ"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCT1AD7RYEtRR9frZFKyaNAQ",
+   "channel_url": "https://www.youtube.com/channel/UCT1AD7RYEtRR9frZFKyaNAQ"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UC-KQejw_wqiRht6JBMj1Jxg",
+   "channel_url": "https://www.youtube.com/channel/UC-KQejw_wqiRht6JBMj1Jxg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UC-jrJDE909guQH6PlBt6iyA",
+   "channel_url": "https://www.youtube.com/channel/UC-jrJDE909guQH6PlBt6iyA"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCJHsbLVR6GudZmAMNi0AAeQ",
+   "channel_url": "https://www.youtube.com/channel/UCJHsbLVR6GudZmAMNi0AAeQ"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UClER9_0NV4hFa1BNPX5ZpJQ",
+   "channel_url": "https://www.youtube.com/channel/UClER9_0NV4hFa1BNPX5ZpJQ"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCeiL_TDGZ1xuGyefw1jGbjg",
+   "channel_url": "https://www.youtube.com/channel/UCeiL_TDGZ1xuGyefw1jGbjg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCITy_PKDE9vc9cT-3G5DkLQ",
+   "channel_url": "https://www.youtube.com/channel/UCITy_PKDE9vc9cT-3G5DkLQ"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCx84l7oNMRuJ_GTRioq4Byg",
+   "channel_url": "https://www.youtube.com/channel/UCx84l7oNMRuJ_GTRioq4Byg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UC7SdB2kC2HAPoNf3Gl5KJlg",
+   "channel_url": "https://www.youtube.com/channel/UC7SdB2kC2HAPoNf3Gl5KJlg"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCS7jROFlL0zKWTReADQIY9Q",
+   "channel_url": "https://www.youtube.com/channel/UCS7jROFlL0zKWTReADQIY9Q"
+  },
+  {
+   "vertical": "climbing_bouldering",
+   "channel_id": "UCYRlIAy59A_c43pd5gNGvRQ",
+   "channel_url": "https://www.youtube.com/channel/UCYRlIAy59A_c43pd5gNGvRQ"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCnbedP6zMEJGj_A4DdasBvg",
+   "channel_url": "https://www.youtube.com/channel/UCnbedP6zMEJGj_A4DdasBvg"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCNxmB31eRIYvN2yyAlkQO6Q",
+   "channel_url": "https://www.youtube.com/channel/UCNxmB31eRIYvN2yyAlkQO6Q"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCAvRPzxAXqFY82wO-bhaT1A",
+   "channel_url": "https://www.youtube.com/channel/UCAvRPzxAXqFY82wO-bhaT1A"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UClK--dP7MFWKXVwulEmY1Fw",
+   "channel_url": "https://www.youtube.com/channel/UClK--dP7MFWKXVwulEmY1Fw"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCJp5DA_bcQfzVstJRAIc8Ag",
+   "channel_url": "https://www.youtube.com/channel/UCJp5DA_bcQfzVstJRAIc8Ag"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCwchl7zm5qQ8OwGw6He95VA",
+   "channel_url": "https://www.youtube.com/channel/UCwchl7zm5qQ8OwGw6He95VA"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCmw1s7J6UpPGJ770OiaqC7A",
+   "channel_url": "https://www.youtube.com/channel/UCmw1s7J6UpPGJ770OiaqC7A"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCdslRqC1bNDiL2x6ThAIxPg",
+   "channel_url": "https://www.youtube.com/channel/UCdslRqC1bNDiL2x6ThAIxPg"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCnaEMf9rt7iXwfY8fg6V6AQ",
+   "channel_url": "https://www.youtube.com/channel/UCnaEMf9rt7iXwfY8fg6V6AQ"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCbyxeEGo_rHegF0Sld-3KSQ",
+   "channel_url": "https://www.youtube.com/channel/UCbyxeEGo_rHegF0Sld-3KSQ"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UC0L1suV8pVgO4pCAIBNGx5w",
+   "channel_url": "https://www.youtube.com/channel/UC0L1suV8pVgO4pCAIBNGx5w"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCsVXjNRWJMyXViNLM2pyMfg",
+   "channel_url": "https://www.youtube.com/channel/UCsVXjNRWJMyXViNLM2pyMfg"
+  },
+  {
+   "vertical": "diving_freediving",
+   "channel_id": "UCEwgQGIA2RbRw26CDYoMp7Q",
+   "channel_url": "https://www.youtube.com/channel/UCEwgQGIA2RbRw26CDYoMp7Q"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCB1L2RL_hDaqFqv4ogvtd4w",
+   "channel_url": "https://www.youtube.com/channel/UCB1L2RL_hDaqFqv4ogvtd4w"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCHpYvqW0vPcR7fw1nh2b-fQ",
+   "channel_url": "https://www.youtube.com/channel/UCHpYvqW0vPcR7fw1nh2b-fQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCYibPywrFbjrDljGqYy_Zxw",
+   "channel_url": "https://www.youtube.com/channel/UCYibPywrFbjrDljGqYy_Zxw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCUv7Z0jj0fR5L1xZdgGQA_w",
+   "channel_url": "https://www.youtube.com/channel/UCUv7Z0jj0fR5L1xZdgGQA_w"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCn_lFpUEwTR9iH_FrggJm1w",
+   "channel_url": "https://www.youtube.com/channel/UCn_lFpUEwTR9iH_FrggJm1w"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCfq8D9tzZIG8A9D4Up11m7g",
+   "channel_url": "https://www.youtube.com/channel/UCfq8D9tzZIG8A9D4Up11m7g"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCIjodR4qQsEwUYnfSmqmYDQ",
+   "channel_url": "https://www.youtube.com/channel/UCIjodR4qQsEwUYnfSmqmYDQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCXPJU9IaAhXXnmAgMKVgc-A",
+   "channel_url": "https://www.youtube.com/channel/UCXPJU9IaAhXXnmAgMKVgc-A"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCoraOms4cTbKoSigJlvZKhw",
+   "channel_url": "https://www.youtube.com/channel/UCoraOms4cTbKoSigJlvZKhw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCnehB9bmRz5e8Xbu-j59dNQ",
+   "channel_url": "https://www.youtube.com/channel/UCnehB9bmRz5e8Xbu-j59dNQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCd_xQRiSE1Y7DUU03FpQMHQ",
+   "channel_url": "https://www.youtube.com/channel/UCd_xQRiSE1Y7DUU03FpQMHQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCN5M4ilQUw8QUWrs-uq27-A",
+   "channel_url": "https://www.youtube.com/channel/UCN5M4ilQUw8QUWrs-uq27-A"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCA49ktWnaAdxGJHFSFirLbQ",
+   "channel_url": "https://www.youtube.com/channel/UCA49ktWnaAdxGJHFSFirLbQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCsFctXdFnbeoKpLefdEloEQ",
+   "channel_url": "https://www.youtube.com/channel/UCsFctXdFnbeoKpLefdEloEQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCCEcldwDEvAiXa1XL7V-b0w",
+   "channel_url": "https://www.youtube.com/channel/UCCEcldwDEvAiXa1XL7V-b0w"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UC3c1dPjtBDdmAKB7sbbe6jA",
+   "channel_url": "https://www.youtube.com/channel/UC3c1dPjtBDdmAKB7sbbe6jA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UC8i-N_JAbEy7oVGifegSDHA",
+   "channel_url": "https://www.youtube.com/channel/UC8i-N_JAbEy7oVGifegSDHA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCDeWJnwrPc2emyMjbWwY1wA",
+   "channel_url": "https://www.youtube.com/channel/UCDeWJnwrPc2emyMjbWwY1wA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCP1YtEUR_Kw2wCStC7Z_c-A",
+   "channel_url": "https://www.youtube.com/channel/UCP1YtEUR_Kw2wCStC7Z_c-A"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UC2CL9_2pWHaz-z9e5EVMA0Q",
+   "channel_url": "https://www.youtube.com/channel/UC2CL9_2pWHaz-z9e5EVMA0Q"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCw9VurEXpjj3nioB251n5CA",
+   "channel_url": "https://www.youtube.com/channel/UCw9VurEXpjj3nioB251n5CA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCXOkGNwEHPAPxQXveJu1X7A",
+   "channel_url": "https://www.youtube.com/channel/UCXOkGNwEHPAPxQXveJu1X7A"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UC_HDOPlQCM5v1yF6CfGUQCQ",
+   "channel_url": "https://www.youtube.com/channel/UC_HDOPlQCM5v1yF6CfGUQCQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UC_lMXIg7-2duykFib_MV9CA",
+   "channel_url": "https://www.youtube.com/channel/UC_lMXIg7-2duykFib_MV9CA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCD-QU-CZNYY8YIfhXT-zuhQ",
+   "channel_url": "https://www.youtube.com/channel/UCD-QU-CZNYY8YIfhXT-zuhQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCAufMQ4FT4wwiH__qdCWCzQ",
+   "channel_url": "https://www.youtube.com/channel/UCAufMQ4FT4wwiH__qdCWCzQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCewscAHCUvuusguafB5QyAA",
+   "channel_url": "https://www.youtube.com/channel/UCewscAHCUvuusguafB5QyAA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCKhJto32Wm5INNgvc4lOcGg",
+   "channel_url": "https://www.youtube.com/channel/UCKhJto32Wm5INNgvc4lOcGg"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCkabQDa6r-ci7jLTO7_1CMg",
+   "channel_url": "https://www.youtube.com/channel/UCkabQDa6r-ci7jLTO7_1CMg"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCScHdYFS_KBduqkRBjbQNuA",
+   "channel_url": "https://www.youtube.com/channel/UCScHdYFS_KBduqkRBjbQNuA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UChS_OmcvU43ikdFHZyM35Fw",
+   "channel_url": "https://www.youtube.com/channel/UChS_OmcvU43ikdFHZyM35Fw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCW3T8dQVEynwj6-_DArcM7w",
+   "channel_url": "https://www.youtube.com/channel/UCW3T8dQVEynwj6-_DArcM7w"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCu8YylsPiu9XfaQC74Hr_Gw",
+   "channel_url": "https://www.youtube.com/channel/UCu8YylsPiu9XfaQC74Hr_Gw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCdZqx1ZX5d8TB_aI9pEcxTw",
+   "channel_url": "https://www.youtube.com/channel/UCdZqx1ZX5d8TB_aI9pEcxTw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCcH2FjhSEHpFHhHBaeKVDOA",
+   "channel_url": "https://www.youtube.com/channel/UCcH2FjhSEHpFHhHBaeKVDOA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UC2e9JrZHH6gVcAq2HSspKKw",
+   "channel_url": "https://www.youtube.com/channel/UC2e9JrZHH6gVcAq2HSspKKw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCDPNxSeTS1EUxM5BZxAM6dg",
+   "channel_url": "https://www.youtube.com/channel/UCDPNxSeTS1EUxM5BZxAM6dg"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCqQXv13wl6PDNks0JR-gssw",
+   "channel_url": "https://www.youtube.com/channel/UCqQXv13wl6PDNks0JR-gssw"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCqUy5JJ0J8TiCeoEz5d5LKA",
+   "channel_url": "https://www.youtube.com/channel/UCqUy5JJ0J8TiCeoEz5d5LKA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCFXKQnj73kqse7HC2m3Upow",
+   "channel_url": "https://www.youtube.com/channel/UCFXKQnj73kqse7HC2m3Upow"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCjrIo9Y18UsML2bivlgkgRQ",
+   "channel_url": "https://www.youtube.com/channel/UCjrIo9Y18UsML2bivlgkgRQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCuGQuZoy4XZ82L21WVI8BsA",
+   "channel_url": "https://www.youtube.com/channel/UCuGQuZoy4XZ82L21WVI8BsA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCfs836yXCDcWzToSO8olWTA",
+   "channel_url": "https://www.youtube.com/channel/UCfs836yXCDcWzToSO8olWTA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCUtowtXwca806IvXR67BdzA",
+   "channel_url": "https://www.youtube.com/channel/UCUtowtXwca806IvXR67BdzA"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCU1F3IShyHcOJUmv8nH48kQ",
+   "channel_url": "https://www.youtube.com/channel/UCU1F3IShyHcOJUmv8nH48kQ"
+  },
+  {
+   "vertical": "trail_running",
+   "channel_id": "UCnIyytMWGt41WZAc6QocKcQ",
+   "channel_url": "https://www.youtube.com/channel/UCnIyytMWGt41WZAc6QocKcQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCQj-aao-K4NQCHRAh59cGuQ",
+   "channel_url": "https://www.youtube.com/channel/UCQj-aao-K4NQCHRAh59cGuQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCqhybVjBh22CKrE4YJmrcpA",
+   "channel_url": "https://www.youtube.com/channel/UCqhybVjBh22CKrE4YJmrcpA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC50A3alImgi4P2yktnIUsdw",
+   "channel_url": "https://www.youtube.com/channel/UC50A3alImgi4P2yktnIUsdw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCZ3uqlDpYjPziNbJnGehyuw",
+   "channel_url": "https://www.youtube.com/channel/UCZ3uqlDpYjPziNbJnGehyuw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCU5loa8IhW8nxDi5JlmvxHg",
+   "channel_url": "https://www.youtube.com/channel/UCU5loa8IhW8nxDi5JlmvxHg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCbFBfgyrIx_Q78H5cgTW_Ow",
+   "channel_url": "https://www.youtube.com/channel/UCbFBfgyrIx_Q78H5cgTW_Ow"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCEni6cBCHItfumvBFoCzyog",
+   "channel_url": "https://www.youtube.com/channel/UCEni6cBCHItfumvBFoCzyog"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC3fmUyuCPnu4xl4-3sd2miA",
+   "channel_url": "https://www.youtube.com/channel/UC3fmUyuCPnu4xl4-3sd2miA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCMnDOuJDEi7cGjQiBiqVK2Q",
+   "channel_url": "https://www.youtube.com/channel/UCMnDOuJDEi7cGjQiBiqVK2Q"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCQSjiJnfzIZUpViFTolVIqQ",
+   "channel_url": "https://www.youtube.com/channel/UCQSjiJnfzIZUpViFTolVIqQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCnXcauRB1GT9taE49A8tdvw",
+   "channel_url": "https://www.youtube.com/channel/UCnXcauRB1GT9taE49A8tdvw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC6pJBgO-hN1v9TWGcpLdOyA",
+   "channel_url": "https://www.youtube.com/channel/UC6pJBgO-hN1v9TWGcpLdOyA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC15_JWyO0xsrV-W-pYdFtBQ",
+   "channel_url": "https://www.youtube.com/channel/UC15_JWyO0xsrV-W-pYdFtBQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UChhwD5p2bUEpGBYrtvTTvcQ",
+   "channel_url": "https://www.youtube.com/channel/UChhwD5p2bUEpGBYrtvTTvcQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCOz_tgJjDtpCjkMl-NF1juw",
+   "channel_url": "https://www.youtube.com/channel/UCOz_tgJjDtpCjkMl-NF1juw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCpLdVk1C9OqNmoLvmVBZcDg",
+   "channel_url": "https://www.youtube.com/channel/UCpLdVk1C9OqNmoLvmVBZcDg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCmT69Nr6zmp4DMW3IZee6zw",
+   "channel_url": "https://www.youtube.com/channel/UCmT69Nr6zmp4DMW3IZee6zw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC93P3Sl3KhuLQyEgdy5I50g",
+   "channel_url": "https://www.youtube.com/channel/UC93P3Sl3KhuLQyEgdy5I50g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCM4Vz3l4i7x-arrmPbSEEcw",
+   "channel_url": "https://www.youtube.com/channel/UCM4Vz3l4i7x-arrmPbSEEcw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC0DBQZJiIUs15CQN_fot0SA",
+   "channel_url": "https://www.youtube.com/channel/UC0DBQZJiIUs15CQN_fot0SA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC5tgahQjQpfzDk12m5FmJ8g",
+   "channel_url": "https://www.youtube.com/channel/UC5tgahQjQpfzDk12m5FmJ8g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCAZ9mAx3rrqOi4fd0uRkEGA",
+   "channel_url": "https://www.youtube.com/channel/UCAZ9mAx3rrqOi4fd0uRkEGA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCOKKbHE8epF5ory1otJOn9A",
+   "channel_url": "https://www.youtube.com/channel/UCOKKbHE8epF5ory1otJOn9A"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCXRIaLVp6Qh2HMisvlOTmSw",
+   "channel_url": "https://www.youtube.com/channel/UCXRIaLVp6Qh2HMisvlOTmSw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCYbtePXSGytkIKdxsnrHCsw",
+   "channel_url": "https://www.youtube.com/channel/UCYbtePXSGytkIKdxsnrHCsw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC-jN1vVluFNSAUqtXTsv8bQ",
+   "channel_url": "https://www.youtube.com/channel/UC-jN1vVluFNSAUqtXTsv8bQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCwTBAcM4pLz7qMkPr8-9New",
+   "channel_url": "https://www.youtube.com/channel/UCwTBAcM4pLz7qMkPr8-9New"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCpbal67ET03BH9Qlbhgn-3g",
+   "channel_url": "https://www.youtube.com/channel/UCpbal67ET03BH9Qlbhgn-3g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCPCq2twyry7ddFMQIYvYfcg",
+   "channel_url": "https://www.youtube.com/channel/UCPCq2twyry7ddFMQIYvYfcg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCRks27jD1PAB42_kD9kCboQ",
+   "channel_url": "https://www.youtube.com/channel/UCRks27jD1PAB42_kD9kCboQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCEqIeKfCjW4e4_S6rsG233g",
+   "channel_url": "https://www.youtube.com/channel/UCEqIeKfCjW4e4_S6rsG233g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC3En-96GnlLqfoPaeuqfHyA",
+   "channel_url": "https://www.youtube.com/channel/UC3En-96GnlLqfoPaeuqfHyA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCTb3CbjWRDfD7UAWLIFBoKQ",
+   "channel_url": "https://www.youtube.com/channel/UCTb3CbjWRDfD7UAWLIFBoKQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCe9vhgmW3wz5xtqWC8EcNUg",
+   "channel_url": "https://www.youtube.com/channel/UCe9vhgmW3wz5xtqWC8EcNUg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC0rMd26QX0ww9T9ULFwDmRg",
+   "channel_url": "https://www.youtube.com/channel/UC0rMd26QX0ww9T9ULFwDmRg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCs3QLeUy1Wqu_Xr9fAD0r_w",
+   "channel_url": "https://www.youtube.com/channel/UCs3QLeUy1Wqu_Xr9fAD0r_w"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCENP-X8ir04pzfXxd82F1RA",
+   "channel_url": "https://www.youtube.com/channel/UCENP-X8ir04pzfXxd82F1RA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCmpBaVt70o_YhZJYKvvCFcg",
+   "channel_url": "https://www.youtube.com/channel/UCmpBaVt70o_YhZJYKvvCFcg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC5fccFprLvNtfQIebZp8abg",
+   "channel_url": "https://www.youtube.com/channel/UC5fccFprLvNtfQIebZp8abg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCrhyZ5hdhNkzkOW5GWPk1eg",
+   "channel_url": "https://www.youtube.com/channel/UCrhyZ5hdhNkzkOW5GWPk1eg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCxlTGXwAjPqbLvvQ9IpVQKw",
+   "channel_url": "https://www.youtube.com/channel/UCxlTGXwAjPqbLvvQ9IpVQKw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC2s8b6p8w-IvU8UQ89KBnkg",
+   "channel_url": "https://www.youtube.com/channel/UC2s8b6p8w-IvU8UQ89KBnkg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCAlw6vgbaiHC_BThXKfq_Gg",
+   "channel_url": "https://www.youtube.com/channel/UCAlw6vgbaiHC_BThXKfq_Gg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCeMhoDeaoq1c1SxxZMCdP9A",
+   "channel_url": "https://www.youtube.com/channel/UCeMhoDeaoq1c1SxxZMCdP9A"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCUDYoU8PY6FiM5J53Ge04XQ",
+   "channel_url": "https://www.youtube.com/channel/UCUDYoU8PY6FiM5J53Ge04XQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCU89ddcMyedSMcftiQ9E3KQ",
+   "channel_url": "https://www.youtube.com/channel/UCU89ddcMyedSMcftiQ9E3KQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCy_VzEH2uc8Ahx3iOs5WczA",
+   "channel_url": "https://www.youtube.com/channel/UCy_VzEH2uc8Ahx3iOs5WczA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCr8SSTZYhm2s_ZygwRcFKqA",
+   "channel_url": "https://www.youtube.com/channel/UCr8SSTZYhm2s_ZygwRcFKqA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCEn2wgTk6Lj2nAcuiuZOz6w",
+   "channel_url": "https://www.youtube.com/channel/UCEn2wgTk6Lj2nAcuiuZOz6w"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCIPwDWXooBg6KvR-zqiiqwQ",
+   "channel_url": "https://www.youtube.com/channel/UCIPwDWXooBg6KvR-zqiiqwQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCKvtq_W4MMt_QfPQU7Kl8oA",
+   "channel_url": "https://www.youtube.com/channel/UCKvtq_W4MMt_QfPQU7Kl8oA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCtuwLOZGwm_fQ18EBFyzxOw",
+   "channel_url": "https://www.youtube.com/channel/UCtuwLOZGwm_fQ18EBFyzxOw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCIzIQfewNhKyBHsoG2dfHhg",
+   "channel_url": "https://www.youtube.com/channel/UCIzIQfewNhKyBHsoG2dfHhg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCxW2svqu_jFT3HowM0rNbbA",
+   "channel_url": "https://www.youtube.com/channel/UCxW2svqu_jFT3HowM0rNbbA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCOMmSvUwQHqK3L1YPsV_0xQ",
+   "channel_url": "https://www.youtube.com/channel/UCOMmSvUwQHqK3L1YPsV_0xQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCyGCNimtYbe6coA7iz1OHtw",
+   "channel_url": "https://www.youtube.com/channel/UCyGCNimtYbe6coA7iz1OHtw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCL9oIFoVMW0h5hE_dSQ7pJA",
+   "channel_url": "https://www.youtube.com/channel/UCL9oIFoVMW0h5hE_dSQ7pJA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC3Ud8r8QcW_MFIfHhWvApYg",
+   "channel_url": "https://www.youtube.com/channel/UC3Ud8r8QcW_MFIfHhWvApYg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UChOsRNGNnngVFr8n700ZKgw",
+   "channel_url": "https://www.youtube.com/channel/UChOsRNGNnngVFr8n700ZKgw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCBzZSRfVaU15YvElLz0GGvg",
+   "channel_url": "https://www.youtube.com/channel/UCBzZSRfVaU15YvElLz0GGvg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCVzXVA5qchbl2NsD5AwHfBA",
+   "channel_url": "https://www.youtube.com/channel/UCVzXVA5qchbl2NsD5AwHfBA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCectshVe1QHkjHuhVk7LV5A",
+   "channel_url": "https://www.youtube.com/channel/UCectshVe1QHkjHuhVk7LV5A"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCGeWQ0zjnJcOq6donXz9rZQ",
+   "channel_url": "https://www.youtube.com/channel/UCGeWQ0zjnJcOq6donXz9rZQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC3ZRMwdSMKIQrmr_BmBcsiA",
+   "channel_url": "https://www.youtube.com/channel/UC3ZRMwdSMKIQrmr_BmBcsiA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCPDF_cwpB5FijHVPWkbp4HQ",
+   "channel_url": "https://www.youtube.com/channel/UCPDF_cwpB5FijHVPWkbp4HQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCCjjZ-Qc43dF7xHBC92MAuA",
+   "channel_url": "https://www.youtube.com/channel/UCCjjZ-Qc43dF7xHBC92MAuA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCYDLTKJg3eH3tWWGzbkq1Iw",
+   "channel_url": "https://www.youtube.com/channel/UCYDLTKJg3eH3tWWGzbkq1Iw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCWi18LvJQbolJh9JYTZ5-aA",
+   "channel_url": "https://www.youtube.com/channel/UCWi18LvJQbolJh9JYTZ5-aA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCU5cG6kwr_6anXmI9myfg1Q",
+   "channel_url": "https://www.youtube.com/channel/UCU5cG6kwr_6anXmI9myfg1Q"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC4neTteursNfqLs8-4coGaw",
+   "channel_url": "https://www.youtube.com/channel/UC4neTteursNfqLs8-4coGaw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCFhLhnXqAoq97KM3IZhJyJQ",
+   "channel_url": "https://www.youtube.com/channel/UCFhLhnXqAoq97KM3IZhJyJQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC5tlGf0fvu7P4RwI1kqoMKQ",
+   "channel_url": "https://www.youtube.com/channel/UC5tlGf0fvu7P4RwI1kqoMKQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCRW4WrZmL6--zVTPhlmR27g",
+   "channel_url": "https://www.youtube.com/channel/UCRW4WrZmL6--zVTPhlmR27g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCWXcW2AkrvhwzaV9LKT5Gxg",
+   "channel_url": "https://www.youtube.com/channel/UCWXcW2AkrvhwzaV9LKT5Gxg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCUZgVgHezuZA_HmMFtE6s6w",
+   "channel_url": "https://www.youtube.com/channel/UCUZgVgHezuZA_HmMFtE6s6w"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCU8GWwigwbtfTNq-TEnbOQw",
+   "channel_url": "https://www.youtube.com/channel/UCU8GWwigwbtfTNq-TEnbOQw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCdK2PRntzXEN_vQAYnOLFBg",
+   "channel_url": "https://www.youtube.com/channel/UCdK2PRntzXEN_vQAYnOLFBg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCNlDn43wiA9TtnIyvtS3NmA",
+   "channel_url": "https://www.youtube.com/channel/UCNlDn43wiA9TtnIyvtS3NmA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCnP81-17yufSyG-8JKrUU9g",
+   "channel_url": "https://www.youtube.com/channel/UCnP81-17yufSyG-8JKrUU9g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC6Z_-RPYxc3Tav1bI7gt3lg",
+   "channel_url": "https://www.youtube.com/channel/UC6Z_-RPYxc3Tav1bI7gt3lg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCrMhSsQ-3zLsnV-nthp1-_Q",
+   "channel_url": "https://www.youtube.com/channel/UCrMhSsQ-3zLsnV-nthp1-_Q"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCjQRYGHoALku4l2LBRxcE-A",
+   "channel_url": "https://www.youtube.com/channel/UCjQRYGHoALku4l2LBRxcE-A"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCWYbpTY4kk1nsP1yfRuk1VQ",
+   "channel_url": "https://www.youtube.com/channel/UCWYbpTY4kk1nsP1yfRuk1VQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC0fOu2HyFcSJVB_LP6kNGFQ",
+   "channel_url": "https://www.youtube.com/channel/UC0fOu2HyFcSJVB_LP6kNGFQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UChWCblptkMZ-Y9OHs1dwl5A",
+   "channel_url": "https://www.youtube.com/channel/UChWCblptkMZ-Y9OHs1dwl5A"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCTqeAJnuDQdQfGiBDySamlg",
+   "channel_url": "https://www.youtube.com/channel/UCTqeAJnuDQdQfGiBDySamlg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCNEdTUgr46uQFvVALQrT_sQ",
+   "channel_url": "https://www.youtube.com/channel/UCNEdTUgr46uQFvVALQrT_sQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC-MiaGIuDkdGZ9yypzNJ8GQ",
+   "channel_url": "https://www.youtube.com/channel/UC-MiaGIuDkdGZ9yypzNJ8GQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCsjfKBmjXF85NGaRWyeEjhA",
+   "channel_url": "https://www.youtube.com/channel/UCsjfKBmjXF85NGaRWyeEjhA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCsLEgHv1G8QGbbSBJq8Ig4Q",
+   "channel_url": "https://www.youtube.com/channel/UCsLEgHv1G8QGbbSBJq8Ig4Q"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCpWyegKCZJMQ8M-QoJ9Og7w",
+   "channel_url": "https://www.youtube.com/channel/UCpWyegKCZJMQ8M-QoJ9Og7w"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCcanwUyDy2RIuRfnxwXQ0Fw",
+   "channel_url": "https://www.youtube.com/channel/UCcanwUyDy2RIuRfnxwXQ0Fw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCTzhPRTLtvfJLz9hF_w_mfw",
+   "channel_url": "https://www.youtube.com/channel/UCTzhPRTLtvfJLz9hF_w_mfw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCZ9s9Y7emnNUuZz-qgrJZrw",
+   "channel_url": "https://www.youtube.com/channel/UCZ9s9Y7emnNUuZz-qgrJZrw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCvmpLYeIXkAhS8FGNwSzhIw",
+   "channel_url": "https://www.youtube.com/channel/UCvmpLYeIXkAhS8FGNwSzhIw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCMZtRy0S5IrN0N4ZZGxe2lw",
+   "channel_url": "https://www.youtube.com/channel/UCMZtRy0S5IrN0N4ZZGxe2lw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCgtehR4l8vO5HkSQ99biu4Q",
+   "channel_url": "https://www.youtube.com/channel/UCgtehR4l8vO5HkSQ99biu4Q"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCmP8t1F9Xf0wj2GneHl8mrQ",
+   "channel_url": "https://www.youtube.com/channel/UCmP8t1F9Xf0wj2GneHl8mrQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCunBBk4lc6wcRMU3xsYyGSQ",
+   "channel_url": "https://www.youtube.com/channel/UCunBBk4lc6wcRMU3xsYyGSQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCx47wqLmMejax7bSeTXBCcg",
+   "channel_url": "https://www.youtube.com/channel/UCx47wqLmMejax7bSeTXBCcg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCnZSWhBI9KOvZ9nu0iatDjQ",
+   "channel_url": "https://www.youtube.com/channel/UCnZSWhBI9KOvZ9nu0iatDjQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCGCqrzkGAe29HFa4wJg8T9g",
+   "channel_url": "https://www.youtube.com/channel/UCGCqrzkGAe29HFa4wJg8T9g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCWKS94Y7hJBRpBoyhmiXXDQ",
+   "channel_url": "https://www.youtube.com/channel/UCWKS94Y7hJBRpBoyhmiXXDQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCnaQ7079HRR7s82wBrTK4Dw",
+   "channel_url": "https://www.youtube.com/channel/UCnaQ7079HRR7s82wBrTK4Dw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC9_jxcFanNunM1Mf0zwt5Ug",
+   "channel_url": "https://www.youtube.com/channel/UC9_jxcFanNunM1Mf0zwt5Ug"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCZO1xsb0rRf_uBDmug8pROQ",
+   "channel_url": "https://www.youtube.com/channel/UCZO1xsb0rRf_uBDmug8pROQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCb3KwY6oUqATTRQa4m4fIDw",
+   "channel_url": "https://www.youtube.com/channel/UCb3KwY6oUqATTRQa4m4fIDw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC230SvXRyF-gET2uIOzG58Q",
+   "channel_url": "https://www.youtube.com/channel/UC230SvXRyF-gET2uIOzG58Q"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCXNexg-9up3me0ZFZNsg6MQ",
+   "channel_url": "https://www.youtube.com/channel/UCXNexg-9up3me0ZFZNsg6MQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC0Ihuy4gj2w-AYEQXRnUdUA",
+   "channel_url": "https://www.youtube.com/channel/UC0Ihuy4gj2w-AYEQXRnUdUA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC76p_oNQxZVovwcTAkqD3EA",
+   "channel_url": "https://www.youtube.com/channel/UC76p_oNQxZVovwcTAkqD3EA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCcR4cyQyAF-guvk7Wm5Lbqg",
+   "channel_url": "https://www.youtube.com/channel/UCcR4cyQyAF-guvk7Wm5Lbqg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCuouNT9ddEC0JizBs_9FFzw",
+   "channel_url": "https://www.youtube.com/channel/UCuouNT9ddEC0JizBs_9FFzw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCoYKpuwY88h2lpb377vdloQ",
+   "channel_url": "https://www.youtube.com/channel/UCoYKpuwY88h2lpb377vdloQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCwroX5Z5-cubmA5YreyDkVA",
+   "channel_url": "https://www.youtube.com/channel/UCwroX5Z5-cubmA5YreyDkVA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCz3vtNORTVprog5BOdhfujA",
+   "channel_url": "https://www.youtube.com/channel/UCz3vtNORTVprog5BOdhfujA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCRDl_pCgSpAhUbxkRg_DZuw",
+   "channel_url": "https://www.youtube.com/channel/UCRDl_pCgSpAhUbxkRg_DZuw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCsmGXTJyZjvqocpaKEREJkw",
+   "channel_url": "https://www.youtube.com/channel/UCsmGXTJyZjvqocpaKEREJkw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCobhUzoOOty5SKDqmaP_Jkg",
+   "channel_url": "https://www.youtube.com/channel/UCobhUzoOOty5SKDqmaP_Jkg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC5jK_uYSrk-tzjotDXceMOg",
+   "channel_url": "https://www.youtube.com/channel/UC5jK_uYSrk-tzjotDXceMOg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC59rbnUZuo_dPPrccLUtI4w",
+   "channel_url": "https://www.youtube.com/channel/UC59rbnUZuo_dPPrccLUtI4w"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCOBigpB3Pi7Hg5xFucp_Wtw",
+   "channel_url": "https://www.youtube.com/channel/UCOBigpB3Pi7Hg5xFucp_Wtw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC3CxEBKx2l38nl1_SFsC2gg",
+   "channel_url": "https://www.youtube.com/channel/UC3CxEBKx2l38nl1_SFsC2gg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCi-Qdy5IP343H8PESfKQEJw",
+   "channel_url": "https://www.youtube.com/channel/UCi-Qdy5IP343H8PESfKQEJw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCHSKfZf17xVL0dGf-QqJrIw",
+   "channel_url": "https://www.youtube.com/channel/UCHSKfZf17xVL0dGf-QqJrIw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCJ6DoHJO3vqxN4XprOx6LeQ",
+   "channel_url": "https://www.youtube.com/channel/UCJ6DoHJO3vqxN4XprOx6LeQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCzgTyqyAxGgNT2vjQ7Xd3RQ",
+   "channel_url": "https://www.youtube.com/channel/UCzgTyqyAxGgNT2vjQ7Xd3RQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCCkmgsl8W18oR6c_W7UZ1lQ",
+   "channel_url": "https://www.youtube.com/channel/UCCkmgsl8W18oR6c_W7UZ1lQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCbUJoRkF2BIAbcPl_-gBJXA",
+   "channel_url": "https://www.youtube.com/channel/UCbUJoRkF2BIAbcPl_-gBJXA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCiCUiIxc6CsWK75idM0eMLg",
+   "channel_url": "https://www.youtube.com/channel/UCiCUiIxc6CsWK75idM0eMLg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCIvPCzM6BI_q7AnxkdkW3iQ",
+   "channel_url": "https://www.youtube.com/channel/UCIvPCzM6BI_q7AnxkdkW3iQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCr0FeH0yLwU-807ZiPUgzKg",
+   "channel_url": "https://www.youtube.com/channel/UCr0FeH0yLwU-807ZiPUgzKg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCYqh-GANfIZfGNSnmfiO47g",
+   "channel_url": "https://www.youtube.com/channel/UCYqh-GANfIZfGNSnmfiO47g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCdRXSTyax4swWxWk62-JoQA",
+   "channel_url": "https://www.youtube.com/channel/UCdRXSTyax4swWxWk62-JoQA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCVbMKtCyLez6r45LLrgJUzg",
+   "channel_url": "https://www.youtube.com/channel/UCVbMKtCyLez6r45LLrgJUzg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC4EC9u2eMdDfOU8vTGrXlGA",
+   "channel_url": "https://www.youtube.com/channel/UC4EC9u2eMdDfOU8vTGrXlGA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCyedLJ7HeRZsr7jiH4f9WFg",
+   "channel_url": "https://www.youtube.com/channel/UCyedLJ7HeRZsr7jiH4f9WFg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC-bkMqA8QqkHyz-KPCSD7QQ",
+   "channel_url": "https://www.youtube.com/channel/UC-bkMqA8QqkHyz-KPCSD7QQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCelGFXf7shCFACeS2HtRB8g",
+   "channel_url": "https://www.youtube.com/channel/UCelGFXf7shCFACeS2HtRB8g"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCGQ3KNCfZJnbrxDABAobAQg",
+   "channel_url": "https://www.youtube.com/channel/UCGQ3KNCfZJnbrxDABAobAQg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCikStyn1u_JHIXrVofSNcTQ",
+   "channel_url": "https://www.youtube.com/channel/UCikStyn1u_JHIXrVofSNcTQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCaXojaaWrWnXYM2a-NhsbqA",
+   "channel_url": "https://www.youtube.com/channel/UCaXojaaWrWnXYM2a-NhsbqA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC9uXWgwEaM6obA_a5hgs1Pg",
+   "channel_url": "https://www.youtube.com/channel/UC9uXWgwEaM6obA_a5hgs1Pg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC3d7gnCcAXT44c-lOMuS-eQ",
+   "channel_url": "https://www.youtube.com/channel/UC3d7gnCcAXT44c-lOMuS-eQ"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCCe0HYum5SttlVetVNO9qcA",
+   "channel_url": "https://www.youtube.com/channel/UCCe0HYum5SttlVetVNO9qcA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UC70QDVsJdU-V90o_mOWCIpw",
+   "channel_url": "https://www.youtube.com/channel/UC70QDVsJdU-V90o_mOWCIpw"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCfqFFuZJetnEh3rDPWLyB7A",
+   "channel_url": "https://www.youtube.com/channel/UCfqFFuZJetnEh3rDPWLyB7A"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCUOg-dkit4GiNow4iCVLJbA",
+   "channel_url": "https://www.youtube.com/channel/UCUOg-dkit4GiNow4iCVLJbA"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCM-76PfqWz3qUjx4fAnuFMg",
+   "channel_url": "https://www.youtube.com/channel/UCM-76PfqWz3qUjx4fAnuFMg"
+  },
+  {
+   "vertical": "kayak_whitewater",
+   "channel_id": "UCds5ygp77SNY3k7-6bF-TQg",
+   "channel_url": "https://www.youtube.com/channel/UCds5ygp77SNY3k7-6bF-TQg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCoBssFKG7Sh3vTgE2R4rpOg",
+   "channel_url": "https://www.youtube.com/channel/UCoBssFKG7Sh3vTgE2R4rpOg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCwzKfJXBZg46wBuco-rZNbA",
+   "channel_url": "https://www.youtube.com/channel/UCwzKfJXBZg46wBuco-rZNbA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCusD6cPVuc9F9m3L50jCNiA",
+   "channel_url": "https://www.youtube.com/channel/UCusD6cPVuc9F9m3L50jCNiA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCA-wtc6zLLYvL-N1tTibKUA",
+   "channel_url": "https://www.youtube.com/channel/UCA-wtc6zLLYvL-N1tTibKUA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCNHNBVSTBLNAdWR0d6a5XOQ",
+   "channel_url": "https://www.youtube.com/channel/UCNHNBVSTBLNAdWR0d6a5XOQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCgajqnIHzQUYAG9SnhlB18Q",
+   "channel_url": "https://www.youtube.com/channel/UCgajqnIHzQUYAG9SnhlB18Q"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCMPq_m8KUD-oTwvh9yCLtbA",
+   "channel_url": "https://www.youtube.com/channel/UCMPq_m8KUD-oTwvh9yCLtbA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCfq_li2CAOFNb-TVT9gynDg",
+   "channel_url": "https://www.youtube.com/channel/UCfq_li2CAOFNb-TVT9gynDg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCFyU_-O6Vsq_hKauWkYcLEQ",
+   "channel_url": "https://www.youtube.com/channel/UCFyU_-O6Vsq_hKauWkYcLEQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCMcfXX3VLU_a2kDMryTgrRQ",
+   "channel_url": "https://www.youtube.com/channel/UCMcfXX3VLU_a2kDMryTgrRQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCr1O792ANuLtfj_5vOlOCtA",
+   "channel_url": "https://www.youtube.com/channel/UCr1O792ANuLtfj_5vOlOCtA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCf1BX-KmKVsNKe_CdY69bHA",
+   "channel_url": "https://www.youtube.com/channel/UCf1BX-KmKVsNKe_CdY69bHA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCoUxOqehUlkQ74AffwxuPAA",
+   "channel_url": "https://www.youtube.com/channel/UCoUxOqehUlkQ74AffwxuPAA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCGsIL992QyMEHKLLgWMVmDw",
+   "channel_url": "https://www.youtube.com/channel/UCGsIL992QyMEHKLLgWMVmDw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC0R58N7uYmCKn4TbMBP6GVg",
+   "channel_url": "https://www.youtube.com/channel/UC0R58N7uYmCKn4TbMBP6GVg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCNwfXe1PzxrZKaRjGYc3ZYQ",
+   "channel_url": "https://www.youtube.com/channel/UCNwfXe1PzxrZKaRjGYc3ZYQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCMVmLwyuFc8pp3mjuBPchKQ",
+   "channel_url": "https://www.youtube.com/channel/UCMVmLwyuFc8pp3mjuBPchKQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCcZdKBM2TWxisAzDb-jfloA",
+   "channel_url": "https://www.youtube.com/channel/UCcZdKBM2TWxisAzDb-jfloA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCbQmeWsB76dAZRfAGbwuV3A",
+   "channel_url": "https://www.youtube.com/channel/UCbQmeWsB76dAZRfAGbwuV3A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCGj0mtaYGQCBh2vGnigkz8w",
+   "channel_url": "https://www.youtube.com/channel/UCGj0mtaYGQCBh2vGnigkz8w"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCGkIbXBiA9jqtyhc77E4fUw",
+   "channel_url": "https://www.youtube.com/channel/UCGkIbXBiA9jqtyhc77E4fUw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCz69JAjUE44bfm2Y7K2pcMQ",
+   "channel_url": "https://www.youtube.com/channel/UCz69JAjUE44bfm2Y7K2pcMQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCruT23rQPj9G-mOyKAjmFXA",
+   "channel_url": "https://www.youtube.com/channel/UCruT23rQPj9G-mOyKAjmFXA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCdAtqeLQnw75W8-261RkRYw",
+   "channel_url": "https://www.youtube.com/channel/UCdAtqeLQnw75W8-261RkRYw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCfPBS4c83LxW2hVOCn0K02w",
+   "channel_url": "https://www.youtube.com/channel/UCfPBS4c83LxW2hVOCn0K02w"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC6iSIqfkP8Fng43422C924w",
+   "channel_url": "https://www.youtube.com/channel/UC6iSIqfkP8Fng43422C924w"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCPUMT8tpcKW2HvlnaojgNwg",
+   "channel_url": "https://www.youtube.com/channel/UCPUMT8tpcKW2HvlnaojgNwg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCx_nOtH3TqaXbmuNs-9x-UA",
+   "channel_url": "https://www.youtube.com/channel/UCx_nOtH3TqaXbmuNs-9x-UA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC2HCfC7_IGMwF2tgK-TdrWA",
+   "channel_url": "https://www.youtube.com/channel/UC2HCfC7_IGMwF2tgK-TdrWA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCY3NDiGvO80jrEcVzHvxlcQ",
+   "channel_url": "https://www.youtube.com/channel/UCY3NDiGvO80jrEcVzHvxlcQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCQZR3ay0cR76DJndgD6myAw",
+   "channel_url": "https://www.youtube.com/channel/UCQZR3ay0cR76DJndgD6myAw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCvVKZzbyz35THyJZteiFfmA",
+   "channel_url": "https://www.youtube.com/channel/UCvVKZzbyz35THyJZteiFfmA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCSu4eaXny3viprKtbdo-1zA",
+   "channel_url": "https://www.youtube.com/channel/UCSu4eaXny3viprKtbdo-1zA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCt0t0lF5NXQRFjaUkc5jLsw",
+   "channel_url": "https://www.youtube.com/channel/UCt0t0lF5NXQRFjaUkc5jLsw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UClWUCnCdNPOeO76QOPHtwXg",
+   "channel_url": "https://www.youtube.com/channel/UClWUCnCdNPOeO76QOPHtwXg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCixB64Bds3O1ihg7K0yfIWg",
+   "channel_url": "https://www.youtube.com/channel/UCixB64Bds3O1ihg7K0yfIWg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC5ocIwx9phis3YfP6IfYqpA",
+   "channel_url": "https://www.youtube.com/channel/UC5ocIwx9phis3YfP6IfYqpA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCfU7bKeseEisHgWVUOEvqlQ",
+   "channel_url": "https://www.youtube.com/channel/UCfU7bKeseEisHgWVUOEvqlQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCcgbj_CLv_Zrr2YGn5clyfQ",
+   "channel_url": "https://www.youtube.com/channel/UCcgbj_CLv_Zrr2YGn5clyfQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCVei55HbnIhhKaOtYr6WOdg",
+   "channel_url": "https://www.youtube.com/channel/UCVei55HbnIhhKaOtYr6WOdg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCysO7mcTuv7-3BmwMt6wIAw",
+   "channel_url": "https://www.youtube.com/channel/UCysO7mcTuv7-3BmwMt6wIAw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC011DoUchQXc92uc1euBnsg",
+   "channel_url": "https://www.youtube.com/channel/UC011DoUchQXc92uc1euBnsg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCjmZWXBaasQnwPY_agkT_Hw",
+   "channel_url": "https://www.youtube.com/channel/UCjmZWXBaasQnwPY_agkT_Hw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCFHDSwC3BDjZ4YBM7mrKNUQ",
+   "channel_url": "https://www.youtube.com/channel/UCFHDSwC3BDjZ4YBM7mrKNUQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCmnVGVRFff9faqVMQ-tA0Jg",
+   "channel_url": "https://www.youtube.com/channel/UCmnVGVRFff9faqVMQ-tA0Jg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC4qUM5DnZhQ406XJ1EboLfQ",
+   "channel_url": "https://www.youtube.com/channel/UC4qUM5DnZhQ406XJ1EboLfQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCLS8n3vMy_mE8_lB10-bCJA",
+   "channel_url": "https://www.youtube.com/channel/UCLS8n3vMy_mE8_lB10-bCJA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCQMI1tZTgoPgzjzMnsUx87w",
+   "channel_url": "https://www.youtube.com/channel/UCQMI1tZTgoPgzjzMnsUx87w"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCuM5TOvMzLbbBJleMURd-oQ",
+   "channel_url": "https://www.youtube.com/channel/UCuM5TOvMzLbbBJleMURd-oQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCSbPHTteAPEFSSAr7UG2FMg",
+   "channel_url": "https://www.youtube.com/channel/UCSbPHTteAPEFSSAr7UG2FMg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCW8cT2ZXsnVY-CDvUrPUp_g",
+   "channel_url": "https://www.youtube.com/channel/UCW8cT2ZXsnVY-CDvUrPUp_g"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCfcr4YZ-SCIzHs67j5F9szg",
+   "channel_url": "https://www.youtube.com/channel/UCfcr4YZ-SCIzHs67j5F9szg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC7qBGLxjOzKXir6r0erWlJg",
+   "channel_url": "https://www.youtube.com/channel/UC7qBGLxjOzKXir6r0erWlJg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCtT7KuJIJcfn09v8goINGTw",
+   "channel_url": "https://www.youtube.com/channel/UCtT7KuJIJcfn09v8goINGTw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCuGM4qXGoW95jNGyfUfw2Kw",
+   "channel_url": "https://www.youtube.com/channel/UCuGM4qXGoW95jNGyfUfw2Kw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCsDwvzmPGK7PvdiQEmYeHxQ",
+   "channel_url": "https://www.youtube.com/channel/UCsDwvzmPGK7PvdiQEmYeHxQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCB7u90ijO8sHzj0d0SvQgdw",
+   "channel_url": "https://www.youtube.com/channel/UCB7u90ijO8sHzj0d0SvQgdw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCbjcHSJ9kNlonnL9eD59Yxg",
+   "channel_url": "https://www.youtube.com/channel/UCbjcHSJ9kNlonnL9eD59Yxg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCMUb27mr9BBV-5pTDtnrmfw",
+   "channel_url": "https://www.youtube.com/channel/UCMUb27mr9BBV-5pTDtnrmfw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC6DevRBhdC_8tbqsK3y3uPQ",
+   "channel_url": "https://www.youtube.com/channel/UC6DevRBhdC_8tbqsK3y3uPQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCqPzxKRJXogZrc4QDVUSXiQ",
+   "channel_url": "https://www.youtube.com/channel/UCqPzxKRJXogZrc4QDVUSXiQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCbDGvfJHf0r_WjS9voB8POA",
+   "channel_url": "https://www.youtube.com/channel/UCbDGvfJHf0r_WjS9voB8POA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCoMdktPbSTixAyNGwb-UYkQ",
+   "channel_url": "https://www.youtube.com/channel/UCoMdktPbSTixAyNGwb-UYkQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCgELJD7knHYZZkAwEht5PyQ",
+   "channel_url": "https://www.youtube.com/channel/UCgELJD7knHYZZkAwEht5PyQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCweG4toJm3gqJZ53gT3eHBw",
+   "channel_url": "https://www.youtube.com/channel/UCweG4toJm3gqJZ53gT3eHBw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC03yoKBaqVrWnnBZpSVcgFA",
+   "channel_url": "https://www.youtube.com/channel/UC03yoKBaqVrWnnBZpSVcgFA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCjJ-MpJ_NvMwja5Z3_K4okw",
+   "channel_url": "https://www.youtube.com/channel/UCjJ-MpJ_NvMwja5Z3_K4okw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCPw1_mLMMc0TLAdFrQIewiA",
+   "channel_url": "https://www.youtube.com/channel/UCPw1_mLMMc0TLAdFrQIewiA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCTAAoSjIMd4Ue93mCyNQrRQ",
+   "channel_url": "https://www.youtube.com/channel/UCTAAoSjIMd4Ue93mCyNQrRQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCUvzZCXWwk-LfUn9lhnnOPw",
+   "channel_url": "https://www.youtube.com/channel/UCUvzZCXWwk-LfUn9lhnnOPw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC0BIIYXTQIWizAs4Q1rTASw",
+   "channel_url": "https://www.youtube.com/channel/UC0BIIYXTQIWizAs4Q1rTASw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCB0mQukoVN9FLJtkWhXDwbQ",
+   "channel_url": "https://www.youtube.com/channel/UCB0mQukoVN9FLJtkWhXDwbQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC3EEBjdPWa3aIDN6J0Z30tA",
+   "channel_url": "https://www.youtube.com/channel/UC3EEBjdPWa3aIDN6J0Z30tA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCK4URifXxbCpZkn65UMMEmw",
+   "channel_url": "https://www.youtube.com/channel/UCK4URifXxbCpZkn65UMMEmw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC7YibQl0tTukdAk8lQspp_A",
+   "channel_url": "https://www.youtube.com/channel/UC7YibQl0tTukdAk8lQspp_A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCax494c_s1GlRfKJMyGJgEw",
+   "channel_url": "https://www.youtube.com/channel/UCax494c_s1GlRfKJMyGJgEw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCc7LFNWQsp2he-DcoCxMPVw",
+   "channel_url": "https://www.youtube.com/channel/UCc7LFNWQsp2he-DcoCxMPVw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC_9buATB26sk-YT8mgUJavA",
+   "channel_url": "https://www.youtube.com/channel/UC_9buATB26sk-YT8mgUJavA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCk__bxOsoNpo2vBAa5_7wYw",
+   "channel_url": "https://www.youtube.com/channel/UCk__bxOsoNpo2vBAa5_7wYw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCrJUgQh03RsWoJyX_rkCbuQ",
+   "channel_url": "https://www.youtube.com/channel/UCrJUgQh03RsWoJyX_rkCbuQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC4-EeJKDAbUxu51y1QBdmgw",
+   "channel_url": "https://www.youtube.com/channel/UC4-EeJKDAbUxu51y1QBdmgw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC567Z5fi4IakfSu2iI0zuog",
+   "channel_url": "https://www.youtube.com/channel/UC567Z5fi4IakfSu2iI0zuog"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCYbfxah9N0oRCD1hRsgArMQ",
+   "channel_url": "https://www.youtube.com/channel/UCYbfxah9N0oRCD1hRsgArMQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC8Gs8EOweMA7PRsTFosMb-w",
+   "channel_url": "https://www.youtube.com/channel/UC8Gs8EOweMA7PRsTFosMb-w"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCgeezRbZSSVxYKs0nWzPb1A",
+   "channel_url": "https://www.youtube.com/channel/UCgeezRbZSSVxYKs0nWzPb1A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCsmvbdDm7I2cZh406gK1qeA",
+   "channel_url": "https://www.youtube.com/channel/UCsmvbdDm7I2cZh406gK1qeA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCeMfCehQ57WFJgDnrFVxJwQ",
+   "channel_url": "https://www.youtube.com/channel/UCeMfCehQ57WFJgDnrFVxJwQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC6Q7IgNvvHk6pb3_MUYCGxw",
+   "channel_url": "https://www.youtube.com/channel/UC6Q7IgNvvHk6pb3_MUYCGxw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UClq0IZAyB1NTV2RzIBYig5g",
+   "channel_url": "https://www.youtube.com/channel/UClq0IZAyB1NTV2RzIBYig5g"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCCz5JBv39AQAB9avYgEUUpg",
+   "channel_url": "https://www.youtube.com/channel/UCCz5JBv39AQAB9avYgEUUpg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCxdAtF-wHpdD7CifPJnJqWQ",
+   "channel_url": "https://www.youtube.com/channel/UCxdAtF-wHpdD7CifPJnJqWQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCdfzEwY39ZQ0MzE7d2umSYg",
+   "channel_url": "https://www.youtube.com/channel/UCdfzEwY39ZQ0MzE7d2umSYg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCWG8kKkJ5pQ6ZuoeKdxUEkQ",
+   "channel_url": "https://www.youtube.com/channel/UCWG8kKkJ5pQ6ZuoeKdxUEkQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC6wIoxxCGeC2S7uRMcwa0Tw",
+   "channel_url": "https://www.youtube.com/channel/UC6wIoxxCGeC2S7uRMcwa0Tw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCXVsnBw-f_Ey9PS9DKNdREA",
+   "channel_url": "https://www.youtube.com/channel/UCXVsnBw-f_Ey9PS9DKNdREA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCUHiT1J7qYRhbEpFF2n8fCw",
+   "channel_url": "https://www.youtube.com/channel/UCUHiT1J7qYRhbEpFF2n8fCw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCF6kCmz9yk8eYUHEkpELRuQ",
+   "channel_url": "https://www.youtube.com/channel/UCF6kCmz9yk8eYUHEkpELRuQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCHTMJpNJSseS-lZE-KT7mYw",
+   "channel_url": "https://www.youtube.com/channel/UCHTMJpNJSseS-lZE-KT7mYw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCI50AA4bQHW6IFTJ2N4r7EA",
+   "channel_url": "https://www.youtube.com/channel/UCI50AA4bQHW6IFTJ2N4r7EA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UClf36Hdu5Z79FADUmio8avw",
+   "channel_url": "https://www.youtube.com/channel/UClf36Hdu5Z79FADUmio8avw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCreXFjyF-QIeQYB9FkBBdkg",
+   "channel_url": "https://www.youtube.com/channel/UCreXFjyF-QIeQYB9FkBBdkg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCYLiX1xWKilvdz7YFCFyXjg",
+   "channel_url": "https://www.youtube.com/channel/UCYLiX1xWKilvdz7YFCFyXjg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC9wuzEG98vKHb87M30iYTmw",
+   "channel_url": "https://www.youtube.com/channel/UC9wuzEG98vKHb87M30iYTmw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC4NM-X60YOc_AGuJSISZEJw",
+   "channel_url": "https://www.youtube.com/channel/UC4NM-X60YOc_AGuJSISZEJw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC54VWoDWu-7ZvjoaYSblgpg",
+   "channel_url": "https://www.youtube.com/channel/UC54VWoDWu-7ZvjoaYSblgpg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCMvT8ZxHMqgWcsmlQkD5z5g",
+   "channel_url": "https://www.youtube.com/channel/UCMvT8ZxHMqgWcsmlQkD5z5g"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCkoFX2-qzTdRdCRe7f-uWQA",
+   "channel_url": "https://www.youtube.com/channel/UCkoFX2-qzTdRdCRe7f-uWQA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCcyyq3ekzpr2sbeKbm5dfug",
+   "channel_url": "https://www.youtube.com/channel/UCcyyq3ekzpr2sbeKbm5dfug"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCJtOXHi3biRwvS5-f8OyHJw",
+   "channel_url": "https://www.youtube.com/channel/UCJtOXHi3biRwvS5-f8OyHJw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCGb9bvYtY4ceAgaBfVOzYew",
+   "channel_url": "https://www.youtube.com/channel/UCGb9bvYtY4ceAgaBfVOzYew"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UChT1AsUUtFC4hwpIy_dq8Ug",
+   "channel_url": "https://www.youtube.com/channel/UChT1AsUUtFC4hwpIy_dq8Ug"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCUH5EPcGByJ3snuKCgEbzSw",
+   "channel_url": "https://www.youtube.com/channel/UCUH5EPcGByJ3snuKCgEbzSw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCCpZPGNe6eNDnU5vdZ1j1dA",
+   "channel_url": "https://www.youtube.com/channel/UCCpZPGNe6eNDnU5vdZ1j1dA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCIYg3bpmEcHO8Q2NjL4IkAA",
+   "channel_url": "https://www.youtube.com/channel/UCIYg3bpmEcHO8Q2NjL4IkAA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCpG_M7NZNRLkv83VNnKop9g",
+   "channel_url": "https://www.youtube.com/channel/UCpG_M7NZNRLkv83VNnKop9g"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCpko_-a4wgz2u_DgDgd9fqA",
+   "channel_url": "https://www.youtube.com/channel/UCpko_-a4wgz2u_DgDgd9fqA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCkY85EJwL8iSF4Hgq9e4fNw",
+   "channel_url": "https://www.youtube.com/channel/UCkY85EJwL8iSF4Hgq9e4fNw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCmRqlawmlWq7X-_68sFRewg",
+   "channel_url": "https://www.youtube.com/channel/UCmRqlawmlWq7X-_68sFRewg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCAQMvaF5rnOrl7rkH1EFOxQ",
+   "channel_url": "https://www.youtube.com/channel/UCAQMvaF5rnOrl7rkH1EFOxQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCWhMeA7TdkaClRf2jlkcBgg",
+   "channel_url": "https://www.youtube.com/channel/UCWhMeA7TdkaClRf2jlkcBgg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC3WUYmrI1etNl4KOvBnVALA",
+   "channel_url": "https://www.youtube.com/channel/UC3WUYmrI1etNl4KOvBnVALA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC0f8sQmFAV8CPp9gcnmIExw",
+   "channel_url": "https://www.youtube.com/channel/UC0f8sQmFAV8CPp9gcnmIExw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCwbSWJBRu9IQ3xy4mvSGPpQ",
+   "channel_url": "https://www.youtube.com/channel/UCwbSWJBRu9IQ3xy4mvSGPpQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCXtU5T6pM7OBvHS6UBNIy-A",
+   "channel_url": "https://www.youtube.com/channel/UCXtU5T6pM7OBvHS6UBNIy-A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCNe6j_kQ9nbiJwPI4htKGwQ",
+   "channel_url": "https://www.youtube.com/channel/UCNe6j_kQ9nbiJwPI4htKGwQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCXZylDwsIOlHvs1QGfTjx2Q",
+   "channel_url": "https://www.youtube.com/channel/UCXZylDwsIOlHvs1QGfTjx2Q"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCKUmXH3oWXKpBJ3Uv_byCmw",
+   "channel_url": "https://www.youtube.com/channel/UCKUmXH3oWXKpBJ3Uv_byCmw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCItB-CuaySFsWKw-7mSajQg",
+   "channel_url": "https://www.youtube.com/channel/UCItB-CuaySFsWKw-7mSajQg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCG87ddDfzMpzEhBAKLawmGA",
+   "channel_url": "https://www.youtube.com/channel/UCG87ddDfzMpzEhBAKLawmGA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCxl1J1SFxyotTM8efWuO42w",
+   "channel_url": "https://www.youtube.com/channel/UCxl1J1SFxyotTM8efWuO42w"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCFAACQnedsDWACYXTlAuN7A",
+   "channel_url": "https://www.youtube.com/channel/UCFAACQnedsDWACYXTlAuN7A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCReKzVEx2ddISuISimX094Q",
+   "channel_url": "https://www.youtube.com/channel/UCReKzVEx2ddISuISimX094Q"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC76hs2bdrebFYvdR-I8bwyw",
+   "channel_url": "https://www.youtube.com/channel/UC76hs2bdrebFYvdR-I8bwyw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCxFt75OIIvoN4AaL7lJxtTg",
+   "channel_url": "https://www.youtube.com/channel/UCxFt75OIIvoN4AaL7lJxtTg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC8xNTPL3ilmrbHTcy-0kI9A",
+   "channel_url": "https://www.youtube.com/channel/UC8xNTPL3ilmrbHTcy-0kI9A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCVm0xEfzH1cIzab-1Ezr_mQ",
+   "channel_url": "https://www.youtube.com/channel/UCVm0xEfzH1cIzab-1Ezr_mQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC5ECAwkcUrFDxgxcU0um0Ww",
+   "channel_url": "https://www.youtube.com/channel/UC5ECAwkcUrFDxgxcU0um0Ww"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCF2X0SLQSg7cxydM7EtENjA",
+   "channel_url": "https://www.youtube.com/channel/UCF2X0SLQSg7cxydM7EtENjA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCQMRBoZl77zRGtZe9qegJtA",
+   "channel_url": "https://www.youtube.com/channel/UCQMRBoZl77zRGtZe9qegJtA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC5vMlgU0ZwetOCNZ4MKv3HQ",
+   "channel_url": "https://www.youtube.com/channel/UC5vMlgU0ZwetOCNZ4MKv3HQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCZgpc-b2mApbVgOsG6TQosQ",
+   "channel_url": "https://www.youtube.com/channel/UCZgpc-b2mApbVgOsG6TQosQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCEebhAesTqpxU2UmJwAkiuA",
+   "channel_url": "https://www.youtube.com/channel/UCEebhAesTqpxU2UmJwAkiuA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCGaScVv4SpfhjzVBJjsRk4A",
+   "channel_url": "https://www.youtube.com/channel/UCGaScVv4SpfhjzVBJjsRk4A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCw1U27aD56ZCHOmWRt7klVA",
+   "channel_url": "https://www.youtube.com/channel/UCw1U27aD56ZCHOmWRt7klVA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UC7deqPahOR_8SfhpPhdxTXg",
+   "channel_url": "https://www.youtube.com/channel/UC7deqPahOR_8SfhpPhdxTXg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCXIYLgIp6DYZHjmUUUXErmg",
+   "channel_url": "https://www.youtube.com/channel/UCXIYLgIp6DYZHjmUUUXErmg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCjy9A5rSKdDb3rgKlWyAC-A",
+   "channel_url": "https://www.youtube.com/channel/UCjy9A5rSKdDb3rgKlWyAC-A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCwgURKfUA7e0Z7_qE3TvBFQ",
+   "channel_url": "https://www.youtube.com/channel/UCwgURKfUA7e0Z7_qE3TvBFQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCMAwhaxBOE-2xfX2Kcdqy9Q",
+   "channel_url": "https://www.youtube.com/channel/UCMAwhaxBOE-2xfX2Kcdqy9Q"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCqmAtPmEkJdXBxoANTgbWsg",
+   "channel_url": "https://www.youtube.com/channel/UCqmAtPmEkJdXBxoANTgbWsg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCt16NSYjauKclK67LCXvQyA",
+   "channel_url": "https://www.youtube.com/channel/UCt16NSYjauKclK67LCXvQyA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCVH1NHriYVXMZE0UKJk3Tyg",
+   "channel_url": "https://www.youtube.com/channel/UCVH1NHriYVXMZE0UKJk3Tyg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCPj_B3lP7PowsfgA9nI7iWA",
+   "channel_url": "https://www.youtube.com/channel/UCPj_B3lP7PowsfgA9nI7iWA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCchNEnOEBwLqrqBOe-4AIRg",
+   "channel_url": "https://www.youtube.com/channel/UCchNEnOEBwLqrqBOe-4AIRg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCc0wNILBRqIzQSJnGWU-KPQ",
+   "channel_url": "https://www.youtube.com/channel/UCc0wNILBRqIzQSJnGWU-KPQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCxAsf4NWTcKSGy8FC6Cmn1A",
+   "channel_url": "https://www.youtube.com/channel/UCxAsf4NWTcKSGy8FC6Cmn1A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCmnJMQY56LRKrGafJq7yf7g",
+   "channel_url": "https://www.youtube.com/channel/UCmnJMQY56LRKrGafJq7yf7g"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCi0myUZ1NAd0Dhs_z5MA2XA",
+   "channel_url": "https://www.youtube.com/channel/UCi0myUZ1NAd0Dhs_z5MA2XA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCgv5Zaj9mrOzHain3N_Q9iw",
+   "channel_url": "https://www.youtube.com/channel/UCgv5Zaj9mrOzHain3N_Q9iw"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCRO_urKAoBv1tp2mUnSh9jA",
+   "channel_url": "https://www.youtube.com/channel/UCRO_urKAoBv1tp2mUnSh9jA"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCke7CUOPnzp1dYwI0keZYmQ",
+   "channel_url": "https://www.youtube.com/channel/UCke7CUOPnzp1dYwI0keZYmQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCCS3-c5HhSDldbttQ7XUybQ",
+   "channel_url": "https://www.youtube.com/channel/UCCS3-c5HhSDldbttQ7XUybQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCT5m31xbdhe4bIZ5Na9QtyQ",
+   "channel_url": "https://www.youtube.com/channel/UCT5m31xbdhe4bIZ5Na9QtyQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCeqX_v_uqL3bUK3WTX4nV6A",
+   "channel_url": "https://www.youtube.com/channel/UCeqX_v_uqL3bUK3WTX4nV6A"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCjaxmdb_gTWbz9XF5rzvgGg",
+   "channel_url": "https://www.youtube.com/channel/UCjaxmdb_gTWbz9XF5rzvgGg"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCmtg4WtsxKh0auIfULx99qQ",
+   "channel_url": "https://www.youtube.com/channel/UCmtg4WtsxKh0auIfULx99qQ"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCL2MKdFOuVWG3wG9aF5As3Q",
+   "channel_url": "https://www.youtube.com/channel/UCL2MKdFOuVWG3wG9aF5As3Q"
+  },
+  {
+   "vertical": "skateboarding",
+   "channel_id": "UCswXKucLFdQkSbngCKvu8Aw",
+   "channel_url": "https://www.youtube.com/channel/UCswXKucLFdQkSbngCKvu8Aw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCE7N59ZOJHU4bQz9zRfXajA",
+   "channel_url": "https://www.youtube.com/channel/UCE7N59ZOJHU4bQz9zRfXajA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCQEqPV0AwJ6mQYLmSO0rcNA",
+   "channel_url": "https://www.youtube.com/channel/UCQEqPV0AwJ6mQYLmSO0rcNA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCiVmHW7d57ICmEf9WGIp1CA",
+   "channel_url": "https://www.youtube.com/channel/UCiVmHW7d57ICmEf9WGIp1CA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCQrzEZbOx5NiwDlrHRyhFog",
+   "channel_url": "https://www.youtube.com/channel/UCQrzEZbOx5NiwDlrHRyhFog"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCFQDtftsHGzSh1-TReNT4lA",
+   "channel_url": "https://www.youtube.com/channel/UCFQDtftsHGzSh1-TReNT4lA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCsWG9ANbrmgR0z-eFk_A3YQ",
+   "channel_url": "https://www.youtube.com/channel/UCsWG9ANbrmgR0z-eFk_A3YQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCEmwZcjitm5ZA3QN7nJBfew",
+   "channel_url": "https://www.youtube.com/channel/UCEmwZcjitm5ZA3QN7nJBfew"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCIiUK702c9eF_lk2B8SqIYA",
+   "channel_url": "https://www.youtube.com/channel/UCIiUK702c9eF_lk2B8SqIYA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC2s2wY09ZeSqc_w3R89KEnQ",
+   "channel_url": "https://www.youtube.com/channel/UC2s2wY09ZeSqc_w3R89KEnQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCTPPpOehwsseAovUGgCdy0g",
+   "channel_url": "https://www.youtube.com/channel/UCTPPpOehwsseAovUGgCdy0g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCemG3VoNCmjP8ucHR2YY7hw",
+   "channel_url": "https://www.youtube.com/channel/UCemG3VoNCmjP8ucHR2YY7hw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCiy-Wi7xvIdpQDe9esYFu4w",
+   "channel_url": "https://www.youtube.com/channel/UCiy-Wi7xvIdpQDe9esYFu4w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCe99_IRw3f7Q0MoreVSHqJg",
+   "channel_url": "https://www.youtube.com/channel/UCe99_IRw3f7Q0MoreVSHqJg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC7O8KgJdsE_e9op3vG-p2dg",
+   "channel_url": "https://www.youtube.com/channel/UC7O8KgJdsE_e9op3vG-p2dg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCOuhPyi1zI3nYcnAH6yUlew",
+   "channel_url": "https://www.youtube.com/channel/UCOuhPyi1zI3nYcnAH6yUlew"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC1EN7_RuqBMUDBDs0dXUraQ",
+   "channel_url": "https://www.youtube.com/channel/UC1EN7_RuqBMUDBDs0dXUraQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCQfYitfrEvr9Houg5OaqNDQ",
+   "channel_url": "https://www.youtube.com/channel/UCQfYitfrEvr9Houg5OaqNDQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCOmcA3f_RrH6b9NmcNa4tdg",
+   "channel_url": "https://www.youtube.com/channel/UCOmcA3f_RrH6b9NmcNa4tdg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCUxHuOIvCTHRDBBtzbx_prA",
+   "channel_url": "https://www.youtube.com/channel/UCUxHuOIvCTHRDBBtzbx_prA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCAqyeI0hciWBF-CoNIMP49Q",
+   "channel_url": "https://www.youtube.com/channel/UCAqyeI0hciWBF-CoNIMP49Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCx-zRJR97R9kqrp4xTATD4g",
+   "channel_url": "https://www.youtube.com/channel/UCx-zRJR97R9kqrp4xTATD4g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCc5iUV1PS0--qiHkbTMPZZA",
+   "channel_url": "https://www.youtube.com/channel/UCc5iUV1PS0--qiHkbTMPZZA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCPBdQRcb6OAsE0kxNsf6SRA",
+   "channel_url": "https://www.youtube.com/channel/UCPBdQRcb6OAsE0kxNsf6SRA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCN9GTuRmeF0z9A53UOLpMJw",
+   "channel_url": "https://www.youtube.com/channel/UCN9GTuRmeF0z9A53UOLpMJw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCCEqyHUgTk7weW3eZVkCiLQ",
+   "channel_url": "https://www.youtube.com/channel/UCCEqyHUgTk7weW3eZVkCiLQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC9l2p3EeqAQxO0e-NaZPCpA",
+   "channel_url": "https://www.youtube.com/channel/UC9l2p3EeqAQxO0e-NaZPCpA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCW95xJRXLFsbMPXA9RS2ljA",
+   "channel_url": "https://www.youtube.com/channel/UCW95xJRXLFsbMPXA9RS2ljA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCcT09cIisCkCDx_1SUNuE6Q",
+   "channel_url": "https://www.youtube.com/channel/UCcT09cIisCkCDx_1SUNuE6Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCtmE_qWSnLc8nINPFrZAO1g",
+   "channel_url": "https://www.youtube.com/channel/UCtmE_qWSnLc8nINPFrZAO1g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCNYqXdMNs5N5hwtLR2NYbcQ",
+   "channel_url": "https://www.youtube.com/channel/UCNYqXdMNs5N5hwtLR2NYbcQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UClZASsTzCrqHT7Fra6ljOcw",
+   "channel_url": "https://www.youtube.com/channel/UClZASsTzCrqHT7Fra6ljOcw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCnKvibren8ZcXgm2f6yRD5Q",
+   "channel_url": "https://www.youtube.com/channel/UCnKvibren8ZcXgm2f6yRD5Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCwu4SoMXdW300tuhA6SLxXQ",
+   "channel_url": "https://www.youtube.com/channel/UCwu4SoMXdW300tuhA6SLxXQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCdTUsmg628C-9VJcfeHWtTg",
+   "channel_url": "https://www.youtube.com/channel/UCdTUsmg628C-9VJcfeHWtTg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCtM-xct7QQx0dL-swaMzYbg",
+   "channel_url": "https://www.youtube.com/channel/UCtM-xct7QQx0dL-swaMzYbg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC95bEkaIgwhxSjSsdMFXYGg",
+   "channel_url": "https://www.youtube.com/channel/UC95bEkaIgwhxSjSsdMFXYGg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCEjaFzeSVd_CTJjhb4J29Ow",
+   "channel_url": "https://www.youtube.com/channel/UCEjaFzeSVd_CTJjhb4J29Ow"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCYJzhShXDqlwHzl0DUkd4_Q",
+   "channel_url": "https://www.youtube.com/channel/UCYJzhShXDqlwHzl0DUkd4_Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCklmj1MQuMDEszxGzyZo7bA",
+   "channel_url": "https://www.youtube.com/channel/UCklmj1MQuMDEszxGzyZo7bA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCAJXw-FZ7Bs_EjwftbH2OlA",
+   "channel_url": "https://www.youtube.com/channel/UCAJXw-FZ7Bs_EjwftbH2OlA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCXForyVTdaoE50diO6znW4w",
+   "channel_url": "https://www.youtube.com/channel/UCXForyVTdaoE50diO6znW4w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCtAe3hq8uTbm_3vLc82wGpQ",
+   "channel_url": "https://www.youtube.com/channel/UCtAe3hq8uTbm_3vLc82wGpQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCs_fyggHUWthGz9yz96qaYQ",
+   "channel_url": "https://www.youtube.com/channel/UCs_fyggHUWthGz9yz96qaYQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCcxePYdC6d3jo3jcIuHuDxQ",
+   "channel_url": "https://www.youtube.com/channel/UCcxePYdC6d3jo3jcIuHuDxQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCZlY23zzuP_od_MDsmIxK2g",
+   "channel_url": "https://www.youtube.com/channel/UCZlY23zzuP_od_MDsmIxK2g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC0h_KX-PqXYfFDy6Fe_UiCA",
+   "channel_url": "https://www.youtube.com/channel/UC0h_KX-PqXYfFDy6Fe_UiCA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCX3eufnI7A2I7IkKHZn8KSQ",
+   "channel_url": "https://www.youtube.com/channel/UCX3eufnI7A2I7IkKHZn8KSQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC4oOny_IIUSMcECJgrtYjQQ",
+   "channel_url": "https://www.youtube.com/channel/UC4oOny_IIUSMcECJgrtYjQQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCUUNkL6Wke6i0P6funa7wdQ",
+   "channel_url": "https://www.youtube.com/channel/UCUUNkL6Wke6i0P6funa7wdQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCBhzQHQy0Zkey32DPalWTKQ",
+   "channel_url": "https://www.youtube.com/channel/UCBhzQHQy0Zkey32DPalWTKQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCizB5yDLNSOQ_AL-L2oC6Gg",
+   "channel_url": "https://www.youtube.com/channel/UCizB5yDLNSOQ_AL-L2oC6Gg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCcJ5sgPZQm5WcSNlrGunp9Q",
+   "channel_url": "https://www.youtube.com/channel/UCcJ5sgPZQm5WcSNlrGunp9Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCj6k72lRkLGVs3JN_uzMfJA",
+   "channel_url": "https://www.youtube.com/channel/UCj6k72lRkLGVs3JN_uzMfJA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCRZlHMBsvlwyiodMhPCyuzQ",
+   "channel_url": "https://www.youtube.com/channel/UCRZlHMBsvlwyiodMhPCyuzQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCHyAqlBnSDB_m1EjC8dsNfA",
+   "channel_url": "https://www.youtube.com/channel/UCHyAqlBnSDB_m1EjC8dsNfA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCziVkZ1pVhwGKWQceXW2KPQ",
+   "channel_url": "https://www.youtube.com/channel/UCziVkZ1pVhwGKWQceXW2KPQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCVvrQOOnftz0jNlfmRbUhWg",
+   "channel_url": "https://www.youtube.com/channel/UCVvrQOOnftz0jNlfmRbUhWg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCaOiOeTQMYfJGj_n88Mgywg",
+   "channel_url": "https://www.youtube.com/channel/UCaOiOeTQMYfJGj_n88Mgywg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC-fdGgFuQZzHCyGejY6fncw",
+   "channel_url": "https://www.youtube.com/channel/UC-fdGgFuQZzHCyGejY6fncw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCA1tgdVUPv4IhLbtBlR9Akg",
+   "channel_url": "https://www.youtube.com/channel/UCA1tgdVUPv4IhLbtBlR9Akg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCDqVICXz52kgmNIj6-DxUfQ",
+   "channel_url": "https://www.youtube.com/channel/UCDqVICXz52kgmNIj6-DxUfQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCnq-oopqBP9YDGB6Yaj8Kqw",
+   "channel_url": "https://www.youtube.com/channel/UCnq-oopqBP9YDGB6Yaj8Kqw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCX2lKscksEFc8uhwZAXvUFw",
+   "channel_url": "https://www.youtube.com/channel/UCX2lKscksEFc8uhwZAXvUFw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCyaJpSKgIGAVlsaUIRZM75Q",
+   "channel_url": "https://www.youtube.com/channel/UCyaJpSKgIGAVlsaUIRZM75Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCM3rmJjq4cZdhtPeIH3RFqA",
+   "channel_url": "https://www.youtube.com/channel/UCM3rmJjq4cZdhtPeIH3RFqA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCtmrw3M_HIuVOobiZg6bjUQ",
+   "channel_url": "https://www.youtube.com/channel/UCtmrw3M_HIuVOobiZg6bjUQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCedDMc8vcDwjLrISkS1D8aA",
+   "channel_url": "https://www.youtube.com/channel/UCedDMc8vcDwjLrISkS1D8aA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCqYuzgSCEl0IqWKxC8T4Gmg",
+   "channel_url": "https://www.youtube.com/channel/UCqYuzgSCEl0IqWKxC8T4Gmg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCVQWy-DTLpRqnuA17WZkjRQ",
+   "channel_url": "https://www.youtube.com/channel/UCVQWy-DTLpRqnuA17WZkjRQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCR19e9cb4HVBT9KNj6aVFXA",
+   "channel_url": "https://www.youtube.com/channel/UCR19e9cb4HVBT9KNj6aVFXA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCSczDB_iYcKj32BgS1JHVFA",
+   "channel_url": "https://www.youtube.com/channel/UCSczDB_iYcKj32BgS1JHVFA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC5jfX-wWRmYhLWBTydLUF0A",
+   "channel_url": "https://www.youtube.com/channel/UC5jfX-wWRmYhLWBTydLUF0A"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCPbu8nxuwaiQ1Hu2FUXo3YA",
+   "channel_url": "https://www.youtube.com/channel/UCPbu8nxuwaiQ1Hu2FUXo3YA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCsk6kqU1-bM1_Mz3dYWUI_Q",
+   "channel_url": "https://www.youtube.com/channel/UCsk6kqU1-bM1_Mz3dYWUI_Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCvaUQ1JyMua3an-CXjC-dnA",
+   "channel_url": "https://www.youtube.com/channel/UCvaUQ1JyMua3an-CXjC-dnA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCdhC9amOXszSehD95D9mH9A",
+   "channel_url": "https://www.youtube.com/channel/UCdhC9amOXszSehD95D9mH9A"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCmztAGd54Fie4eEJIio6syA",
+   "channel_url": "https://www.youtube.com/channel/UCmztAGd54Fie4eEJIio6syA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCbzfyefZUyve_i5XpPWLIgQ",
+   "channel_url": "https://www.youtube.com/channel/UCbzfyefZUyve_i5XpPWLIgQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCYqES3Qt8NgLhZ7aDaBRNYg",
+   "channel_url": "https://www.youtube.com/channel/UCYqES3Qt8NgLhZ7aDaBRNYg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCs2-yzOmGML9ylN5JNqxFLg",
+   "channel_url": "https://www.youtube.com/channel/UCs2-yzOmGML9ylN5JNqxFLg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCVJA6awN1t20BjMBFld7XYg",
+   "channel_url": "https://www.youtube.com/channel/UCVJA6awN1t20BjMBFld7XYg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCvD4K7jAUTcmT7AJqpxiSiA",
+   "channel_url": "https://www.youtube.com/channel/UCvD4K7jAUTcmT7AJqpxiSiA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCLClBkdXDDPXWpUxX3u2ofQ",
+   "channel_url": "https://www.youtube.com/channel/UCLClBkdXDDPXWpUxX3u2ofQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC1ve9mUAF1dFCTEjsn6SEUQ",
+   "channel_url": "https://www.youtube.com/channel/UC1ve9mUAF1dFCTEjsn6SEUQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCmlUDN4TN_XQUWjUcWc6DNQ",
+   "channel_url": "https://www.youtube.com/channel/UCmlUDN4TN_XQUWjUcWc6DNQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC7Fvu2h6PumWF5zKCounGoA",
+   "channel_url": "https://www.youtube.com/channel/UC7Fvu2h6PumWF5zKCounGoA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCUsG3QnyCH2e_FdVIJ0ohbw",
+   "channel_url": "https://www.youtube.com/channel/UCUsG3QnyCH2e_FdVIJ0ohbw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCYpjqTH6mnskdGid_lOqFkA",
+   "channel_url": "https://www.youtube.com/channel/UCYpjqTH6mnskdGid_lOqFkA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCpfTlITDToSPf8wCP2WOgoQ",
+   "channel_url": "https://www.youtube.com/channel/UCpfTlITDToSPf8wCP2WOgoQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UClkTu0W22cJZqLCT9YTyCAg",
+   "channel_url": "https://www.youtube.com/channel/UClkTu0W22cJZqLCT9YTyCAg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCH4d5cabTerc6X13pSPqugA",
+   "channel_url": "https://www.youtube.com/channel/UCH4d5cabTerc6X13pSPqugA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC-eEWCP7BFfmNNy9aqEEFsQ",
+   "channel_url": "https://www.youtube.com/channel/UC-eEWCP7BFfmNNy9aqEEFsQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCK0Q4a7uwDnwKinFdiJOmTw",
+   "channel_url": "https://www.youtube.com/channel/UCK0Q4a7uwDnwKinFdiJOmTw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC4CPNiQjqvveh5pFjGBEpxg",
+   "channel_url": "https://www.youtube.com/channel/UC4CPNiQjqvveh5pFjGBEpxg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCq4JiARVRiCIffzd6DBbdDw",
+   "channel_url": "https://www.youtube.com/channel/UCq4JiARVRiCIffzd6DBbdDw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCzyxJKfQFTo72R0e2-sp3JA",
+   "channel_url": "https://www.youtube.com/channel/UCzyxJKfQFTo72R0e2-sp3JA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCy7a26V8cuc6jXnEsiZLt2g",
+   "channel_url": "https://www.youtube.com/channel/UCy7a26V8cuc6jXnEsiZLt2g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC3iTY0vRAsp_01Efz9MIFhw",
+   "channel_url": "https://www.youtube.com/channel/UC3iTY0vRAsp_01Efz9MIFhw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCggKjZQcrTrO1S52pNqVW6g",
+   "channel_url": "https://www.youtube.com/channel/UCggKjZQcrTrO1S52pNqVW6g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCX-VzGzMorUuAdV2-cZkA7Q",
+   "channel_url": "https://www.youtube.com/channel/UCX-VzGzMorUuAdV2-cZkA7Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCV0Nvmwp8lclg5jWUfwFDGg",
+   "channel_url": "https://www.youtube.com/channel/UCV0Nvmwp8lclg5jWUfwFDGg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCBHkEzRqHBmIPBJaCtGr7GA",
+   "channel_url": "https://www.youtube.com/channel/UCBHkEzRqHBmIPBJaCtGr7GA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCDmwqJ1l7_MbZ2_uwiCLDsQ",
+   "channel_url": "https://www.youtube.com/channel/UCDmwqJ1l7_MbZ2_uwiCLDsQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCPcritfmzaUyMVIlCOT5AcA",
+   "channel_url": "https://www.youtube.com/channel/UCPcritfmzaUyMVIlCOT5AcA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCwcwcTFEFGnD0RKjR3QQwuw",
+   "channel_url": "https://www.youtube.com/channel/UCwcwcTFEFGnD0RKjR3QQwuw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCEeNY0KRhKoCE3TsBvVx75Q",
+   "channel_url": "https://www.youtube.com/channel/UCEeNY0KRhKoCE3TsBvVx75Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCNB_GbeB7lOIU9o_IZ7PUXA",
+   "channel_url": "https://www.youtube.com/channel/UCNB_GbeB7lOIU9o_IZ7PUXA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC1mpsOEBieJ--YnvYJBgu9Q",
+   "channel_url": "https://www.youtube.com/channel/UC1mpsOEBieJ--YnvYJBgu9Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC8qoeyHx6WuF39xnnEj5r1g",
+   "channel_url": "https://www.youtube.com/channel/UC8qoeyHx6WuF39xnnEj5r1g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCwYmYfJ0lvIia_T5yUFKSFA",
+   "channel_url": "https://www.youtube.com/channel/UCwYmYfJ0lvIia_T5yUFKSFA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCdciUg5qTl92-_amY95i58A",
+   "channel_url": "https://www.youtube.com/channel/UCdciUg5qTl92-_amY95i58A"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCC2g-iFtLfRWj2RTaTiNyxA",
+   "channel_url": "https://www.youtube.com/channel/UCC2g-iFtLfRWj2RTaTiNyxA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCc4LcjIdYwJwEKfeb3MgXXw",
+   "channel_url": "https://www.youtube.com/channel/UCc4LcjIdYwJwEKfeb3MgXXw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC2cZBUnfvJYcwSKhMd_17IQ",
+   "channel_url": "https://www.youtube.com/channel/UC2cZBUnfvJYcwSKhMd_17IQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC3ZHM-iH5sm5OC7lGWT738Q",
+   "channel_url": "https://www.youtube.com/channel/UC3ZHM-iH5sm5OC7lGWT738Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCAlHfroho8XAnWXQPMnjKWg",
+   "channel_url": "https://www.youtube.com/channel/UCAlHfroho8XAnWXQPMnjKWg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCgxPXsgfJnOXzFOrDRJOX1g",
+   "channel_url": "https://www.youtube.com/channel/UCgxPXsgfJnOXzFOrDRJOX1g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCFnxaWR3RVtdAkNWsflKgyw",
+   "channel_url": "https://www.youtube.com/channel/UCFnxaWR3RVtdAkNWsflKgyw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC03wHjDdL_fPpBpALk3l0xQ",
+   "channel_url": "https://www.youtube.com/channel/UC03wHjDdL_fPpBpALk3l0xQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCqepHJcaZ7OccYqdUK5BzOA",
+   "channel_url": "https://www.youtube.com/channel/UCqepHJcaZ7OccYqdUK5BzOA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCGOSdtK8AVhAWY0-rfJn6vQ",
+   "channel_url": "https://www.youtube.com/channel/UCGOSdtK8AVhAWY0-rfJn6vQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC4uEw9CzoSkWv7TncREn7zQ",
+   "channel_url": "https://www.youtube.com/channel/UC4uEw9CzoSkWv7TncREn7zQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCBThpMNNGDLeQETc6W3uT4g",
+   "channel_url": "https://www.youtube.com/channel/UCBThpMNNGDLeQETc6W3uT4g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCmlCgHktrPSaeLoGd12sWfg",
+   "channel_url": "https://www.youtube.com/channel/UCmlCgHktrPSaeLoGd12sWfg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCnd7_6I2Qj_dha3ugBwXc-Q",
+   "channel_url": "https://www.youtube.com/channel/UCnd7_6I2Qj_dha3ugBwXc-Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCKLbqTHy4PyupkV7sZ2-A_Q",
+   "channel_url": "https://www.youtube.com/channel/UCKLbqTHy4PyupkV7sZ2-A_Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCIyzQhzNw2-JcLYSjmrn2LA",
+   "channel_url": "https://www.youtube.com/channel/UCIyzQhzNw2-JcLYSjmrn2LA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCMia4Z2HKfQl8pxzg48iiyw",
+   "channel_url": "https://www.youtube.com/channel/UCMia4Z2HKfQl8pxzg48iiyw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCpsKoMnKZaFekA9vZNftbPw",
+   "channel_url": "https://www.youtube.com/channel/UCpsKoMnKZaFekA9vZNftbPw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCmthb5LfvZjtKrtOQuju9Eg",
+   "channel_url": "https://www.youtube.com/channel/UCmthb5LfvZjtKrtOQuju9Eg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCTxm-lsKS1b7rHdvhG4vI-w",
+   "channel_url": "https://www.youtube.com/channel/UCTxm-lsKS1b7rHdvhG4vI-w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC2L3Os9bLkYALfpHZu1b__A",
+   "channel_url": "https://www.youtube.com/channel/UC2L3Os9bLkYALfpHZu1b__A"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCS7WM3QvQxPiJqAVOVxjmPA",
+   "channel_url": "https://www.youtube.com/channel/UCS7WM3QvQxPiJqAVOVxjmPA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCyoaokMOJDcCD5vrk3ZQzKQ",
+   "channel_url": "https://www.youtube.com/channel/UCyoaokMOJDcCD5vrk3ZQzKQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCqjZEcyB-6zeF78blSd7UHg",
+   "channel_url": "https://www.youtube.com/channel/UCqjZEcyB-6zeF78blSd7UHg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC3rsVQWE69f8pvk0rEATkog",
+   "channel_url": "https://www.youtube.com/channel/UC3rsVQWE69f8pvk0rEATkog"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCSWumkokdn4vTTNJkDQ4hdg",
+   "channel_url": "https://www.youtube.com/channel/UCSWumkokdn4vTTNJkDQ4hdg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCkOuuG24xEXBIqinP4g5p_g",
+   "channel_url": "https://www.youtube.com/channel/UCkOuuG24xEXBIqinP4g5p_g"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCw2XoYXItSLpdiWfhzLpxxQ",
+   "channel_url": "https://www.youtube.com/channel/UCw2XoYXItSLpdiWfhzLpxxQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCBUj_DG83jF4FeDz0gmnagQ",
+   "channel_url": "https://www.youtube.com/channel/UCBUj_DG83jF4FeDz0gmnagQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCgLBuC63ZeRrVSnK7hFXHUw",
+   "channel_url": "https://www.youtube.com/channel/UCgLBuC63ZeRrVSnK7hFXHUw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCtwNjEmac_t27VaW71wtyBw",
+   "channel_url": "https://www.youtube.com/channel/UCtwNjEmac_t27VaW71wtyBw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC7D4gc5QyjA34EAniDm1N9A",
+   "channel_url": "https://www.youtube.com/channel/UC7D4gc5QyjA34EAniDm1N9A"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC7obdmEn9r7HgsankInUyLw",
+   "channel_url": "https://www.youtube.com/channel/UC7obdmEn9r7HgsankInUyLw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC8GnZpqrYAnJXB51rycFzuw",
+   "channel_url": "https://www.youtube.com/channel/UC8GnZpqrYAnJXB51rycFzuw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC8gw5xkFHMmiBaZD5krlrrA",
+   "channel_url": "https://www.youtube.com/channel/UC8gw5xkFHMmiBaZD5krlrrA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCU2iqXCZkWyDElGS3Jj0tEg",
+   "channel_url": "https://www.youtube.com/channel/UCU2iqXCZkWyDElGS3Jj0tEg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCs-vhOHw87tIKIU7MlRNjAA",
+   "channel_url": "https://www.youtube.com/channel/UCs-vhOHw87tIKIU7MlRNjAA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCJM7CkAcpZlgYYObA2In3hQ",
+   "channel_url": "https://www.youtube.com/channel/UCJM7CkAcpZlgYYObA2In3hQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCoFkNAqCz6ha3WsXM9d0k3Q",
+   "channel_url": "https://www.youtube.com/channel/UCoFkNAqCz6ha3WsXM9d0k3Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCwxcUV5aQBtpRqvEawpOPzQ",
+   "channel_url": "https://www.youtube.com/channel/UCwxcUV5aQBtpRqvEawpOPzQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCGhmGZrLpJe0CNi24R2SQSQ",
+   "channel_url": "https://www.youtube.com/channel/UCGhmGZrLpJe0CNi24R2SQSQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCrcz0Vxiv4ZOKFEDScLw5UQ",
+   "channel_url": "https://www.youtube.com/channel/UCrcz0Vxiv4ZOKFEDScLw5UQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCmoP0L7pIyvBDABoQS47KUA",
+   "channel_url": "https://www.youtube.com/channel/UCmoP0L7pIyvBDABoQS47KUA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCPkdWyffM9b_uMhPxvash5w",
+   "channel_url": "https://www.youtube.com/channel/UCPkdWyffM9b_uMhPxvash5w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCiqwdOkIUCP-Q0Cb-5mHGkA",
+   "channel_url": "https://www.youtube.com/channel/UCiqwdOkIUCP-Q0Cb-5mHGkA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCzASGArEZlVaXjzNqiHVdaw",
+   "channel_url": "https://www.youtube.com/channel/UCzASGArEZlVaXjzNqiHVdaw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCJV_LmqWmpmtWIu_2aVh3_w",
+   "channel_url": "https://www.youtube.com/channel/UCJV_LmqWmpmtWIu_2aVh3_w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC9QZjZuI9r0VaipT6rUINhg",
+   "channel_url": "https://www.youtube.com/channel/UC9QZjZuI9r0VaipT6rUINhg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCkV6Mk06SbOXUxw6jlcdwMg",
+   "channel_url": "https://www.youtube.com/channel/UCkV6Mk06SbOXUxw6jlcdwMg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCtrozukUG4bIbdpVG603HeA",
+   "channel_url": "https://www.youtube.com/channel/UCtrozukUG4bIbdpVG603HeA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCzLlloh_mkuFQw6qAYdob5w",
+   "channel_url": "https://www.youtube.com/channel/UCzLlloh_mkuFQw6qAYdob5w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCmQY1TsMgn6LeuweFzElNSQ",
+   "channel_url": "https://www.youtube.com/channel/UCmQY1TsMgn6LeuweFzElNSQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCPUsH0vq3d9FGmKf-9_v9wQ",
+   "channel_url": "https://www.youtube.com/channel/UCPUsH0vq3d9FGmKf-9_v9wQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCltuu_5fsMGCf0y80hWX5UQ",
+   "channel_url": "https://www.youtube.com/channel/UCltuu_5fsMGCf0y80hWX5UQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCPCc4i_lIw-fW9oBXh6yTnw",
+   "channel_url": "https://www.youtube.com/channel/UCPCc4i_lIw-fW9oBXh6yTnw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC-4zsQGrF06OeRSZCHORS3Q",
+   "channel_url": "https://www.youtube.com/channel/UC-4zsQGrF06OeRSZCHORS3Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC0YgA2dbwju_henwHmfHVTg",
+   "channel_url": "https://www.youtube.com/channel/UC0YgA2dbwju_henwHmfHVTg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC_9Xz3JgDJyloWZye_pDzdw",
+   "channel_url": "https://www.youtube.com/channel/UC_9Xz3JgDJyloWZye_pDzdw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC_X-1cr99pqB3_9DehipyTQ",
+   "channel_url": "https://www.youtube.com/channel/UC_X-1cr99pqB3_9DehipyTQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCKT0Q89AhkLVUZuqOBajHAw",
+   "channel_url": "https://www.youtube.com/channel/UCKT0Q89AhkLVUZuqOBajHAw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCD828kk8Ucz1F7gCyDsG3Xg",
+   "channel_url": "https://www.youtube.com/channel/UCD828kk8Ucz1F7gCyDsG3Xg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCWcynft1B96iKVQeuC3CJPw",
+   "channel_url": "https://www.youtube.com/channel/UCWcynft1B96iKVQeuC3CJPw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCzjMgMHnP3Oog4BVZ5eN0aw",
+   "channel_url": "https://www.youtube.com/channel/UCzjMgMHnP3Oog4BVZ5eN0aw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCsr1MpUk4UGjcbyVl-8kWZA",
+   "channel_url": "https://www.youtube.com/channel/UCsr1MpUk4UGjcbyVl-8kWZA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCYwTGRYSs9rLk2EhHXp1Cxg",
+   "channel_url": "https://www.youtube.com/channel/UCYwTGRYSs9rLk2EhHXp1Cxg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCZitxcZr_Pon1ZMR7T3eKPg",
+   "channel_url": "https://www.youtube.com/channel/UCZitxcZr_Pon1ZMR7T3eKPg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCNndIWV5iGmGGkKrv7Um4vA",
+   "channel_url": "https://www.youtube.com/channel/UCNndIWV5iGmGGkKrv7Um4vA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCaa_0jXFwi7UHzblh8YmIrw",
+   "channel_url": "https://www.youtube.com/channel/UCaa_0jXFwi7UHzblh8YmIrw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC_klVAhtjyHmxpCoXlEWnBw",
+   "channel_url": "https://www.youtube.com/channel/UC_klVAhtjyHmxpCoXlEWnBw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCTZ9xZ7_T85swx2rAag5nKA",
+   "channel_url": "https://www.youtube.com/channel/UCTZ9xZ7_T85swx2rAag5nKA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC574ZVr_Oc_7nQVIuvvs4ag",
+   "channel_url": "https://www.youtube.com/channel/UC574ZVr_Oc_7nQVIuvvs4ag"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCekF30z9mWcJadVSAuRmtog",
+   "channel_url": "https://www.youtube.com/channel/UCekF30z9mWcJadVSAuRmtog"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC2IkBiENjzAX756-Zwl4kiQ",
+   "channel_url": "https://www.youtube.com/channel/UC2IkBiENjzAX756-Zwl4kiQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCyjjJ-mxRCUO8LSjEsic4Cw",
+   "channel_url": "https://www.youtube.com/channel/UCyjjJ-mxRCUO8LSjEsic4Cw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCh6STjEd1d2mu8ufiC9USfw",
+   "channel_url": "https://www.youtube.com/channel/UCh6STjEd1d2mu8ufiC9USfw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCloJHRhtGN6Qh8CTZmKD0tg",
+   "channel_url": "https://www.youtube.com/channel/UCloJHRhtGN6Qh8CTZmKD0tg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCgn0WSl0ILtLv6ZxOl3ckig",
+   "channel_url": "https://www.youtube.com/channel/UCgn0WSl0ILtLv6ZxOl3ckig"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCxIV-wtL4iQnNw8de3lKAaQ",
+   "channel_url": "https://www.youtube.com/channel/UCxIV-wtL4iQnNw8de3lKAaQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC8EZHCHO0cHkTERtUDb1nkg",
+   "channel_url": "https://www.youtube.com/channel/UC8EZHCHO0cHkTERtUDb1nkg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCzLMg5YUa1GPimzXdCEgWmQ",
+   "channel_url": "https://www.youtube.com/channel/UCzLMg5YUa1GPimzXdCEgWmQ"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCMryb0zcSD7P2COkcuF6jbg",
+   "channel_url": "https://www.youtube.com/channel/UCMryb0zcSD7P2COkcuF6jbg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC4ltydtTT9HwtUI9l0kpf2Q",
+   "channel_url": "https://www.youtube.com/channel/UC4ltydtTT9HwtUI9l0kpf2Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCYeJ6fTWqjBUBN1KCeQbQ6A",
+   "channel_url": "https://www.youtube.com/channel/UCYeJ6fTWqjBUBN1KCeQbQ6A"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCxJCUpTNCNFZP28dkjMIk4w",
+   "channel_url": "https://www.youtube.com/channel/UCxJCUpTNCNFZP28dkjMIk4w"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCkmelrFyE8Mwa3ywh_nFjyA",
+   "channel_url": "https://www.youtube.com/channel/UCkmelrFyE8Mwa3ywh_nFjyA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCpN0VmOInSjsQ6K3rsIVTIw",
+   "channel_url": "https://www.youtube.com/channel/UCpN0VmOInSjsQ6K3rsIVTIw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UC4Jk1H5_F-BWy5Y9ta_BR2Q",
+   "channel_url": "https://www.youtube.com/channel/UC4Jk1H5_F-BWy5Y9ta_BR2Q"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCLRbCGbjnHwvJuBrXFjM2Yw",
+   "channel_url": "https://www.youtube.com/channel/UCLRbCGbjnHwvJuBrXFjM2Yw"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCsOeM1Av1vB3CGm95X-IdrA",
+   "channel_url": "https://www.youtube.com/channel/UCsOeM1Av1vB3CGm95X-IdrA"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCCsprF45yQWmCxZcdAIXymg",
+   "channel_url": "https://www.youtube.com/channel/UCCsprF45yQWmCxZcdAIXymg"
+  },
+  {
+   "vertical": "fpv_drone",
+   "channel_id": "UCURoaJsy55PGtMeHVQ8bsAg",
+   "channel_url": "https://www.youtube.com/channel/UCURoaJsy55PGtMeHVQ8bsAg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCGlVrxmuAF9B_vh7niYWeaw",
+   "channel_url": "https://www.youtube.com/channel/UCGlVrxmuAF9B_vh7niYWeaw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCntZaUVKDzZq0zJsIzdhwyg",
+   "channel_url": "https://www.youtube.com/channel/UCntZaUVKDzZq0zJsIzdhwyg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCNm5WAE9BNkTSaZdpoUc56A",
+   "channel_url": "https://www.youtube.com/channel/UCNm5WAE9BNkTSaZdpoUc56A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCHyBWpfAggsFPDc5A7l_eWA",
+   "channel_url": "https://www.youtube.com/channel/UCHyBWpfAggsFPDc5A7l_eWA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCf4gmW3modR0AJT5dXp2e2Q",
+   "channel_url": "https://www.youtube.com/channel/UCf4gmW3modR0AJT5dXp2e2Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCL5XeZyEphUZWKZrsFgr6nA",
+   "channel_url": "https://www.youtube.com/channel/UCL5XeZyEphUZWKZrsFgr6nA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCsTFnv1ocECk4TUjx8PfnKA",
+   "channel_url": "https://www.youtube.com/channel/UCsTFnv1ocECk4TUjx8PfnKA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCWmxtovt4DfzFgCZ4eK-6Gw",
+   "channel_url": "https://www.youtube.com/channel/UCWmxtovt4DfzFgCZ4eK-6Gw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCq2SjOIp5O-K4yZy0SN1Aug",
+   "channel_url": "https://www.youtube.com/channel/UCq2SjOIp5O-K4yZy0SN1Aug"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCMtvw7OQKqRPsj9QG4i7EOg",
+   "channel_url": "https://www.youtube.com/channel/UCMtvw7OQKqRPsj9QG4i7EOg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCzjgP3vihjN2Y3JaqXoPV9Q",
+   "channel_url": "https://www.youtube.com/channel/UCzjgP3vihjN2Y3JaqXoPV9Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCmYY4IgVbSARZsGNt3lds_A",
+   "channel_url": "https://www.youtube.com/channel/UCmYY4IgVbSARZsGNt3lds_A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCGT9WaIosNKj9-Vwi1ZNtbw",
+   "channel_url": "https://www.youtube.com/channel/UCGT9WaIosNKj9-Vwi1ZNtbw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCLjhjaoPYnqI2SXnX7Nq96A",
+   "channel_url": "https://www.youtube.com/channel/UCLjhjaoPYnqI2SXnX7Nq96A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC8iQXOAH56DAWh4cX8D7kIg",
+   "channel_url": "https://www.youtube.com/channel/UC8iQXOAH56DAWh4cX8D7kIg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCPQeFqyxTu9g1IMBlVvG9jg",
+   "channel_url": "https://www.youtube.com/channel/UCPQeFqyxTu9g1IMBlVvG9jg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC8FqyFg0qOA9jkVG4Krze3A",
+   "channel_url": "https://www.youtube.com/channel/UC8FqyFg0qOA9jkVG4Krze3A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCQ7f4SiWB3pPypxhBXKbJUw",
+   "channel_url": "https://www.youtube.com/channel/UCQ7f4SiWB3pPypxhBXKbJUw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC53Bdj5v_odW6uFiGgR7NRg",
+   "channel_url": "https://www.youtube.com/channel/UC53Bdj5v_odW6uFiGgR7NRg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCQEDB9BVgbMKF8gaOW75WGQ",
+   "channel_url": "https://www.youtube.com/channel/UCQEDB9BVgbMKF8gaOW75WGQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC3s9pXXJVhBV8cDGnWzVJhw",
+   "channel_url": "https://www.youtube.com/channel/UC3s9pXXJVhBV8cDGnWzVJhw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCGs1JjiRBEKMlVD4eUxJ2ww",
+   "channel_url": "https://www.youtube.com/channel/UCGs1JjiRBEKMlVD4eUxJ2ww"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC1qsAH6L-zn8gl9FXxDgFoA",
+   "channel_url": "https://www.youtube.com/channel/UC1qsAH6L-zn8gl9FXxDgFoA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjD_dIlYBil51LU42cl3EkA",
+   "channel_url": "https://www.youtube.com/channel/UCjD_dIlYBil51LU42cl3EkA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCd5u58Iumk0hZWz7Y19VRdg",
+   "channel_url": "https://www.youtube.com/channel/UCd5u58Iumk0hZWz7Y19VRdg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCLVVgRAvB4ed14SUqiSX71A",
+   "channel_url": "https://www.youtube.com/channel/UCLVVgRAvB4ed14SUqiSX71A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCRlel7cXdQNVxVVEaDmIUww",
+   "channel_url": "https://www.youtube.com/channel/UCRlel7cXdQNVxVVEaDmIUww"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC-UajEpHBz9gUnq3dtzYU8Q",
+   "channel_url": "https://www.youtube.com/channel/UC-UajEpHBz9gUnq3dtzYU8Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC1-SAiDmSpTRzDhhbqGEllQ",
+   "channel_url": "https://www.youtube.com/channel/UC1-SAiDmSpTRzDhhbqGEllQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCDthdGzJx-TnklLDl3mAu1A",
+   "channel_url": "https://www.youtube.com/channel/UCDthdGzJx-TnklLDl3mAu1A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCSTD_Jbpxea9Ohzu9YY5KUw",
+   "channel_url": "https://www.youtube.com/channel/UCSTD_Jbpxea9Ohzu9YY5KUw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCaVlIK17s3rPoJP6yOi9WQg",
+   "channel_url": "https://www.youtube.com/channel/UCaVlIK17s3rPoJP6yOi9WQg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC4ijq8Cg-8zQKx8OH12dUSw",
+   "channel_url": "https://www.youtube.com/channel/UC4ijq8Cg-8zQKx8OH12dUSw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCfP8a1oJSfQ-seMk6TZw2wA",
+   "channel_url": "https://www.youtube.com/channel/UCfP8a1oJSfQ-seMk6TZw2wA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCV_5hBRRMwkMMKvTirQ6Hjg",
+   "channel_url": "https://www.youtube.com/channel/UCV_5hBRRMwkMMKvTirQ6Hjg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCPTJzXbTrSg7pKlUpYXXr8w",
+   "channel_url": "https://www.youtube.com/channel/UCPTJzXbTrSg7pKlUpYXXr8w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCCA6SXQc-hBGR-f4N7u9jHQ",
+   "channel_url": "https://www.youtube.com/channel/UCCA6SXQc-hBGR-f4N7u9jHQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC1lHLtKQ-7JEGJ-Xn1j_kpw",
+   "channel_url": "https://www.youtube.com/channel/UC1lHLtKQ-7JEGJ-Xn1j_kpw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCY42c0tpcgML_eWpqBZmwgA",
+   "channel_url": "https://www.youtube.com/channel/UCY42c0tpcgML_eWpqBZmwgA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCsAhtzUwZ4J7h_axJzd9h4g",
+   "channel_url": "https://www.youtube.com/channel/UCsAhtzUwZ4J7h_axJzd9h4g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC2g3xkcuihDiNVq5QIt5Zuw",
+   "channel_url": "https://www.youtube.com/channel/UC2g3xkcuihDiNVq5QIt5Zuw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCok77e49axINEhw6Z_SRlew",
+   "channel_url": "https://www.youtube.com/channel/UCok77e49axINEhw6Z_SRlew"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChct8CaT2hIcHL2Dv9THXeg",
+   "channel_url": "https://www.youtube.com/channel/UChct8CaT2hIcHL2Dv9THXeg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCOA1bYnVaLiLen6cOz40XnA",
+   "channel_url": "https://www.youtube.com/channel/UCOA1bYnVaLiLen6cOz40XnA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC3M-AQ4ouRqxRyKDF9U6tnA",
+   "channel_url": "https://www.youtube.com/channel/UC3M-AQ4ouRqxRyKDF9U6tnA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCNu3vZn6fPe3incOJtZNQAw",
+   "channel_url": "https://www.youtube.com/channel/UCNu3vZn6fPe3incOJtZNQAw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCOBQ8S7xSPCxUM-1XHh21wg",
+   "channel_url": "https://www.youtube.com/channel/UCOBQ8S7xSPCxUM-1XHh21wg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCNfZX2AH6npsBlWJl-c_2nw",
+   "channel_url": "https://www.youtube.com/channel/UCNfZX2AH6npsBlWJl-c_2nw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC6q3bnl8JI_Ad76IVQpIOTg",
+   "channel_url": "https://www.youtube.com/channel/UC6q3bnl8JI_Ad76IVQpIOTg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChO67MWDRz0w1lhvmGLyTqw",
+   "channel_url": "https://www.youtube.com/channel/UChO67MWDRz0w1lhvmGLyTqw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChPSQs3-l_Tw-7YnsXY-I5Q",
+   "channel_url": "https://www.youtube.com/channel/UChPSQs3-l_Tw-7YnsXY-I5Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCIWwlUtmSq5rUQ_zx1Mk2cg",
+   "channel_url": "https://www.youtube.com/channel/UCIWwlUtmSq5rUQ_zx1Mk2cg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCkJQlMyZTYJJWqqb3ijh8mA",
+   "channel_url": "https://www.youtube.com/channel/UCkJQlMyZTYJJWqqb3ijh8mA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC-6ziTkcTKgr63pMA66MWPQ",
+   "channel_url": "https://www.youtube.com/channel/UC-6ziTkcTKgr63pMA66MWPQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCxSmyjTnJ8iSFqJ6DUObktQ",
+   "channel_url": "https://www.youtube.com/channel/UCxSmyjTnJ8iSFqJ6DUObktQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC6MKSbonyocY07FrPDAE8zg",
+   "channel_url": "https://www.youtube.com/channel/UC6MKSbonyocY07FrPDAE8zg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCkTUvua1Ft703Pa3gkghfAg",
+   "channel_url": "https://www.youtube.com/channel/UCkTUvua1Ft703Pa3gkghfAg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCTqSGCmYj1AniYKyuovCP4w",
+   "channel_url": "https://www.youtube.com/channel/UCTqSGCmYj1AniYKyuovCP4w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC0DunKslAH88h_nyhNR8HVQ",
+   "channel_url": "https://www.youtube.com/channel/UC0DunKslAH88h_nyhNR8HVQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChkLYoiuFgFC2no8ubEi_hg",
+   "channel_url": "https://www.youtube.com/channel/UChkLYoiuFgFC2no8ubEi_hg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC9cqHzfj-AHvqsqAYL2Oh-w",
+   "channel_url": "https://www.youtube.com/channel/UC9cqHzfj-AHvqsqAYL2Oh-w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCaEM95WgtUc7p1yMut3Fw0g",
+   "channel_url": "https://www.youtube.com/channel/UCaEM95WgtUc7p1yMut3Fw0g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC4i1191M0g4nU87KK7LvnXQ",
+   "channel_url": "https://www.youtube.com/channel/UC4i1191M0g4nU87KK7LvnXQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC5Ij4Keunv1gQOZdRDNwWFA",
+   "channel_url": "https://www.youtube.com/channel/UC5Ij4Keunv1gQOZdRDNwWFA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC9EgawuMkA_5PJLnX8Qulxw",
+   "channel_url": "https://www.youtube.com/channel/UC9EgawuMkA_5PJLnX8Qulxw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCfJ79m00jF1CBjaSDrJy46A",
+   "channel_url": "https://www.youtube.com/channel/UCfJ79m00jF1CBjaSDrJy46A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC-aY9p6R5E4dnwXiJhTsU6w",
+   "channel_url": "https://www.youtube.com/channel/UC-aY9p6R5E4dnwXiJhTsU6w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC6m2joaNX0zgVew5ZCaJ8KA",
+   "channel_url": "https://www.youtube.com/channel/UC6m2joaNX0zgVew5ZCaJ8KA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCaLhypkZSi24dXGqGJm4t3A",
+   "channel_url": "https://www.youtube.com/channel/UCaLhypkZSi24dXGqGJm4t3A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UClDAoPeKGZ0GUvRh6KJBRfQ",
+   "channel_url": "https://www.youtube.com/channel/UClDAoPeKGZ0GUvRh6KJBRfQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCUqtYdx5zOlcUkBGUVEoq3Q",
+   "channel_url": "https://www.youtube.com/channel/UCUqtYdx5zOlcUkBGUVEoq3Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCwZFzjzYS6hVhvF68kiReBA",
+   "channel_url": "https://www.youtube.com/channel/UCwZFzjzYS6hVhvF68kiReBA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCT_UzCNdvZ7piqc27oDdQrg",
+   "channel_url": "https://www.youtube.com/channel/UCT_UzCNdvZ7piqc27oDdQrg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCqomzqNe2K83PfW_JD-oo_g",
+   "channel_url": "https://www.youtube.com/channel/UCqomzqNe2K83PfW_JD-oo_g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCFaYVrisXbyfOUd6L7vj5kg",
+   "channel_url": "https://www.youtube.com/channel/UCFaYVrisXbyfOUd6L7vj5kg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCx-RuRxWBvuajVEaeYCCzuA",
+   "channel_url": "https://www.youtube.com/channel/UCx-RuRxWBvuajVEaeYCCzuA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCpnuadQ_w3r6f4Q_NRlqd-w",
+   "channel_url": "https://www.youtube.com/channel/UCpnuadQ_w3r6f4Q_NRlqd-w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjCYo_c8Duugf7k3gUL9jXA",
+   "channel_url": "https://www.youtube.com/channel/UCjCYo_c8Duugf7k3gUL9jXA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC18exdGWh7piVWisrnDXiZg",
+   "channel_url": "https://www.youtube.com/channel/UC18exdGWh7piVWisrnDXiZg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCKdHfRkpvBa4KDs-ehAndRQ",
+   "channel_url": "https://www.youtube.com/channel/UCKdHfRkpvBa4KDs-ehAndRQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCyDkco6M3V0MOUXfk7sZ_vA",
+   "channel_url": "https://www.youtube.com/channel/UCyDkco6M3V0MOUXfk7sZ_vA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjZXi6cdcQQdhtGHWUkyyiw",
+   "channel_url": "https://www.youtube.com/channel/UCjZXi6cdcQQdhtGHWUkyyiw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCP288HkVaNVGVkMT43ZK3Pw",
+   "channel_url": "https://www.youtube.com/channel/UCP288HkVaNVGVkMT43ZK3Pw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCQGJG3tkmRb8jknnLgunKgQ",
+   "channel_url": "https://www.youtube.com/channel/UCQGJG3tkmRb8jknnLgunKgQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCV8mSD4E4jBN487kJw2Er5Q",
+   "channel_url": "https://www.youtube.com/channel/UCV8mSD4E4jBN487kJw2Er5Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCwBJxmQQ3FNF6VGjC3l6GwA",
+   "channel_url": "https://www.youtube.com/channel/UCwBJxmQQ3FNF6VGjC3l6GwA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCqY53uWge5gesYWyHpfDzWA",
+   "channel_url": "https://www.youtube.com/channel/UCqY53uWge5gesYWyHpfDzWA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCNlAh22d2HURkQbHTHAZiFQ",
+   "channel_url": "https://www.youtube.com/channel/UCNlAh22d2HURkQbHTHAZiFQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCyIjOl8-zjFUPvXB_Ji44kA",
+   "channel_url": "https://www.youtube.com/channel/UCyIjOl8-zjFUPvXB_Ji44kA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCew1WU2EPltKUZw7_pKvsQg",
+   "channel_url": "https://www.youtube.com/channel/UCew1WU2EPltKUZw7_pKvsQg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCB0mDalltdJCBr6yJM0NGuA",
+   "channel_url": "https://www.youtube.com/channel/UCB0mDalltdJCBr6yJM0NGuA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCgiivYS7qoZ0ni3-cA0Ydfw",
+   "channel_url": "https://www.youtube.com/channel/UCgiivYS7qoZ0ni3-cA0Ydfw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCnTcrbbk26MhVcEAKz9wYwQ",
+   "channel_url": "https://www.youtube.com/channel/UCnTcrbbk26MhVcEAKz9wYwQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC8jQFVbxKPCYoDFWnS7ZQ7A",
+   "channel_url": "https://www.youtube.com/channel/UC8jQFVbxKPCYoDFWnS7ZQ7A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC6OIsy19d-oeVX8SOYwaN5g",
+   "channel_url": "https://www.youtube.com/channel/UC6OIsy19d-oeVX8SOYwaN5g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCqsvFoj-8ntqJloHQxV1g-w",
+   "channel_url": "https://www.youtube.com/channel/UCqsvFoj-8ntqJloHQxV1g-w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCKPCFE98IQcQKvINVLhinVw",
+   "channel_url": "https://www.youtube.com/channel/UCKPCFE98IQcQKvINVLhinVw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCx_FKiO_nQIpEpCLRPWx1fg",
+   "channel_url": "https://www.youtube.com/channel/UCx_FKiO_nQIpEpCLRPWx1fg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCnnqAw6XSq2Zi2tVUzWWhzg",
+   "channel_url": "https://www.youtube.com/channel/UCnnqAw6XSq2Zi2tVUzWWhzg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCW7hOyLjxisztAIn7HeNofw",
+   "channel_url": "https://www.youtube.com/channel/UCW7hOyLjxisztAIn7HeNofw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCC5i7JwJWc3s-PllQMAi97g",
+   "channel_url": "https://www.youtube.com/channel/UCC5i7JwJWc3s-PllQMAi97g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC_jSqJtqja62czQuzmDKBpA",
+   "channel_url": "https://www.youtube.com/channel/UC_jSqJtqja62czQuzmDKBpA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC8JmHCXEW6mvI2TkAezzWdQ",
+   "channel_url": "https://www.youtube.com/channel/UC8JmHCXEW6mvI2TkAezzWdQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC_YezO87ID9bp4DCnv5uBoQ",
+   "channel_url": "https://www.youtube.com/channel/UC_YezO87ID9bp4DCnv5uBoQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCANLMICi-3igkEQGaLBhLEw",
+   "channel_url": "https://www.youtube.com/channel/UCANLMICi-3igkEQGaLBhLEw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCDGFD2jJNGAiEI-bEzJTfTw",
+   "channel_url": "https://www.youtube.com/channel/UCDGFD2jJNGAiEI-bEzJTfTw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCiYHl36b6Zh9l2ma_l4N0Uw",
+   "channel_url": "https://www.youtube.com/channel/UCiYHl36b6Zh9l2ma_l4N0Uw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCyI6hv0Z54cSEbPRlXZittA",
+   "channel_url": "https://www.youtube.com/channel/UCyI6hv0Z54cSEbPRlXZittA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCmGfoRCm3zXcLbFUsIMj0pQ",
+   "channel_url": "https://www.youtube.com/channel/UCmGfoRCm3zXcLbFUsIMj0pQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC3dZI6KHuedSaKq8A-blMOA",
+   "channel_url": "https://www.youtube.com/channel/UC3dZI6KHuedSaKq8A-blMOA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCX6G-fDuTejQWc97iI7patQ",
+   "channel_url": "https://www.youtube.com/channel/UCX6G-fDuTejQWc97iI7patQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjQG53OmjPJX3MD2nUAeXPw",
+   "channel_url": "https://www.youtube.com/channel/UCjQG53OmjPJX3MD2nUAeXPw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCv_CSiessLc5wkvqgTklm0w",
+   "channel_url": "https://www.youtube.com/channel/UCv_CSiessLc5wkvqgTklm0w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC-NStqJg4v5WnK4xIQ8PrCw",
+   "channel_url": "https://www.youtube.com/channel/UC-NStqJg4v5WnK4xIQ8PrCw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCdB_wHzRxuhLwzKdVFWYBig",
+   "channel_url": "https://www.youtube.com/channel/UCdB_wHzRxuhLwzKdVFWYBig"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCKaTDHpixH0DVOc6cX9PBTw",
+   "channel_url": "https://www.youtube.com/channel/UCKaTDHpixH0DVOc6cX9PBTw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCrKlkZSaJw7ntMHwGyKLDDA",
+   "channel_url": "https://www.youtube.com/channel/UCrKlkZSaJw7ntMHwGyKLDDA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCL2LMEqfEgvGjHWhiBuxLMQ",
+   "channel_url": "https://www.youtube.com/channel/UCL2LMEqfEgvGjHWhiBuxLMQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCy0IBCo1koP3d_G9MqLB2ug",
+   "channel_url": "https://www.youtube.com/channel/UCy0IBCo1koP3d_G9MqLB2ug"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC_iqZ2fuh5DstzhPUdpreXw",
+   "channel_url": "https://www.youtube.com/channel/UC_iqZ2fuh5DstzhPUdpreXw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC_uIW_MvxONcZsAkaMq1ujA",
+   "channel_url": "https://www.youtube.com/channel/UC_uIW_MvxONcZsAkaMq1ujA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC9EETAHl7qM8dpUreCQ5qPA",
+   "channel_url": "https://www.youtube.com/channel/UC9EETAHl7qM8dpUreCQ5qPA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC-eXpL9COZhobz08tBY4gDg",
+   "channel_url": "https://www.youtube.com/channel/UC-eXpL9COZhobz08tBY4gDg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCph-BAbjQU0WCVmod6IXEvg",
+   "channel_url": "https://www.youtube.com/channel/UCph-BAbjQU0WCVmod6IXEvg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjk_rgKEj_hKSuyuv9a7BhA",
+   "channel_url": "https://www.youtube.com/channel/UCjk_rgKEj_hKSuyuv9a7BhA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCzphdKnkGWxCwZaXUO2k3SA",
+   "channel_url": "https://www.youtube.com/channel/UCzphdKnkGWxCwZaXUO2k3SA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC3m9Z-AnGHifr03dzaoLGbQ",
+   "channel_url": "https://www.youtube.com/channel/UC3m9Z-AnGHifr03dzaoLGbQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCysWHUPGnEwq2cNh1yYrC_Q",
+   "channel_url": "https://www.youtube.com/channel/UCysWHUPGnEwq2cNh1yYrC_Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCqR3Q21gww22FBQpEWcGEVw",
+   "channel_url": "https://www.youtube.com/channel/UCqR3Q21gww22FBQpEWcGEVw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCkNv58gXkRplfWIKphVF1UQ",
+   "channel_url": "https://www.youtube.com/channel/UCkNv58gXkRplfWIKphVF1UQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCu7pPrixg0ZI43F4wb_ELhA",
+   "channel_url": "https://www.youtube.com/channel/UCu7pPrixg0ZI43F4wb_ELhA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC_olRVwNOQSaROvyKxYDHkA",
+   "channel_url": "https://www.youtube.com/channel/UC_olRVwNOQSaROvyKxYDHkA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC6mW5ImdY3nt0vaCvVxWeKw",
+   "channel_url": "https://www.youtube.com/channel/UC6mW5ImdY3nt0vaCvVxWeKw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC0Af6tVJb4mOjICiwNlXwkg",
+   "channel_url": "https://www.youtube.com/channel/UC0Af6tVJb4mOjICiwNlXwkg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCWzRnuTnPGg6tuOgZ1fbytQ",
+   "channel_url": "https://www.youtube.com/channel/UCWzRnuTnPGg6tuOgZ1fbytQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCcgFWqL5d7p4lJCwP5t7Y3A",
+   "channel_url": "https://www.youtube.com/channel/UCcgFWqL5d7p4lJCwP5t7Y3A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC0EJv_GIzd02bNjH38hDEpg",
+   "channel_url": "https://www.youtube.com/channel/UC0EJv_GIzd02bNjH38hDEpg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCN7cznecoK_nRQUCpBSbB4Q",
+   "channel_url": "https://www.youtube.com/channel/UCN7cznecoK_nRQUCpBSbB4Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC8qiqGzCpLdCvFdKw4EB6AQ",
+   "channel_url": "https://www.youtube.com/channel/UC8qiqGzCpLdCvFdKw4EB6AQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC7O-bduiIyvCBtT_QSbKmpw",
+   "channel_url": "https://www.youtube.com/channel/UC7O-bduiIyvCBtT_QSbKmpw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCd_mxoctDm0kvI31Kpnle1g",
+   "channel_url": "https://www.youtube.com/channel/UCd_mxoctDm0kvI31Kpnle1g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC6mq6et5OBfavCntJg1pLFw",
+   "channel_url": "https://www.youtube.com/channel/UC6mq6et5OBfavCntJg1pLFw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCsbIuX9LyF2y7aV2VQVoVGg",
+   "channel_url": "https://www.youtube.com/channel/UCsbIuX9LyF2y7aV2VQVoVGg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCiTZ10qFC3wFQvIB1af1DzA",
+   "channel_url": "https://www.youtube.com/channel/UCiTZ10qFC3wFQvIB1af1DzA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCqGxtdkJ8ntvIu6sM9WLmUw",
+   "channel_url": "https://www.youtube.com/channel/UCqGxtdkJ8ntvIu6sM9WLmUw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC43f1jr-udWa2pw212mJhNw",
+   "channel_url": "https://www.youtube.com/channel/UC43f1jr-udWa2pw212mJhNw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCwMJPMiIt2qVHsDeyVyVeww",
+   "channel_url": "https://www.youtube.com/channel/UCwMJPMiIt2qVHsDeyVyVeww"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC9vsId_UFmXw6a6lNkxfA5g",
+   "channel_url": "https://www.youtube.com/channel/UC9vsId_UFmXw6a6lNkxfA5g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCMIE12AHq1elXrToA88tqAg",
+   "channel_url": "https://www.youtube.com/channel/UCMIE12AHq1elXrToA88tqAg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCdVEfdWcNwL5jWmwaNWEf1Q",
+   "channel_url": "https://www.youtube.com/channel/UCdVEfdWcNwL5jWmwaNWEf1Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChp3_d2DHEBZOBHACIBeOOw",
+   "channel_url": "https://www.youtube.com/channel/UChp3_d2DHEBZOBHACIBeOOw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCLnNZdZyyA_7scx_QeDfYKg",
+   "channel_url": "https://www.youtube.com/channel/UCLnNZdZyyA_7scx_QeDfYKg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCJMexLsfDYiJPhstC-7JvdA",
+   "channel_url": "https://www.youtube.com/channel/UCJMexLsfDYiJPhstC-7JvdA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCczljj7k_ZtOsr0BmCTjUnw",
+   "channel_url": "https://www.youtube.com/channel/UCczljj7k_ZtOsr0BmCTjUnw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC4laYpY5K9N4GDLjRqmoH_w",
+   "channel_url": "https://www.youtube.com/channel/UC4laYpY5K9N4GDLjRqmoH_w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC2LbjrRZvRO8wGuLfT6ax2w",
+   "channel_url": "https://www.youtube.com/channel/UC2LbjrRZvRO8wGuLfT6ax2w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC4AHdCAoqKZ2oMxfrB8Z3dw",
+   "channel_url": "https://www.youtube.com/channel/UC4AHdCAoqKZ2oMxfrB8Z3dw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCpMgG1Ua44YDY4OTuxntYDw",
+   "channel_url": "https://www.youtube.com/channel/UCpMgG1Ua44YDY4OTuxntYDw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCj02r4ZTmCVJOB37Dbyoy5w",
+   "channel_url": "https://www.youtube.com/channel/UCj02r4ZTmCVJOB37Dbyoy5w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCW03UZ-Mpp6Et4nHWCtIy5g",
+   "channel_url": "https://www.youtube.com/channel/UCW03UZ-Mpp6Et4nHWCtIy5g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCuCI82s5WjWQZMxK1bOa7yw",
+   "channel_url": "https://www.youtube.com/channel/UCuCI82s5WjWQZMxK1bOa7yw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCEClBm2rnG9OipYVgrKgaxA",
+   "channel_url": "https://www.youtube.com/channel/UCEClBm2rnG9OipYVgrKgaxA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCL9aTJb0ur4sovxcppAopEw",
+   "channel_url": "https://www.youtube.com/channel/UCL9aTJb0ur4sovxcppAopEw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCzY7PhuQgQe8gGAgqmkZe9Q",
+   "channel_url": "https://www.youtube.com/channel/UCzY7PhuQgQe8gGAgqmkZe9Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC9GGzAhhvhJO1hL10-BcgNA",
+   "channel_url": "https://www.youtube.com/channel/UC9GGzAhhvhJO1hL10-BcgNA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCqpNHx_gjAV70G-H1jZMpOg",
+   "channel_url": "https://www.youtube.com/channel/UCqpNHx_gjAV70G-H1jZMpOg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC_P78ag-1eZGHqPgR9FA-cw",
+   "channel_url": "https://www.youtube.com/channel/UC_P78ag-1eZGHqPgR9FA-cw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCl_oudxGhPy6K3g60d-qLXA",
+   "channel_url": "https://www.youtube.com/channel/UCl_oudxGhPy6K3g60d-qLXA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCtiLZhefLrm4CEMrctJyzUQ",
+   "channel_url": "https://www.youtube.com/channel/UCtiLZhefLrm4CEMrctJyzUQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCHRVeW3Z0ttSFk6xIfGW4lA",
+   "channel_url": "https://www.youtube.com/channel/UCHRVeW3Z0ttSFk6xIfGW4lA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCemPMavRPXyRX3LITZGHHkg",
+   "channel_url": "https://www.youtube.com/channel/UCemPMavRPXyRX3LITZGHHkg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC4kyePyDD-AEpOQ16cgfvvg",
+   "channel_url": "https://www.youtube.com/channel/UC4kyePyDD-AEpOQ16cgfvvg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCn6N62QEqe9r48HUqwSvixg",
+   "channel_url": "https://www.youtube.com/channel/UCn6N62QEqe9r48HUqwSvixg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCaP3ve1gumGsXrTVfZUhSJA",
+   "channel_url": "https://www.youtube.com/channel/UCaP3ve1gumGsXrTVfZUhSJA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC0zAX6PQUKro_p8GwdFYjmg",
+   "channel_url": "https://www.youtube.com/channel/UC0zAX6PQUKro_p8GwdFYjmg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCXTh7aZTf_zrStGZc4LGKRA",
+   "channel_url": "https://www.youtube.com/channel/UCXTh7aZTf_zrStGZc4LGKRA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCgx5CXOg9fc9oX4NlslMkig",
+   "channel_url": "https://www.youtube.com/channel/UCgx5CXOg9fc9oX4NlslMkig"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjJ_qi4aYg7ZnhjrUR4yIKA",
+   "channel_url": "https://www.youtube.com/channel/UCjJ_qi4aYg7ZnhjrUR4yIKA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChyXLjGnrNbQnyNx29fTKsg",
+   "channel_url": "https://www.youtube.com/channel/UChyXLjGnrNbQnyNx29fTKsg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCulfgSupA4CKO4ZEDXA9nJg",
+   "channel_url": "https://www.youtube.com/channel/UCulfgSupA4CKO4ZEDXA9nJg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCu3Wc2GlCpyxGmX7N0EO5NQ",
+   "channel_url": "https://www.youtube.com/channel/UCu3Wc2GlCpyxGmX7N0EO5NQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCxxlq0YR086Qnu3OX-4261A",
+   "channel_url": "https://www.youtube.com/channel/UCxxlq0YR086Qnu3OX-4261A"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCF_9Jm4udlXNh7UfYtIBEbA",
+   "channel_url": "https://www.youtube.com/channel/UCF_9Jm4udlXNh7UfYtIBEbA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCwq_z6HdG963_y0tnkst5Qw",
+   "channel_url": "https://www.youtube.com/channel/UCwq_z6HdG963_y0tnkst5Qw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCZo7GB8RjLf1YX1py-qiUgw",
+   "channel_url": "https://www.youtube.com/channel/UCZo7GB8RjLf1YX1py-qiUgw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC0weoMoGQeRfK2GfV_hzkTw",
+   "channel_url": "https://www.youtube.com/channel/UC0weoMoGQeRfK2GfV_hzkTw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCl6GyUdeUoLzcwdFvjp-y2w",
+   "channel_url": "https://www.youtube.com/channel/UCl6GyUdeUoLzcwdFvjp-y2w"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCjBk_F2Cv9_LxjDnZVWJXsg",
+   "channel_url": "https://www.youtube.com/channel/UCjBk_F2Cv9_LxjDnZVWJXsg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCBeKQHJIO1JIsTnjScP2-4g",
+   "channel_url": "https://www.youtube.com/channel/UCBeKQHJIO1JIsTnjScP2-4g"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UChMixywV8k0THKXwQcx6sVg",
+   "channel_url": "https://www.youtube.com/channel/UChMixywV8k0THKXwQcx6sVg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCKlNpUVT7CCg98uRZwf2LYg",
+   "channel_url": "https://www.youtube.com/channel/UCKlNpUVT7CCg98uRZwf2LYg"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCdRG-WrGf38peaL8lZ6LWEw",
+   "channel_url": "https://www.youtube.com/channel/UCdRG-WrGf38peaL8lZ6LWEw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UC59yKnPGlOmpy4YQtv8dH-Q",
+   "channel_url": "https://www.youtube.com/channel/UC59yKnPGlOmpy4YQtv8dH-Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCa1b7OeqI16xfAzY9gX8b_Q",
+   "channel_url": "https://www.youtube.com/channel/UCa1b7OeqI16xfAzY9gX8b_Q"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCYITbKc0fCERTCRtyjy5dVw",
+   "channel_url": "https://www.youtube.com/channel/UCYITbKc0fCERTCRtyjy5dVw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCWVttefOAX46IYEYc_iGwFw",
+   "channel_url": "https://www.youtube.com/channel/UCWVttefOAX46IYEYc_iGwFw"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCh-wpGSrx3FvA1Z3tXYa-gA",
+   "channel_url": "https://www.youtube.com/channel/UCh-wpGSrx3FvA1Z3tXYa-gA"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCKnxNxhL5u0Dayo-w8gXTZQ",
+   "channel_url": "https://www.youtube.com/channel/UCKnxNxhL5u0Dayo-w8gXTZQ"
+  },
+  {
+   "vertical": "hiking_bikepacking",
+   "channel_id": "UCLr4Pqe-QQrZ-hMozbqW7mQ",
+   "channel_url": "https://www.youtube.com/channel/UCLr4Pqe-QQrZ-hMozbqW7mQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCqAUJkEzRsHD_uoR-yBSVSA",
+   "channel_url": "https://www.youtube.com/channel/UCqAUJkEzRsHD_uoR-yBSVSA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCJXWinVwlYPSOlYx154Z-Ag",
+   "channel_url": "https://www.youtube.com/channel/UCJXWinVwlYPSOlYx154Z-Ag"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCsuIiwMc6W6Ods0V6SQfP8w",
+   "channel_url": "https://www.youtube.com/channel/UCsuIiwMc6W6Ods0V6SQfP8w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCrsi392diB0fG15D7pF5B0Q",
+   "channel_url": "https://www.youtube.com/channel/UCrsi392diB0fG15D7pF5B0Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCRkP7XY9_7kQ03A48XY0vVw",
+   "channel_url": "https://www.youtube.com/channel/UCRkP7XY9_7kQ03A48XY0vVw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCFq9W0rcjR-kDzU4AsLKRMA",
+   "channel_url": "https://www.youtube.com/channel/UCFq9W0rcjR-kDzU4AsLKRMA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCGuk4ilmzbtmf-ubXRGDV8g",
+   "channel_url": "https://www.youtube.com/channel/UCGuk4ilmzbtmf-ubXRGDV8g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC6166KWFpaYWhK5jveLeCdg",
+   "channel_url": "https://www.youtube.com/channel/UC6166KWFpaYWhK5jveLeCdg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCP-Gr-w1V90LAez3If6KGCQ",
+   "channel_url": "https://www.youtube.com/channel/UCP-Gr-w1V90LAez3If6KGCQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCSKISLSiomjGLLGpo5UwQYw",
+   "channel_url": "https://www.youtube.com/channel/UCSKISLSiomjGLLGpo5UwQYw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCuJyhceVw4X3AWM1PCD9OYg",
+   "channel_url": "https://www.youtube.com/channel/UCuJyhceVw4X3AWM1PCD9OYg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCKxQmtv4FeFDstKIeYDSq4Q",
+   "channel_url": "https://www.youtube.com/channel/UCKxQmtv4FeFDstKIeYDSq4Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC2SITQ24nmtN4f1WeLjPw8A",
+   "channel_url": "https://www.youtube.com/channel/UC2SITQ24nmtN4f1WeLjPw8A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCs-IplAzY5nGpHtCKnR0b_A",
+   "channel_url": "https://www.youtube.com/channel/UCs-IplAzY5nGpHtCKnR0b_A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCDm0nNWjzOMnFYHct0gc8wQ",
+   "channel_url": "https://www.youtube.com/channel/UCDm0nNWjzOMnFYHct0gc8wQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCbl8vIyP3YTt_YLBFcDdNiw",
+   "channel_url": "https://www.youtube.com/channel/UCbl8vIyP3YTt_YLBFcDdNiw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCIM9mrLttYgNOvVE7ymgz8g",
+   "channel_url": "https://www.youtube.com/channel/UCIM9mrLttYgNOvVE7ymgz8g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfSYp_HbRaF4uVByzcRnAOQ",
+   "channel_url": "https://www.youtube.com/channel/UCfSYp_HbRaF4uVByzcRnAOQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCqcTRjUGEiAumD-K9_Nw05A",
+   "channel_url": "https://www.youtube.com/channel/UCqcTRjUGEiAumD-K9_Nw05A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC8S8Gjyhkk4mgjT0tlM9dKQ",
+   "channel_url": "https://www.youtube.com/channel/UC8S8Gjyhkk4mgjT0tlM9dKQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCSpPQVl75BYycRn0zJQeq-w",
+   "channel_url": "https://www.youtube.com/channel/UCSpPQVl75BYycRn0zJQeq-w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCx3iT3SZRN9Wb1Qew1-olPA",
+   "channel_url": "https://www.youtube.com/channel/UCx3iT3SZRN9Wb1Qew1-olPA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC1lOdFywirADs_pnLI2CZqQ",
+   "channel_url": "https://www.youtube.com/channel/UC1lOdFywirADs_pnLI2CZqQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCNfL19sg26_phXwYe-e58Pw",
+   "channel_url": "https://www.youtube.com/channel/UCNfL19sg26_phXwYe-e58Pw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCYhTTCTiOTjSP-RgdFPPv2w",
+   "channel_url": "https://www.youtube.com/channel/UCYhTTCTiOTjSP-RgdFPPv2w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCR2J-_xf8fBvMoTBEpPitkw",
+   "channel_url": "https://www.youtube.com/channel/UCR2J-_xf8fBvMoTBEpPitkw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCcU2_zVGMjnDsIKHCQLyC9Q",
+   "channel_url": "https://www.youtube.com/channel/UCcU2_zVGMjnDsIKHCQLyC9Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCMRYfgL_lJrse8yITsQP5sQ",
+   "channel_url": "https://www.youtube.com/channel/UCMRYfgL_lJrse8yITsQP5sQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCpu6KFCBdAusNf1BZEl5LHA",
+   "channel_url": "https://www.youtube.com/channel/UCpu6KFCBdAusNf1BZEl5LHA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCz_cgRRMbjm8YVl29LDY8mA",
+   "channel_url": "https://www.youtube.com/channel/UCz_cgRRMbjm8YVl29LDY8mA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfLXeORhtV1xmD0dxFql_6w",
+   "channel_url": "https://www.youtube.com/channel/UCfLXeORhtV1xmD0dxFql_6w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC_SPt0MlJXinmCBSGVCLxgw",
+   "channel_url": "https://www.youtube.com/channel/UC_SPt0MlJXinmCBSGVCLxgw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC563XMI6XNvIwUH4lJ075qA",
+   "channel_url": "https://www.youtube.com/channel/UC563XMI6XNvIwUH4lJ075qA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCkmZgdjCWTrajy83as30dUg",
+   "channel_url": "https://www.youtube.com/channel/UCkmZgdjCWTrajy83as30dUg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCIkSRiwfhiSA0wOQNB8ANBA",
+   "channel_url": "https://www.youtube.com/channel/UCIkSRiwfhiSA0wOQNB8ANBA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC-swZgNLttjSb8yMRFCSmCg",
+   "channel_url": "https://www.youtube.com/channel/UC-swZgNLttjSb8yMRFCSmCg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCvhRp6OUBwPs2feW3WMHmxQ",
+   "channel_url": "https://www.youtube.com/channel/UCvhRp6OUBwPs2feW3WMHmxQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCs7tJJU0N8rGxWv1dn5DNjw",
+   "channel_url": "https://www.youtube.com/channel/UCs7tJJU0N8rGxWv1dn5DNjw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCr-iZUs9g7qNeKMXmPfGpgA",
+   "channel_url": "https://www.youtube.com/channel/UCr-iZUs9g7qNeKMXmPfGpgA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC2U-AX-M6ZTQ2Db97O1tMtg",
+   "channel_url": "https://www.youtube.com/channel/UC2U-AX-M6ZTQ2Db97O1tMtg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCzWrHpZ9mMbgiM2XxnkTD0A",
+   "channel_url": "https://www.youtube.com/channel/UCzWrHpZ9mMbgiM2XxnkTD0A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCnQh_hVj4wVAbKtL2ACEuxw",
+   "channel_url": "https://www.youtube.com/channel/UCnQh_hVj4wVAbKtL2ACEuxw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCrcBysxpMpsHebvSN0veywg",
+   "channel_url": "https://www.youtube.com/channel/UCrcBysxpMpsHebvSN0veywg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCnGllBCXq1KnE12URTzNYig",
+   "channel_url": "https://www.youtube.com/channel/UCnGllBCXq1KnE12URTzNYig"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCOl1ZsJodcuFN3cEnz3DfeA",
+   "channel_url": "https://www.youtube.com/channel/UCOl1ZsJodcuFN3cEnz3DfeA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCaTEXXgKMl3zml3u0YfGSgA",
+   "channel_url": "https://www.youtube.com/channel/UCaTEXXgKMl3zml3u0YfGSgA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC7jTC96MxGRE8I5SZv6_LSw",
+   "channel_url": "https://www.youtube.com/channel/UC7jTC96MxGRE8I5SZv6_LSw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCGNH4X0S42PsJL29_rhYVXw",
+   "channel_url": "https://www.youtube.com/channel/UCGNH4X0S42PsJL29_rhYVXw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCY5Exop4r_bHmarcB_7jLMQ",
+   "channel_url": "https://www.youtube.com/channel/UCY5Exop4r_bHmarcB_7jLMQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCJ28R48VUdaJwZ3uDCWDrQQ",
+   "channel_url": "https://www.youtube.com/channel/UCJ28R48VUdaJwZ3uDCWDrQQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCOpmV-aBahL2oNRujoXedsw",
+   "channel_url": "https://www.youtube.com/channel/UCOpmV-aBahL2oNRujoXedsw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCEr7umS3pF_C33yk-Z-7bBQ",
+   "channel_url": "https://www.youtube.com/channel/UCEr7umS3pF_C33yk-Z-7bBQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCC3ke5K2KeBLbRM5iTe0BUQ",
+   "channel_url": "https://www.youtube.com/channel/UCC3ke5K2KeBLbRM5iTe0BUQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCpflDrt947y9sAK9EuAWc9g",
+   "channel_url": "https://www.youtube.com/channel/UCpflDrt947y9sAK9EuAWc9g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfaVTFbFp4_yT_gRV_SXxZg",
+   "channel_url": "https://www.youtube.com/channel/UCfaVTFbFp4_yT_gRV_SXxZg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCc_iEWynGCD5cE_5Mbzk2BA",
+   "channel_url": "https://www.youtube.com/channel/UCc_iEWynGCD5cE_5Mbzk2BA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCrILKkTL7FRc-Sg8CMQtDzA",
+   "channel_url": "https://www.youtube.com/channel/UCrILKkTL7FRc-Sg8CMQtDzA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCGEiZ1-BS_-weGa1g1vmExQ",
+   "channel_url": "https://www.youtube.com/channel/UCGEiZ1-BS_-weGa1g1vmExQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC_QyOmtxAlbZfgWavjWpdXQ",
+   "channel_url": "https://www.youtube.com/channel/UC_QyOmtxAlbZfgWavjWpdXQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCpugU1PracS4MWZSG1OSqLA",
+   "channel_url": "https://www.youtube.com/channel/UCpugU1PracS4MWZSG1OSqLA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC51l3lH7blXiPlbqtGqP5Dg",
+   "channel_url": "https://www.youtube.com/channel/UC51l3lH7blXiPlbqtGqP5Dg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCxwHWfF-VMnd9BxkZDpifIg",
+   "channel_url": "https://www.youtube.com/channel/UCxwHWfF-VMnd9BxkZDpifIg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCdz8M6aEcE-XO8tscnSLeSg",
+   "channel_url": "https://www.youtube.com/channel/UCdz8M6aEcE-XO8tscnSLeSg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC5Te9qNmJAbV-6Lstt58UZw",
+   "channel_url": "https://www.youtube.com/channel/UC5Te9qNmJAbV-6Lstt58UZw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCDZU0bPAqwtNrUNwyaxaCpA",
+   "channel_url": "https://www.youtube.com/channel/UCDZU0bPAqwtNrUNwyaxaCpA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCiCSflIk9GzgtyaqMMAAnFA",
+   "channel_url": "https://www.youtube.com/channel/UCiCSflIk9GzgtyaqMMAAnFA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCYCxYp7o8PZuer5vTGzuEUg",
+   "channel_url": "https://www.youtube.com/channel/UCYCxYp7o8PZuer5vTGzuEUg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCm5ba-ri5PlDQdgiVVDjZGA",
+   "channel_url": "https://www.youtube.com/channel/UCm5ba-ri5PlDQdgiVVDjZGA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCdAi_YSuJe4-3byNLEuMh_Q",
+   "channel_url": "https://www.youtube.com/channel/UCdAi_YSuJe4-3byNLEuMh_Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCcFiNDln5yac1byDKF7ssig",
+   "channel_url": "https://www.youtube.com/channel/UCcFiNDln5yac1byDKF7ssig"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCl8cWr8TFvNwiQKVoLwwUyw",
+   "channel_url": "https://www.youtube.com/channel/UCl8cWr8TFvNwiQKVoLwwUyw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCN5TjsqsK3Q5BCVcahjrINw",
+   "channel_url": "https://www.youtube.com/channel/UCN5TjsqsK3Q5BCVcahjrINw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC55y3uVtY76oa9Cd1gCav1g",
+   "channel_url": "https://www.youtube.com/channel/UC55y3uVtY76oa9Cd1gCav1g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC0QHk3GOmOhFgXYJcFtm6DA",
+   "channel_url": "https://www.youtube.com/channel/UC0QHk3GOmOhFgXYJcFtm6DA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC88eRDTH1I_ALRAf2wqKsrg",
+   "channel_url": "https://www.youtube.com/channel/UC88eRDTH1I_ALRAf2wqKsrg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCXVKoV-cJ181en63vxsEn-A",
+   "channel_url": "https://www.youtube.com/channel/UCXVKoV-cJ181en63vxsEn-A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC2ccm1GajfSujz7T18d7cKA",
+   "channel_url": "https://www.youtube.com/channel/UC2ccm1GajfSujz7T18d7cKA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCk8r1qj379tYM9mQl5UpQVw",
+   "channel_url": "https://www.youtube.com/channel/UCk8r1qj379tYM9mQl5UpQVw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCQw5XytxxfTVGct1lDm09nA",
+   "channel_url": "https://www.youtube.com/channel/UCQw5XytxxfTVGct1lDm09nA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC7HTNR4pEWLaDYtZWbChw9w",
+   "channel_url": "https://www.youtube.com/channel/UC7HTNR4pEWLaDYtZWbChw9w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCG8yFG1uzHrRRjDwrLyZR5g",
+   "channel_url": "https://www.youtube.com/channel/UCG8yFG1uzHrRRjDwrLyZR5g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCqk7x53R--SLM2sjJG6n9vg",
+   "channel_url": "https://www.youtube.com/channel/UCqk7x53R--SLM2sjJG6n9vg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCs8cRivViWcNIx5arlnYXYg",
+   "channel_url": "https://www.youtube.com/channel/UCs8cRivViWcNIx5arlnYXYg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCX06jmnFe0JpiSZH_WrIgfA",
+   "channel_url": "https://www.youtube.com/channel/UCX06jmnFe0JpiSZH_WrIgfA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCTRLIYTYGmrTTNy4al957qg",
+   "channel_url": "https://www.youtube.com/channel/UCTRLIYTYGmrTTNy4al957qg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC6xJ2pHoFBm6TtslxUdWWDg",
+   "channel_url": "https://www.youtube.com/channel/UC6xJ2pHoFBm6TtslxUdWWDg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCdS-PJCL0r-WvR64wIGk2bg",
+   "channel_url": "https://www.youtube.com/channel/UCdS-PJCL0r-WvR64wIGk2bg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCa17M6XJ7x4rveVHVG_HzzQ",
+   "channel_url": "https://www.youtube.com/channel/UCa17M6XJ7x4rveVHVG_HzzQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCDIEqEiq_aARIhoM8xC14Uw",
+   "channel_url": "https://www.youtube.com/channel/UCDIEqEiq_aARIhoM8xC14Uw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCACG4ZaM8VmC1TCPUp5YpYA",
+   "channel_url": "https://www.youtube.com/channel/UCACG4ZaM8VmC1TCPUp5YpYA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCnAfAn_W2ef90h5rCmx120A",
+   "channel_url": "https://www.youtube.com/channel/UCnAfAn_W2ef90h5rCmx120A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC63lUfSwS94aXeY7vUKE-PQ",
+   "channel_url": "https://www.youtube.com/channel/UC63lUfSwS94aXeY7vUKE-PQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCMuZWi5NewtOTyJp4F2xl9Q",
+   "channel_url": "https://www.youtube.com/channel/UCMuZWi5NewtOTyJp4F2xl9Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCsnXijtv9bOvtUSri1qS1_A",
+   "channel_url": "https://www.youtube.com/channel/UCsnXijtv9bOvtUSri1qS1_A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCgoicSaXLZKmTscpik5u5mg",
+   "channel_url": "https://www.youtube.com/channel/UCgoicSaXLZKmTscpik5u5mg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC09rqifyTNif_2HAPLJCvrQ",
+   "channel_url": "https://www.youtube.com/channel/UC09rqifyTNif_2HAPLJCvrQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCw0N2zPZlYsrUcVIJkI6mBA",
+   "channel_url": "https://www.youtube.com/channel/UCw0N2zPZlYsrUcVIJkI6mBA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC0XHf9CaMAakafmhkTuNuPA",
+   "channel_url": "https://www.youtube.com/channel/UC0XHf9CaMAakafmhkTuNuPA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCoVidg-UsgNpyjqyWWlWImw",
+   "channel_url": "https://www.youtube.com/channel/UCoVidg-UsgNpyjqyWWlWImw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCr17eO9Sbr1Jh1jcGexcXQA",
+   "channel_url": "https://www.youtube.com/channel/UCr17eO9Sbr1Jh1jcGexcXQA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCGgw06zya4rMSUEEZfaflNA",
+   "channel_url": "https://www.youtube.com/channel/UCGgw06zya4rMSUEEZfaflNA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCkTOP6YPcZzaSMUpO0Hv40A",
+   "channel_url": "https://www.youtube.com/channel/UCkTOP6YPcZzaSMUpO0Hv40A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCrsSGQQv4OsipLQwgf3CP6A",
+   "channel_url": "https://www.youtube.com/channel/UCrsSGQQv4OsipLQwgf3CP6A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCbQiCVLFtWLOjVO0YuUqo7Q",
+   "channel_url": "https://www.youtube.com/channel/UCbQiCVLFtWLOjVO0YuUqo7Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC1cYhWhRwP5VP_8Z9lT7IRA",
+   "channel_url": "https://www.youtube.com/channel/UC1cYhWhRwP5VP_8Z9lT7IRA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCajKgpxKwbuhR2PkI7e-WUA",
+   "channel_url": "https://www.youtube.com/channel/UCajKgpxKwbuhR2PkI7e-WUA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC8gLFapmHedK1TvsStG5Cuw",
+   "channel_url": "https://www.youtube.com/channel/UC8gLFapmHedK1TvsStG5Cuw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC9LDgfKaxq5-J2cwvDhF-aw",
+   "channel_url": "https://www.youtube.com/channel/UC9LDgfKaxq5-J2cwvDhF-aw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCKwIWByGLhE8tuUIjddZt5Q",
+   "channel_url": "https://www.youtube.com/channel/UCKwIWByGLhE8tuUIjddZt5Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCFoY_kDQKua91wz-siDFG5A",
+   "channel_url": "https://www.youtube.com/channel/UCFoY_kDQKua91wz-siDFG5A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCK8vtw-KhU1971oJxzjXpOA",
+   "channel_url": "https://www.youtube.com/channel/UCK8vtw-KhU1971oJxzjXpOA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfFQZ4kQ5RkPqJBFDiYUlsA",
+   "channel_url": "https://www.youtube.com/channel/UCfFQZ4kQ5RkPqJBFDiYUlsA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCenwZ1nxxE96s0b5J0jNMVA",
+   "channel_url": "https://www.youtube.com/channel/UCenwZ1nxxE96s0b5J0jNMVA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCtzHpKQUxjWJCX-tsiUQolQ",
+   "channel_url": "https://www.youtube.com/channel/UCtzHpKQUxjWJCX-tsiUQolQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCpcvsK0UAI3MIHsjjj3CgMg",
+   "channel_url": "https://www.youtube.com/channel/UCpcvsK0UAI3MIHsjjj3CgMg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCjIaHVDYIY9o1X6NJCQYi-A",
+   "channel_url": "https://www.youtube.com/channel/UCjIaHVDYIY9o1X6NJCQYi-A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCcgLaRXH-2SRSjvlNN_MoMw",
+   "channel_url": "https://www.youtube.com/channel/UCcgLaRXH-2SRSjvlNN_MoMw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCuKuhuvF--2zZpL1sHHYS_w",
+   "channel_url": "https://www.youtube.com/channel/UCuKuhuvF--2zZpL1sHHYS_w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCE1LY8BJQJ85lFd11_fg9Ww",
+   "channel_url": "https://www.youtube.com/channel/UCE1LY8BJQJ85lFd11_fg9Ww"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCeXhnB3vl2J2KJiSuqsUqvw",
+   "channel_url": "https://www.youtube.com/channel/UCeXhnB3vl2J2KJiSuqsUqvw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCqSZR0vGFi-P66NmX5r6nWg",
+   "channel_url": "https://www.youtube.com/channel/UCqSZR0vGFi-P66NmX5r6nWg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCiTaQNzwdjDxsLy2HsJhflA",
+   "channel_url": "https://www.youtube.com/channel/UCiTaQNzwdjDxsLy2HsJhflA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC2SEk1w7DgoHs_G3w1biz-w",
+   "channel_url": "https://www.youtube.com/channel/UC2SEk1w7DgoHs_G3w1biz-w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCx7XoEQ-tJRg7IIeeruo3bA",
+   "channel_url": "https://www.youtube.com/channel/UCx7XoEQ-tJRg7IIeeruo3bA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCOFpNj8nH7WIJMdPRZj_1xQ",
+   "channel_url": "https://www.youtube.com/channel/UCOFpNj8nH7WIJMdPRZj_1xQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCxa7V5HDwNvq6TEUtK8pM_g",
+   "channel_url": "https://www.youtube.com/channel/UCxa7V5HDwNvq6TEUtK8pM_g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC4wJaBPihmNIWrItieeHTgw",
+   "channel_url": "https://www.youtube.com/channel/UC4wJaBPihmNIWrItieeHTgw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCzvE4y0RNkWxSE0Ls6eGfTQ",
+   "channel_url": "https://www.youtube.com/channel/UCzvE4y0RNkWxSE0Ls6eGfTQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCTaIJ3Y4ANBwzz5umkennsQ",
+   "channel_url": "https://www.youtube.com/channel/UCTaIJ3Y4ANBwzz5umkennsQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCG-8ipMclJFOTx1mCOCAdXg",
+   "channel_url": "https://www.youtube.com/channel/UCG-8ipMclJFOTx1mCOCAdXg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCSj-QFiQSY3lvUici0xHufw",
+   "channel_url": "https://www.youtube.com/channel/UCSj-QFiQSY3lvUici0xHufw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCghiGUGsvcHTuJJ1nYwmYlw",
+   "channel_url": "https://www.youtube.com/channel/UCghiGUGsvcHTuJJ1nYwmYlw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCk87zfDi_yA2I9UCPq0Ps8Q",
+   "channel_url": "https://www.youtube.com/channel/UCk87zfDi_yA2I9UCPq0Ps8Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCW4aEu14zR4_U0M008AR80w",
+   "channel_url": "https://www.youtube.com/channel/UCW4aEu14zR4_U0M008AR80w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC-LcCX2fc_jMFCzhYfmg_3Q",
+   "channel_url": "https://www.youtube.com/channel/UC-LcCX2fc_jMFCzhYfmg_3Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCFTtlTg_ezBUZFPaEEqNhLw",
+   "channel_url": "https://www.youtube.com/channel/UCFTtlTg_ezBUZFPaEEqNhLw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UClBWndpz6PPXq_uwFez4rzA",
+   "channel_url": "https://www.youtube.com/channel/UClBWndpz6PPXq_uwFez4rzA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCsR37ncTjy78oR0gYximwTw",
+   "channel_url": "https://www.youtube.com/channel/UCsR37ncTjy78oR0gYximwTw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCt-VfYSDgdw41oDGdubFRUA",
+   "channel_url": "https://www.youtube.com/channel/UCt-VfYSDgdw41oDGdubFRUA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCHkOa9jzFF7BvZ4_4zdYOEA",
+   "channel_url": "https://www.youtube.com/channel/UCHkOa9jzFF7BvZ4_4zdYOEA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfvDSkKrRSxPIn6DY1xtWAQ",
+   "channel_url": "https://www.youtube.com/channel/UCfvDSkKrRSxPIn6DY1xtWAQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCGp4u0WHLsK8OAxnvwiTyhA",
+   "channel_url": "https://www.youtube.com/channel/UCGp4u0WHLsK8OAxnvwiTyhA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfC_hIa2WSDJ7ULvaoYJ_qg",
+   "channel_url": "https://www.youtube.com/channel/UCfC_hIa2WSDJ7ULvaoYJ_qg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCjXas5jgJF295A-sEpSs71A",
+   "channel_url": "https://www.youtube.com/channel/UCjXas5jgJF295A-sEpSs71A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCnWTYkCSIEpmyrxdNuwEGNw",
+   "channel_url": "https://www.youtube.com/channel/UCnWTYkCSIEpmyrxdNuwEGNw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCBzU-LHghsqiHsB0UxJA42w",
+   "channel_url": "https://www.youtube.com/channel/UCBzU-LHghsqiHsB0UxJA42w"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC2-meD2UuyTBGlc5XmJqSmg",
+   "channel_url": "https://www.youtube.com/channel/UC2-meD2UuyTBGlc5XmJqSmg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC5DSqkKAXACe-HbXqO0SYGQ",
+   "channel_url": "https://www.youtube.com/channel/UC5DSqkKAXACe-HbXqO0SYGQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC018k7pEPdxInhPl2x07dAw",
+   "channel_url": "https://www.youtube.com/channel/UC018k7pEPdxInhPl2x07dAw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCwF1euMcnj1jwHWzMIYBhpg",
+   "channel_url": "https://www.youtube.com/channel/UCwF1euMcnj1jwHWzMIYBhpg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC5WG-F2mK4irjbk7WKibKKQ",
+   "channel_url": "https://www.youtube.com/channel/UC5WG-F2mK4irjbk7WKibKKQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCGUaoRVHNixK6F_M_EANFew",
+   "channel_url": "https://www.youtube.com/channel/UCGUaoRVHNixK6F_M_EANFew"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCjq0E8BXHaIFfyPbAp7i0qg",
+   "channel_url": "https://www.youtube.com/channel/UCjq0E8BXHaIFfyPbAp7i0qg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCic1dgYm2UwZyXrGaWgQ1FA",
+   "channel_url": "https://www.youtube.com/channel/UCic1dgYm2UwZyXrGaWgQ1FA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC0BklZehXgJS9Ul1Ii0UZcw",
+   "channel_url": "https://www.youtube.com/channel/UC0BklZehXgJS9Ul1Ii0UZcw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCZG8woG7Lty00tRjcX7s0fg",
+   "channel_url": "https://www.youtube.com/channel/UCZG8woG7Lty00tRjcX7s0fg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCz1N1bOaWJLvkNJ20_HZdlQ",
+   "channel_url": "https://www.youtube.com/channel/UCz1N1bOaWJLvkNJ20_HZdlQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCeyEosbqcAwDA4cuSc_RzKQ",
+   "channel_url": "https://www.youtube.com/channel/UCeyEosbqcAwDA4cuSc_RzKQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCgLmVBBdNMckwK6_0R7ee8g",
+   "channel_url": "https://www.youtube.com/channel/UCgLmVBBdNMckwK6_0R7ee8g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCfQbI8nmtBAkThOllEuOTdA",
+   "channel_url": "https://www.youtube.com/channel/UCfQbI8nmtBAkThOllEuOTdA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCQoxcLVGpVt5bILfUmTULnw",
+   "channel_url": "https://www.youtube.com/channel/UCQoxcLVGpVt5bILfUmTULnw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCwtLqVmd-Y3MhkybhQejnBQ",
+   "channel_url": "https://www.youtube.com/channel/UCwtLqVmd-Y3MhkybhQejnBQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCV9rmaGW_P-wsjZRbqMK_pw",
+   "channel_url": "https://www.youtube.com/channel/UCV9rmaGW_P-wsjZRbqMK_pw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCvzh-_aoE100nD0YindXuaA",
+   "channel_url": "https://www.youtube.com/channel/UCvzh-_aoE100nD0YindXuaA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC0oMEDcY146OvhdFh2e0jig",
+   "channel_url": "https://www.youtube.com/channel/UC0oMEDcY146OvhdFh2e0jig"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC_JJGRwPEh5D0Y1m4TF0OeA",
+   "channel_url": "https://www.youtube.com/channel/UC_JJGRwPEh5D0Y1m4TF0OeA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCXJryYh6xcW5iEeJGzK191A",
+   "channel_url": "https://www.youtube.com/channel/UCXJryYh6xcW5iEeJGzK191A"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCJ3Oj6dCRA7Kq3SJOtD2DQg",
+   "channel_url": "https://www.youtube.com/channel/UCJ3Oj6dCRA7Kq3SJOtD2DQg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCKa3vzXkYrPAS0obo_0p7zw",
+   "channel_url": "https://www.youtube.com/channel/UCKa3vzXkYrPAS0obo_0p7zw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC_oOUJtfyO9eg4ZkS1or42g",
+   "channel_url": "https://www.youtube.com/channel/UC_oOUJtfyO9eg4ZkS1or42g"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCRbtu2ZkTquD6eZwLq4dR8Q",
+   "channel_url": "https://www.youtube.com/channel/UCRbtu2ZkTquD6eZwLq4dR8Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC8kZajCXf2iW4BxMk7PX8Rw",
+   "channel_url": "https://www.youtube.com/channel/UC8kZajCXf2iW4BxMk7PX8Rw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCIG-fKMr_9abpXc44VViqdQ",
+   "channel_url": "https://www.youtube.com/channel/UCIG-fKMr_9abpXc44VViqdQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC_tFXXdvYMvfVPoy81S5RSQ",
+   "channel_url": "https://www.youtube.com/channel/UC_tFXXdvYMvfVPoy81S5RSQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCtJLu5AmdaHi17mFkRIDlLQ",
+   "channel_url": "https://www.youtube.com/channel/UCtJLu5AmdaHi17mFkRIDlLQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCK7tptUDHh-RYDsdxO1-5QQ",
+   "channel_url": "https://www.youtube.com/channel/UCK7tptUDHh-RYDsdxO1-5QQ"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC3IQWvvKjWd6lb4pZucZZMw",
+   "channel_url": "https://www.youtube.com/channel/UC3IQWvvKjWd6lb4pZucZZMw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCmlSgwB8nGYt2fZkXJPyMvw",
+   "channel_url": "https://www.youtube.com/channel/UCmlSgwB8nGYt2fZkXJPyMvw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCnaNRdLYUE4voxN2a3eoqzg",
+   "channel_url": "https://www.youtube.com/channel/UCnaNRdLYUE4voxN2a3eoqzg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCP5Ji3njwDfQaxcgR34awQw",
+   "channel_url": "https://www.youtube.com/channel/UCP5Ji3njwDfQaxcgR34awQw"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCsWUNx884iTAMh2QVR9rPhA",
+   "channel_url": "https://www.youtube.com/channel/UCsWUNx884iTAMh2QVR9rPhA"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCh3R0jyNtqDmgiR1x1dNSzg",
+   "channel_url": "https://www.youtube.com/channel/UCh3R0jyNtqDmgiR1x1dNSzg"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCQEbNv8NY35s0x01vXT__9Q",
+   "channel_url": "https://www.youtube.com/channel/UCQEbNv8NY35s0x01vXT__9Q"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UCUNau0h1HFEwcB-IEPg5Lag",
+   "channel_url": "https://www.youtube.com/channel/UCUNau0h1HFEwcB-IEPg5Lag"
+  },
+  {
+   "vertical": "paragliding_skydiving",
+   "channel_id": "UC2HXhqg87yIWz152Ig9vkaQ",
+   "channel_url": "https://www.youtube.com/channel/UC2HXhqg87yIWz152Ig9vkaQ"
+  }
+ ]
+}

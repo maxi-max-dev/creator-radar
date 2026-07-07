@@ -1,6 +1,8 @@
 {
   "brand": "insta360",
-  "notes": "达人雷达的第一个品牌配置。引擎本体品牌无关，换品牌=换这份配置。主题措辞来自影石官方选人文章的逆向工程（vault: AI先锋大赛-影石选人逻辑-逆向工程），未用任何正例标签调参。",
+  "platform": "youtube",
+  "pool_path": "data/pool/creator_pool.jsonl",
+  "notes": "达人雷达的第一个品牌配置。引擎本体品牌无关，换品牌=换这份配置。主题措辞来自影石官方选人文章的逆向工程（vault: AI先锋大赛-影石选人逻辑-逆向工程），未用任何正例标签调参。adventure_bold 主题经 2026-07-07 删除实验证实为白重量（召回六格逐格不变、中位略好），已移除，六主题变五主题；余下五主题权重按原比例重归一化到和=1。各主题 variants 于 2026-07-07 扩容期增补新垂类（冲浪/滑雪/攀岩/潜水/越野跑/皮划艇/滑板/FPV/徒步/滑翔）宽措辞变体，配合池子扩容到多运动户外垂类。",
 
   "leak_tokens_pattern": "insta\\s*360|insta360|影石|antigravity|think\\s*bold",
 
@@ -19,45 +21,44 @@
 
   "themes": {
     "pov_native": {
-      "weight": 0.25,
+      "weight": 0.294117,
       "variants": [
         "first-person POV onboard action camera footage, helmet cam riding perspective, immersive 360 degree motorcycle video",
-        "first-person POV mountain bike trail footage, chest mount cycling perspective, immersive 360 degree riding video"
-      ]
-    },
-    "adventure_bold": {
-      "weight": 0.15,
-      "variants": [
-        "bold adventurous challenge, extreme stunts, pushing limits, epic motorcycle adventure in wild terrain",
-        "bold adventurous challenge, extreme downhill stunts, pushing limits, epic bicycle adventure in wild terrain"
+        "first-person POV mountain bike trail footage, chest mount cycling perspective, immersive 360 degree riding video",
+        "immersive first-person POV action sports footage, helmet or chest mounted camera surfing skiing snowboarding climbing diving trail running perspective",
+        "FPV drone freestyle flight footage, immersive first-person view aerial chase, cinematic drone POV over mountains and waves"
       ]
     },
     "authentic_vlog": {
-      "weight": 0.20,
+      "weight": 0.235294,
       "variants": [
         "authentic self-filmed motovlog, personal storytelling, solo creator sharing real daily riding life",
-        "authentic self-filmed cycling vlog, personal storytelling, solo creator sharing real daily cycling life"
+        "authentic self-filmed cycling vlog, personal storytelling, solo creator sharing real daily cycling life",
+        "authentic self-filmed outdoor adventure vlog, solo creator sharing real daily life surfing skiing climbing diving hiking, personal raw storytelling"
       ]
     },
     "journey_narrative": {
-      "weight": 0.15,
+      "weight": 0.176471,
       "variants": [
         "long distance motorcycle travel journey across countries, road trip documentary, overcoming hardship",
-        "long distance bicycle touring journey across countries, bikepacking documentary, overcoming hardship"
+        "long distance bicycle touring journey across countries, bikepacking documentary, overcoming hardship",
+        "multi-day outdoor expedition journey, thru-hiking ski touring kayak paddling adventure documentary across remote wilderness, overcoming hardship"
       ]
     },
     "gear_native": {
-      "weight": 0.15,
+      "weight": 0.176471,
       "variants": [
         "camera gear mounting review for motorcycle riding, filming technique tutorial for riders",
-        "camera gear mounting review for cycling, filming technique tutorial for mountain bikers"
+        "camera gear mounting review for cycling, filming technique tutorial for mountain bikers",
+        "action camera and FPV drone mounting review, filming technique tutorial for surfing skiing climbing diving, rig and stabilizer setup for outdoor sports"
       ]
     },
     "vertical_craft": {
-      "weight": 0.10,
+      "weight": 0.117647,
       "variants": [
         "professional riding skill, motorcycle racing track technique, expert level riding",
-        "professional cycling skill, downhill mountain bike racing technique, expert level bike handling"
+        "professional cycling skill, downhill mountain bike racing technique, expert level bike handling",
+        "expert level outdoor sports technique, professional surfing skiing climbing freediving skateboarding skill and progression tutorial"
       ]
     }
   },
@@ -141,7 +142,7 @@
   },
 
   "feishu_docs": {
-    "notes": "飞书文档出口(把日报 markdown 传上飞书云空间，让飞书成为团队总部)。复用 bitable 同一份凭证文件(app_id/app_secret 取 token)。当前 bot 未开通 docx 建档权限，故 md 以云文件形式上传(飞书点开有 markdown 预览)，Max 自动加成每个文件夹的 full_access。幂等映射(文档 key 到 file_token)存下面 map_path 这个 repo 外文件，敏感标识符不进仓库。失败温和降级只记 log。",
+    "notes": "飞书文档出口(日报/达人档案/报告写成飞书原生 docx，让飞书成为团队总部)。复用 bitable 同一份凭证文件(app_id/app_secret 取 token)。每个文档首建拿稳定 document_id，之后原地更新，URL 永久不轮换；Max 自动加成每个文件夹的 full_access。幂等映射存下面 map_path 这个 repo 外文件，敏感标识符不进仓库。失败温和降级只记 log。",
     "credentials_path": "~/.config/creator-radar/feishu.json",
     "map_path": "~/.config/creator-radar/feishu_docs_map.json"
   },

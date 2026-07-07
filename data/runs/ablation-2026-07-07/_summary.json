@@ -1,0 +1,381 @@
+{
+  "base": {
+    "r5_all": {
+      "hit": 6,
+      "tot": 26,
+      "pct": 23.1
+    },
+    "r5_midtail": {
+      "hit": 4,
+      "tot": 20,
+      "pct": 20.0
+    },
+    "r10_all": {
+      "hit": 7,
+      "tot": 26,
+      "pct": 26.9
+    },
+    "r10_midtail": {
+      "hit": 5,
+      "tot": 20,
+      "pct": 25.0
+    },
+    "med_all": 32.4,
+    "med_midtail": 29.0,
+    "n": 1106
+  },
+  "variants": {
+    "fresh-baseline": {
+      "metrics": {
+        "r5_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r5_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "r10_all": {
+          "hit": 7,
+          "tot": 26,
+          "pct": 26.9
+        },
+        "r10_midtail": {
+          "hit": 5,
+          "tot": 20,
+          "pct": 25.0
+        },
+        "med_all": 32.4,
+        "med_midtail": 29.0,
+        "n": 1106
+      },
+      "verdict": "(对照组)"
+    },
+    "no-sweet": {
+      "metrics": {
+        "r5_all": {
+          "hit": 1,
+          "tot": 26,
+          "pct": 3.8
+        },
+        "r5_midtail": {
+          "hit": 1,
+          "tot": 20,
+          "pct": 5.0
+        },
+        "r10_all": {
+          "hit": 5,
+          "tot": 26,
+          "pct": 19.2
+        },
+        "r10_midtail": {
+          "hit": 3,
+          "tot": 20,
+          "pct": 15.0
+        },
+        "med_all": 53.7,
+        "med_midtail": 51.2,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": -19.3,
+        "d_r10_all": -7.7,
+        "d_r5_mid": -15.0,
+        "d_r10_mid": -10.0,
+        "d_med_all": 21.3,
+        "d_med_mid": 22.2
+      },
+      "verdict": "承重"
+    },
+    "no-markers": {
+      "metrics": {
+        "r5_all": {
+          "hit": 3,
+          "tot": 26,
+          "pct": 11.5
+        },
+        "r5_midtail": {
+          "hit": 3,
+          "tot": 20,
+          "pct": 15.0
+        },
+        "r10_all": {
+          "hit": 5,
+          "tot": 26,
+          "pct": 19.2
+        },
+        "r10_midtail": {
+          "hit": 5,
+          "tot": 20,
+          "pct": 25.0
+        },
+        "med_all": 30.8,
+        "med_midtail": 25.8,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": -11.6,
+        "d_r10_all": -7.7,
+        "d_r5_mid": -5.0,
+        "d_r10_mid": 0.0,
+        "d_med_all": -1.6,
+        "d_med_mid": -3.2
+      },
+      "verdict": "承重"
+    },
+    "semantic-only": {
+      "metrics": {
+        "r5_all": {
+          "hit": 1,
+          "tot": 26,
+          "pct": 3.8
+        },
+        "r5_midtail": {
+          "hit": 1,
+          "tot": 20,
+          "pct": 5.0
+        },
+        "r10_all": {
+          "hit": 3,
+          "tot": 26,
+          "pct": 11.5
+        },
+        "r10_midtail": {
+          "hit": 3,
+          "tot": 20,
+          "pct": 15.0
+        },
+        "med_all": 54.2,
+        "med_midtail": 48.9,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": -19.3,
+        "d_r10_all": -15.4,
+        "d_r5_mid": -15.0,
+        "d_r10_mid": -10.0,
+        "d_med_all": 21.8,
+        "d_med_mid": 19.9
+      },
+      "verdict": "承重"
+    },
+    "theme-drop-pov_native": {
+      "metrics": {
+        "r5_all": {
+          "hit": 4,
+          "tot": 26,
+          "pct": 15.4
+        },
+        "r5_midtail": {
+          "hit": 2,
+          "tot": 20,
+          "pct": 10.0
+        },
+        "r10_all": {
+          "hit": 7,
+          "tot": 26,
+          "pct": 26.9
+        },
+        "r10_midtail": {
+          "hit": 5,
+          "tot": 20,
+          "pct": 25.0
+        },
+        "med_all": 31.6,
+        "med_midtail": 31.0,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": -7.7,
+        "d_r10_all": 0.0,
+        "d_r5_mid": -10.0,
+        "d_r10_mid": 0.0,
+        "d_med_all": -0.8,
+        "d_med_mid": 2.0
+      },
+      "verdict": "承重"
+    },
+    "theme-drop-adventure_bold": {
+      "metrics": {
+        "r5_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r5_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "r10_all": {
+          "hit": 7,
+          "tot": 26,
+          "pct": 26.9
+        },
+        "r10_midtail": {
+          "hit": 5,
+          "tot": 20,
+          "pct": 25.0
+        },
+        "med_all": 31.4,
+        "med_midtail": 27.8,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": 0.0,
+        "d_r10_all": 0.0,
+        "d_r5_mid": 0.0,
+        "d_r10_mid": 0.0,
+        "d_med_all": -1.0,
+        "d_med_mid": -1.2
+      },
+      "verdict": "边缘"
+    },
+    "theme-drop-authentic_vlog": {
+      "metrics": {
+        "r5_all": {
+          "hit": 4,
+          "tot": 26,
+          "pct": 15.4
+        },
+        "r5_midtail": {
+          "hit": 2,
+          "tot": 20,
+          "pct": 10.0
+        },
+        "r10_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r10_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "med_all": 31.2,
+        "med_midtail": 25.0,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": -7.7,
+        "d_r10_all": -3.8,
+        "d_r5_mid": -10.0,
+        "d_r10_mid": -5.0,
+        "d_med_all": -1.2,
+        "d_med_mid": -4.0
+      },
+      "verdict": "承重"
+    },
+    "theme-drop-journey_narrative": {
+      "metrics": {
+        "r5_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r5_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "r10_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r10_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "med_all": 33.8,
+        "med_midtail": 29.0,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": 0.0,
+        "d_r10_all": -3.8,
+        "d_r5_mid": 0.0,
+        "d_r10_mid": -5.0,
+        "d_med_all": 1.4,
+        "d_med_mid": 0.0
+      },
+      "verdict": "承重"
+    },
+    "theme-drop-gear_native": {
+      "metrics": {
+        "r5_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r5_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "r10_all": {
+          "hit": 7,
+          "tot": 26,
+          "pct": 26.9
+        },
+        "r10_midtail": {
+          "hit": 5,
+          "tot": 20,
+          "pct": 25.0
+        },
+        "med_all": 33.3,
+        "med_midtail": 31.7,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": 0.0,
+        "d_r10_all": 0.0,
+        "d_r5_mid": 0.0,
+        "d_r10_mid": 0.0,
+        "d_med_all": 0.9,
+        "d_med_mid": 2.7
+      },
+      "verdict": "承重"
+    },
+    "theme-drop-vertical_craft": {
+      "metrics": {
+        "r5_all": {
+          "hit": 6,
+          "tot": 26,
+          "pct": 23.1
+        },
+        "r5_midtail": {
+          "hit": 4,
+          "tot": 20,
+          "pct": 20.0
+        },
+        "r10_all": {
+          "hit": 7,
+          "tot": 26,
+          "pct": 26.9
+        },
+        "r10_midtail": {
+          "hit": 5,
+          "tot": 20,
+          "pct": 25.0
+        },
+        "med_all": 32.5,
+        "med_midtail": 30.4,
+        "n": 1106
+      },
+      "delta": {
+        "d_r5_all": 0.0,
+        "d_r10_all": 0.0,
+        "d_r5_mid": 0.0,
+        "d_r10_mid": 0.0,
+        "d_med_all": 0.1,
+        "d_med_mid": 1.4
+      },
+      "verdict": "边缘"
+    }
+  }
+}
