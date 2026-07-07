@@ -492,20 +492,24 @@ def push_bitable(cfg, rows):
 
 
 def push_feishu_docs(cfg, report_path, stats=None):
-    """飞书文档出口(互链顺序固化): 主页 -> 档案(带导航头) -> 日报按最新映射刷新档案链接后上传 -> 回填表格「档案」列。
-    先传档案拿到 URL 再让日报和表格引用，链接永远指向本次最新(文件 URL 每次覆盖上传会轮换)。
+    """飞书文档出口(原生 docx，链接永久): 日报先建/更(拿当日永久链接) -> 主页(直链当日日报) ->
+    档案(导航头直链主页+当日日报) -> 日报补新频道档案链接后原地重写一遍 -> 回填表格「档案」列。
+    原地更新不换 URL，顺序只决定"当天新建 id 何时可被引用"，不再有轮换死链问题。
     温和降级: 整块 try 包住，任何失败只返回错误串不中断主链(照 push_bitable 惯例)。"""
     try:
         import feishu_docs
+        r_daily = feishu_docs.push_daily_report(cfg, report_path=report_path)
         r_home = feishu_docs.push_homepage(cfg, dict(stats or {}))
         r_dos = feishu_docs.push_dossiers(cfg)
+        # 当天首次出现的新频道: 其档案 id 上一步才建出来，补进日报后原地重写(同 id，URL 不变)
         patched = feishu_docs.patch_report_dossier_links(report_path, cfg=cfg)
-        r_daily = feishu_docs.push_daily_report(cfg, report_path=report_path)
+        r_daily2 = feishu_docs.push_daily_report(cfg, report_path=report_path)
         r_bf = feishu_docs.backfill_bitable_dossier_links(cfg)
-        return (f"home={'ok' if r_home.get('ok') else 'err:' + str(r_home.get('error') or r_home.get('url_or_err'))[:60]}"
+        daily_ok = r_daily.get("ok") and r_daily2.get("ok")
+        return (f"daily={'ok' if daily_ok else (r_daily.get('error') or r_daily2.get('error') or 'err')}"
+                f" home={'ok' if r_home.get('ok') else 'err:' + str(r_home.get('error') or r_home.get('url_or_err'))[:60]}"
                 f" dossiers={r_dos.get('counts', r_dos.get('error'))}"
                 f" report_links={patched}"
-                f" daily={'ok' if r_daily.get('ok') else r_daily.get('error') or r_daily.get('failed')}"
                 f" bitable_dossier_col={r_bf.get('updated', r_bf.get('error'))}")
     except Exception as e:
         return f"error: {e}"

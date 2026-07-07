@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
-"""飞书文档层: 把日报 / 达人档案 / 关键报告的 markdown 传上飞书云空间，
-让飞书成为团队总部(所有人看的产物自动出现在飞书里)。
+"""飞书文档层: 把日报 / 达人档案 / 关键报告写成飞书原生 docx 文档，
+让飞书成为团队总部(所有人看的产物自动出现在飞书里，且互相跳转)。
 
-为什么是「上传 md 文件」而不是「建 docx 原生文档」:
-  本 bot 当前授予的权限里没有 docx:document / docx:document:create,
-  也没有 ccm_import_open 媒体上传权限，原生 docx 建档与 markdown 导入两条路都被 403 挡死
-  (deprecated 的老 doc/v2 也已全局停用)。零开发的 Max 无法轻易在管理后台补授权，
-  故走「不需要任何新权限」的稳妥路: 用 drive 文件夹组织 + files/upload_all 把 .md 传成云文件,
-  飞书点开有 markdown 预览。Max 作为每个文件夹的 full_access 协作者能看到全部产物分门别类。
-  升级到原生 docx 只需补授权后替换 _put_doc 一个函数(其余编排/幂等/降级不变)。
+实现路线(2026-07-07 docx 权限补齐后升级为原生文档):
+  - 每个 key 首次出现建档一次，拿稳定 document_id，链接从此永久。
+  - 之后每天原地更新: 清旧块写新块，URL 不变，互链网络不再需要防轮换。
+  - markdown -> blocks 手工构建(不依赖未验证的 ccm 导入接口，控制力也更强):
+    标题 1-3 / 正文 / 无序有序列表 / 表格 / callout 高亮块 / divider / 代码块,
+    转不了的降级为纯文本块，宁可样式糙不可内容丢。
+  - 历史注: 权限补齐前曾走 files/upload_all 传 .md 云文件(URL 每次覆盖会轮换)，
+    迁移后旧文件已清理，映射条目从 file_token 换成 document_id。
 
 设计原则(照抄现有 run_radar 的飞书调用风格):
   - 标准库 urllib，复用 run_radar._feishu_call 的调用形态(失败返回 {code:-1} 不抛)。
   - 一切失败温和降级: 只返回错误串 / 记 log，绝不中断主链。
-  - 敏感标识符(app 凭证/folder_token/file_token 映射)全在 repo 外(~/.config/creator-radar/)。
-  - 对外文字(文件名/文件夹名)不用破折号。
+  - 敏感标识符(app 凭证/document_id/folder_token 映射)全在 repo 外(~/.config/creator-radar/)。
+  - 对外文字(文档标题/文件夹名)不用破折号。
 """
-import json, os, sys, time, urllib.request, urllib.error, uuid
+import json, os, re, sys, time, urllib.request, urllib.error
 from datetime import date, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -51,33 +52,265 @@ def _feishu_call(method, path, token=None, body=None):
         return {"code": -1, "msg": str(e)}
 
 
-def _upload_file(token, folder_token, file_name, data_bytes):
-    """multipart 上传一个文件到指定文件夹(drive/v1/files/upload_all, parent_type=explorer)。
-    返回 {code, data:{file_token,url}} 形态。失败返回 {code:-1}。"""
-    boundary = "----cr" + uuid.uuid4().hex
-    parts = []
-    def field(k, v):
-        parts.append(("--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n"
-                      % (boundary, k, v)).encode())
-    field("file_name", file_name)
-    field("parent_type", "explorer")
-    field("parent_node", folder_token)
-    field("size", str(len(data_bytes)))
-    parts.append(("--%s\r\nContent-Disposition: form-data; name=\"file\"; filename=\"%s\"\r\n"
-                  "Content-Type: application/octet-stream\r\n\r\n" % (boundary, file_name)).encode())
-    parts.append(data_bytes)
-    parts.append(("\r\n--%s--\r\n" % boundary).encode())
-    payload = b"".join(parts)
-    req = urllib.request.Request(OPEN_BASE + "/drive/v1/files/upload_all", data=payload, method="POST")
-    req.add_header("Authorization", "Bearer " + token)
-    req.add_header("Content-Type", "multipart/form-data; boundary=" + boundary)
-    try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            return json.loads(r.read())
-    except urllib.error.HTTPError as e:
-        return {"code": -1, "_http": e.code, "msg": e.read().decode(errors="replace")[:300]}
-    except Exception as e:
-        return {"code": -1, "msg": str(e)}
+# ----- markdown -> docx blocks 转换器 -----
+
+_INLINE_LINK = re.compile(r"\[([^\]]+)\]\((https?://[^\s)]+)\)")
+_INLINE_BOLD = re.compile(r"\*\*(.+?)\*\*")
+_INLINE_CODE = re.compile(r"`([^`]+)`")
+_TABLE_SEP = re.compile(r"^\|[\s:|-]+\|$")
+_ORDERED = re.compile(r"^(\d+)[.、]\s+(.*)$")
+
+
+def _plain_run(s, italic=False):
+    r = {"text_run": {"content": s}}
+    if italic:
+        r["text_run"]["text_element_style"] = {"italic": True}
+    return r
+
+
+def _code_runs(seg, italic=False):
+    """无链接无加粗的文本段按 `行内代码` 切 runs。"""
+    runs, pos = [], 0
+    for m in _INLINE_CODE.finditer(seg):
+        if m.start() > pos:
+            runs.append(_plain_run(seg[pos:m.start()], italic))
+        st = {"inline_code": True}
+        if italic:
+            st["italic"] = True
+        runs.append({"text_run": {"content": m.group(1), "text_element_style": st}})
+        pos = m.end()
+    if pos < len(seg):
+        runs.append(_plain_run(seg[pos:], italic))
+    return [r for r in runs if r["text_run"]["content"]]
+
+
+def _styled_runs(seg, italic=False):
+    """无链接文本段按 **加粗** 切 runs，剩余再过行内代码。"""
+    runs, pos = [], 0
+    for m in _INLINE_BOLD.finditer(seg):
+        if m.start() > pos:
+            runs += _code_runs(seg[pos:m.start()], italic)
+        st = {"bold": True}
+        if italic:
+            st["italic"] = True
+        runs.append({"text_run": {"content": m.group(1), "text_element_style": st}})
+        pos = m.end()
+    if pos < len(seg):
+        runs += _code_runs(seg[pos:], italic)
+    return runs
+
+
+def _text_elements(s):
+    """行内 markdown -> docx text elements: [链接](url) / **加粗** / `代码` / 整行 _斜体_。
+    只把首尾成对的下划线当斜体(行内下划线如 file_name 保持原样)。样式糙点没关系，内容一个字不丢。"""
+    t = s
+    italic = False
+    if len(t) > 2 and t.startswith("_") and t.endswith("_") and not t.startswith("__"):
+        italic = True
+        t = t[1:-1]
+    elements, pos = [], 0
+    for m in _INLINE_LINK.finditer(t):
+        if m.start() > pos:
+            elements += _styled_runs(t[pos:m.start()], italic)
+        st = {"link": {"url": m.group(2)}}
+        if italic:
+            st["italic"] = True
+        elements.append({"text_run": {"content": m.group(1), "text_element_style": st}})
+        pos = m.end()
+    if pos < len(t):
+        elements += _styled_runs(t[pos:], italic)
+    return elements or [{"text_run": {"content": " "}}]
+
+
+def _split_row(line):
+    """markdown 表格行 -> 单元格文本列表。"""
+    return [c.strip() for c in line.strip().strip("|").split("|")]
+
+
+def _md_to_block_items(md_text, drop_title=None):
+    """markdown -> 块序列 [(kind, payload)]。kind: flat(单块)/callout(引用行组)/table(行组)。
+    认真转: 标题 1-3/正文/无序有序列表/表格/callout(blockquote)/divider/代码块; frontmatter 跳过
+    (其内容在正文均有呈现); 首个 H1 与文档标题重复时丢弃。其余一律纯文本兜底，内容不丢。"""
+    lines = md_text.splitlines()
+    i = 0
+    if lines and lines[0].strip() == "---":  # frontmatter
+        j = 1
+        while j < len(lines) and lines[j].strip() != "---":
+            j += 1
+        if j < len(lines):
+            i = j + 1
+    items, h1_dropped = [], False
+    while i < len(lines):
+        s = lines[i].strip()
+        if not s:
+            i += 1
+            continue
+        if s.startswith("```"):
+            j = i + 1
+            buf = []
+            while j < len(lines) and not lines[j].strip().startswith("```"):
+                buf.append(lines[j])
+                j += 1
+            items.append(("flat", {"block_type": 14, "code": {
+                "style": {"language": 1}, "elements": [{"text_run": {"content": "\n".join(buf) or " "}}]}}))
+            i = j + 1
+            continue
+        if s == "---":
+            items.append(("flat", {"block_type": 22, "divider": {}}))
+            i += 1
+            continue
+        if s.startswith("# "):
+            if not h1_dropped and drop_title:
+                h1_dropped = True
+                i += 1
+                continue
+            items.append(("flat", {"block_type": 3, "heading1": {"elements": _text_elements(s[2:])}}))
+            i += 1
+            continue
+        if s.startswith("## "):
+            items.append(("flat", {"block_type": 4, "heading2": {"elements": _text_elements(s[3:])}}))
+            i += 1
+            continue
+        if s.startswith("### "):
+            items.append(("flat", {"block_type": 5, "heading3": {"elements": _text_elements(s[4:])}}))
+            i += 1
+            continue
+        if s.startswith(">"):
+            buf = []
+            while i < len(lines) and lines[i].strip().startswith(">"):
+                buf.append(lines[i].strip()[1:].strip())
+                i += 1
+            items.append(("callout", [b for b in buf if b] or [" "]))
+            continue
+        if s.startswith("|") and s.endswith("|") and i + 1 < len(lines) and _TABLE_SEP.match(lines[i + 1].strip()):
+            rows = [_split_row(lines[i])]
+            j = i + 2
+            while j < len(lines) and lines[j].strip().startswith("|") and lines[j].strip().endswith("|"):
+                rows.append(_split_row(lines[j]))
+                j += 1
+            items.append(("table", rows))
+            i = j
+            continue
+        if s.startswith("- ") or s.startswith("* "):
+            items.append(("flat", {"block_type": 12, "bullet": {"elements": _text_elements(s[2:])}}))
+            i += 1
+            continue
+        m = _ORDERED.match(s)
+        if m:
+            items.append(("flat", {"block_type": 13, "ordered": {"elements": _text_elements(m.group(2))}}))
+            i += 1
+            continue
+        items.append(("flat", {"block_type": 2, "text": {"elements": _text_elements(s)}}))
+        i += 1
+    return items
+
+
+# ----- docx 写入(建块/嵌套块/清空) -----
+
+def _docx_add_callout(token, doc_id, index, text_lines):
+    """callout 高亮块(嵌套块 API 一次带出子文本块)。返回 True/False。"""
+    kids = ["co%d" % k for k in range(len(text_lines))]
+    desc = [{"block_id": "co_root", "block_type": 19,
+             "callout": {"background_color": 5, "border_color": 5}, "children": kids}]
+    for k, q in zip(kids, text_lines):
+        desc.append({"block_id": k, "block_type": 2, "text": {"elements": _text_elements(q)}, "children": []})
+    r = _feishu_call("POST", "/docx/v1/documents/%s/blocks/%s/descendant" % (doc_id, doc_id),
+                     token=token, body={"children_id": ["co_root"], "index": index, "descendants": desc})
+    return r.get("code") == 0
+
+
+def _docx_add_table(token, doc_id, index, rows):
+    """表格块(嵌套块 API 一次带出全部单元格与文本)。超大表返回 False 让上层降级为文本。"""
+    R = len(rows)
+    C = max(len(r) for r in rows)
+    if R * C * 2 + 1 > 220:  # 嵌套块单次请求上限保护
+        return False
+    cells, desc = [], []
+    for ri in range(R):
+        for ci in range(C):
+            cid, tid = "c%d_%d" % (ri, ci), "t%d_%d" % (ri, ci)
+            cells.append(cid)
+            content = rows[ri][ci] if ci < len(rows[ri]) else ""
+            desc.append({"block_id": cid, "block_type": 32, "table_cell": {}, "children": [tid]})
+            desc.append({"block_id": tid, "block_type": 2,
+                         "text": {"elements": _text_elements(content)}, "children": []})
+    root = {"block_id": "tbl", "block_type": 31,
+            "table": {"property": {"row_size": R, "column_size": C, "header_row": True}},
+            "children": cells}
+    r = _feishu_call("POST", "/docx/v1/documents/%s/blocks/%s/descendant" % (doc_id, doc_id),
+                     token=token, body={"children_id": ["tbl"], "index": index, "descendants": [root] + desc})
+    return r.get("code") == 0
+
+
+def _docx_write_blocks(token, doc_id, items):
+    """把块序列写进文档(按序追加)。flat 连续段批量(<=40/call)，callout/table 走嵌套块 API。
+    任一 callout/table 失败降级为纯文本块(内容不丢)。返回 (写入块数, 降级数, 首个错误或空串)。"""
+    state = {"idx": 0, "written": 0, "err": ""}
+    buf = []
+
+    def flush():
+        while buf:
+            chunk = buf[:40]
+            del buf[:40]
+            r = _feishu_call("POST", "/docx/v1/documents/%s/blocks/%s/children" % (doc_id, doc_id),
+                             token=token, body={"children": chunk, "index": state["idx"]})
+            if r.get("code") != 0:
+                state["err"] = state["err"] or "children code=%s %s" % (r.get("code"), str(r.get("msg"))[:80])
+                return False
+            state["idx"] += len(chunk)
+            state["written"] += len(chunk)
+            time.sleep(0.25)
+        return True
+
+    degraded = 0
+    for kind, payload in items:
+        if kind == "flat":
+            buf.append(payload)
+            continue
+        if not flush():
+            return state["written"], degraded, state["err"]
+        if kind == "callout":
+            if _docx_add_callout(token, doc_id, state["idx"], payload):
+                state["idx"] += 1
+                state["written"] += 1
+            else:
+                degraded += 1
+                for q in payload:
+                    buf.append({"block_type": 2, "text": {"elements": _text_elements(q)}})
+        elif kind == "table":
+            if _docx_add_table(token, doc_id, state["idx"], payload):
+                state["idx"] += 1
+                state["written"] += 1
+            else:
+                degraded += 1
+                for row in payload:
+                    buf.append({"block_type": 2, "text": {"elements": _text_elements(" | ".join(row))}})
+        time.sleep(0.25)
+    flush()
+    return state["written"], degraded, state["err"]
+
+
+def _docx_wipe(token, doc_id):
+    """清空文档正文(根 children 分批删，删父块级联删子树)。空文档直接 True。"""
+    for _ in range(80):
+        r = _feishu_call("GET", "/docx/v1/documents/%s/blocks?page_size=500" % doc_id, token=token)
+        if r.get("code") != 0:
+            return False
+        items = r.get("data", {}).get("items", [])
+        page = next((b for b in items if b.get("block_type") == 1), None)
+        n = len((page or {}).get("children") or [])
+        if n == 0:
+            return True
+        d = _feishu_call("DELETE", "/docx/v1/documents/%s/blocks/%s/children/batch_delete" % (doc_id, doc_id),
+                         token=token, body={"start_index": 0, "end_index": min(n, 40)})
+        if d.get("code") != 0:
+            return False
+        time.sleep(0.25)
+    return False
+
+
+def _doc_url(doc_id):
+    return "https://my.feishu.cn/docx/%s" % doc_id
 
 
 def _get_token(cred):
@@ -178,25 +411,38 @@ def _save_map(map_path, m):
 
 
 def _put_doc(token, folder_token, file_name, md_text, key, doc_map, open_id=""):
-    """把一份 markdown 以「文件」形式放进 folder(幂等替换)。
-    幂等策略: doc_map[key] 存在就先删旧 file_token 再传新的(净效果=覆盖更新内容)，
-    key 不存在就新建。回写 doc_map[key]={file_token,url,folder}。
-    返回 (ok:bool, info:str)。
-    升级到原生 docx 只需改本函数内部(改成 docx 建档/更新 blocks)，编排层不动。"""
-    data_bytes = md_text.encode("utf-8")
-    prev = doc_map.get(key)
-    if prev and prev.get("file_token"):
-        # 删旧(失败不致命，最坏留一份旧的，下面照常传新)
-        _feishu_call("DELETE", "/drive/v1/files/%s?type=file" % prev["file_token"], token=token)
-    r = _upload_file(token, folder_token, file_name, data_bytes)
-    if r.get("code") != 0:
-        return False, "upload failed: code=%s %s" % (r.get("code"), str(r.get("msg"))[:120])
-    ftok = r.get("data", {}).get("file_token")
-    url = r.get("data", {}).get("url", "")
-    _add_collaborator(token, ftok, "file", open_id)
-    doc_map[key] = {"file_token": ftok, "url": url, "folder": folder_token, "name": file_name,
-                    "updated": date.today().isoformat()}
-    return True, url
+    """把一份 markdown 写成飞书原生 docx 文档(幂等原地更新)。
+    key 首次出现: 建档一次拿稳定 document_id(链接从此永久，建档即回写映射防孤儿)。
+    已存在: 原地清旧块写新块，URL 不变。markdown 认真转 blocks(标题/正文/列表/表格/callout/divider)，
+    callout/表格失败降级纯文本，内容不丢。每次都补一遍 Max 的 full_access(幂等，不赌文件夹继承)。
+    返回 (ok:bool, url或错误串)。"""
+    title = file_name[:-3] if file_name.endswith(".md") else file_name
+    try:
+        prev = doc_map.get(key) or {}
+        doc_id = prev.get("document_id")
+        if not doc_id:
+            r = _feishu_call("POST", "/docx/v1/documents", token=token,
+                             body={"title": title, "folder_token": folder_token})
+            doc_id = r.get("data", {}).get("document", {}).get("document_id")
+            if not doc_id:
+                return False, "create doc failed: code=%s %s" % (r.get("code"), str(r.get("msg"))[:100])
+            # 建档即入映射: 后续写块失败也不会下次重复建档(防孤儿文档)
+            doc_map[key] = {"document_id": doc_id, "url": _doc_url(doc_id), "folder": folder_token,
+                            "name": file_name, "updated": date.today().isoformat()}
+        if not _docx_wipe(token, doc_id):
+            return False, "wipe failed: %s" % doc_id
+        items = _md_to_block_items(md_text, drop_title=title)
+        written, degraded, err = _docx_write_blocks(token, doc_id, items)
+        if err:
+            return False, "write blocks: %s" % err
+        _add_collaborator(token, doc_id, "docx", open_id)
+        doc_map[key] = {"document_id": doc_id, "url": _doc_url(doc_id), "folder": folder_token,
+                        "name": file_name, "updated": date.today().isoformat()}
+        if degraded:
+            doc_map[key]["degraded_blocks"] = degraded
+        return True, _doc_url(doc_id)
+    except Exception as e:
+        return False, "error: %s" % e
 
 
 # ----- 三个出口: 日报 / 档案 / 报告 -----
@@ -253,47 +499,51 @@ def _folder_url(tok):
 
 
 def build_homepage_md(cfg, stats, ctx):
-    """主页仪表盘 markdown(团队唯一入口)。顶部 callout 放四个大数字，分区导航配说明，底部更新机制+时间。
-    stats: {pool_size, cards_today, blind_test_multiple, scoreboard_status}。
-    日报导航链到「日报」文件夹(token 稳定): 互链顺序里主页先于日报上传，链文件会指向已轮换的旧 URL。"""
+    """主页仪表盘 markdown(团队唯一入口，互链枢纽)。顶部真 callout 放四个大数字，
+    分区导航配说明，底部更新机制+时间。stats: {pool_size, cards_today, blind_test_multiple, scoreboard_status}。
+    原生 docx 后当日日报直链文档本体(永久 id，当天还没建时退回文件夹)。"""
     f = ctx["folders"]
     doc_map = ctx["doc_map"]
     cred = ctx["cred"]
     bitable_url = cred.get("base_url") or ("https://my.feishu.cn/base/%s" % cred["app_token"])
+    daily_url = doc_map.get("daily/%s" % date.today().isoformat(), {}).get("url", "")
     now = datetime.now().isoformat(timespec="minutes")
     L = ["# 达人雷达 · 总部", ""]
-    # 顶部 callout 大数字块(blockquote 渲染成高亮卡)
-    L += ["> 🛰️ **达人雷达 · 团队总部**  ",
+    # 开场 callout(转换器把 blockquote 渲染成真高亮块)
+    L += ["> 🛰️ **达人雷达 · 团队总部**",
           "> 给品牌方的达人主动发现引擎。所有人看的产物都在这里，按类分好，每天自动更新。",
           "", "---", ""]
+    # 核心数字: 真 callout 大数字块
     L += ["## 核心数字", "",
-          "| 指标 | 当前 |",
-          "|---|---|",
-          f"| 🗂️ 候选池规模 | **{stats.get('pool_size', '?')}** 频道 |",
-          f"| ⭐ 今日推荐 | **{stats.get('cards_today', '?')}** 位达人 |",
-          f"| 🎯 盲测密度 | **{stats.get('blind_test_multiple', '4.6')} 倍**于随机基线(前 5%) |",
-          f"| 📊 记分板 | {stats.get('scoreboard_status', '首份 picks 已存档，2026-08-04 结算')} |",
+          f"> 🗂️ 候选池规模 **{stats.get('pool_size', '?')}** 频道",
+          f"> ⭐ 今日推荐 **{stats.get('cards_today', '?')}** 位达人",
+          f"> 🎯 盲测密度 **{stats.get('blind_test_multiple', '4.6')} 倍** 于随机基线(前 5%)",
+          f"> 📊 记分板 {stats.get('scoreboard_status', '首份 picks 已存档，2026-08-04 结算')}",
           "", "---", ""]
     # 分区导航
     L += ["## 分区导航", ""]
     L += ["### 📊 多维表格（运营主战场）",
-          f"{bitable_url}",
-          "_每日推荐自动灌进这张表，运营在这里做终审、流转评审状态、跟踪投放。_", ""]
-    L += ["### 📰 雷达日报",
-          f"{_folder_url(f.get('日报'))}",
-          "_每天 08:30 的池子动态、推荐卡、记分板结算，一页看完。当日一期在文件夹最上。_", ""]
+          f"[打开多维表格]({bitable_url})",
+          "_每日推荐自动灌进这张表，运营在这里做终审、流转评审状态、跟踪投放。每行的「档案」列直达该达人档案。_", ""]
+    L += ["### 📰 当日日报",
+          (f"[打开今日日报]({daily_url})" if daily_url else f"[打开日报文件夹]({_folder_url(f.get('日报'))})"),
+          f"_每天 08:30 的池子动态、推荐卡、记分板结算，一页看完。历史日报在[日报文件夹]({_folder_url(f.get('日报'))})。_", ""]
     L += ["### 🗃️ 达人档案区",
-          f"{_folder_url(f.get('达人档案'))}",
-          "_每位当日推荐达人一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵、推荐理由。_", ""]
+          f"[打开达人档案文件夹]({_folder_url(f.get('达人档案'))})",
+          "_每位当日推荐达人一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵、推荐理由。每篇头部可一键回本页。_", ""]
     L += ["### 📁 报告区",
-          f"{_folder_url(f.get('报告'))}",
+          f"[打开报告文件夹]({_folder_url(f.get('报告'))})",
           "_方法论与验证：行业方法对比、盲测验证报告、删除实验裁判。给评委和队友看的深度材料。_", ""]
+    L += ["### 📖 系统说明",
+          (f"[打开系统说明]({doc_map.get('system/overview', {}).get('url', '')})"
+           if doc_map.get("system/overview", {}).get("url") else "（待生成）"),
+          "_是什么 / 怎么跑 / 三层雷达 / 技术栈，给队友快速上手。_", ""]
     L += ["### 📈 全池榜单",
           "（扩容合并后上线）",
           "_全池 1000+ 频道的完整排序，将以多维表格第二张表形式上线。_", "", "---", ""]
     L += ["## 数据更新机制", "",
-          "达人雷达每天 **08:30** 自动运行：刷新池子 → 全池重排 → 生成推荐卡 → 更新本页大数字与今日日报链接 → 同步档案。",
-          "重复文档自动覆盖更新，不堆重复。",
+          "达人雷达每天 **08:30** 自动运行：刷新池子 → 全池重排 → 生成推荐卡 → 原地更新本页大数字与当日日报 → 同步档案。",
+          "所有文档原地更新，链接永久不变，可放心收藏与互链。",
           "",
           f"_最后更新：{now}_"]
     return "\n".join(L) + "\n"
@@ -417,24 +667,25 @@ def build_system_md():
 
 def _dossier_nav(doc_map):
     """档案飞书副本的头部导航(互链)。上传时注入而不写进本地文件:
-    data/dossiers 每日自动 commit 进公开仓库，红线要求文件/文件夹 token 不进 repo，
-    所以链接只存在于飞书副本，URL 运行时从映射读。日报链到「日报」文件夹(token 稳定不轮换，
-    当日一期在最上)；主页 URL 每次运行先刷新再注入，永远指向现役主页。"""
+    data/dossiers 每日自动 commit 进公开仓库，红线要求 document_id/token 不进 repo，
+    所以链接只存在于飞书副本，URL 运行时从映射读。原生 docx 后 document_id 永久，
+    当日日报可以直链文档本体(当天日报文档还没建时退回「日报」文件夹)。"""
     home = doc_map.get("home/index", {}).get("url", "")
-    rep_folder = (doc_map.get("_folders") or {}).get("日报", "")
+    daily = doc_map.get("daily/%s" % date.today().isoformat(), {}).get("url", "")
+    rep = daily or (doc_map.get("_folders") or {}).get("日报", "")
     lines = []
     if home:
         lines.append("[🛰️ 返回总部主页](%s)  " % home)
-    if rep_folder:
-        lines.append("[📰 雷达日报](%s)  " % rep_folder)
+    if rep:
+        lines.append("[📰 %s](%s)  " % ("当日日报" if daily else "雷达日报", rep))
     return ("\n".join(lines) + "\n\n") if lines else ""
 
 
 def patch_report_dossier_links(report_path, cfg=None, doc_map=None):
     """日报 md 每张推荐卡小节里补/刷新「达人档案」链接行(按频道名匹配映射)。
-    在 push 流程里于档案上传之后调用，保证链接指向本次最新档案(档案 URL 每日轮换)。
+    原生 docx 后档案链接永久，本函数的作用收窄为: 补上当天首次出现的新频道档案链接
+    (其文档在 push_dossiers 时才建档，write_report 时映射里还没有)。
     reports/ 已 gitignore，链接不进 repo。幂等: 旧链接行被替换不堆叠。返回补上的条数。"""
-    import re
     if doc_map is None:
         node = (cfg or {}).get("feishu_docs", {})
         doc_map = _load_map(node.get("map_path", DEFAULT_MAP_PATH))
@@ -475,8 +726,8 @@ def patch_report_dossier_links(report_path, cfg=None, doc_map=None):
 
 def backfill_bitable_dossier_links(cfg):
     """多维表格「档案」列回填(互链: 表格行 -> 档案文档)。字段不存在自动建(超链接类型)。
-    匹配优先级: 频道链接里含 channel_id > 频道名等于档案标题。全表刷新而非只当日行:
-    档案 URL 每日轮换，老行的链接也必须跟着刷才不会失效。温和降级: 出错只返回错误 dict。"""
+    匹配优先级: 频道链接里含 channel_id > 频道名等于档案标题。原生 docx 后档案链接永久，
+    全表扫描的语义收窄为: 给当天新增行补链接(重写老行同值幂等无害)。温和降级: 出错只返回错误 dict。"""
     node = cfg.get("feishu_docs", {})
     cred_path = os.path.expanduser(node.get("credentials_path", ""))
     if not cred_path or not os.path.exists(cred_path):
@@ -543,6 +794,18 @@ def backfill_bitable_dossier_links(cfg):
                 "matched": len(updates), "updated": done}
     except Exception as e:
         return {"ok": False, "error": str(e)}
+
+
+def _strip_frontmatter(md):
+    """去掉开头的 YAML frontmatter(其字段在正文均有呈现)。原生文档里 yaml 是噪音。"""
+    lines = md.splitlines()
+    if lines and lines[0].strip() == "---":
+        j = 1
+        while j < len(lines) and lines[j].strip() != "---":
+            j += 1
+        if j < len(lines):
+            return "\n".join(lines[j + 1:]).lstrip("\n")
+    return md
 
 
 def _dossier_title(md_text, fallback):
@@ -612,7 +875,8 @@ def _run_uploads(cfg, kind, today=None, explicit_paths=None):
             md = _read(os.path.join(ddir, f))
             title = _dossier_title(md, cid)
             fname = "%s.md" % _safe(title)
-            ok, info = _put_doc(token, target, fname, nav + md, "dossier/%s" % cid, doc_map, open_id=oid)
+            body = nav + _strip_frontmatter(md)  # frontmatter 字段正文均有，原生文档里不留 yaml 噪音
+            ok, info = _put_doc(token, target, fname, body, "dossier/%s" % cid, doc_map, open_id=oid)
             (uploaded if ok else failed).append({"name": fname, "key": "dossier/%s" % cid, "url_or_err": info})
 
     elif kind == "reports":
