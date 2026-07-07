@@ -319,9 +319,10 @@ def _scoreboard_oneliner(scoreboard_results):
 
 
 def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None,
-                 scoreboard_results=None):
+                 scoreboard_results=None, dossier_links=None):
     """日报 markdown(设计升级版)。开头 callout 摘要(blockquote)，推荐卡每张一个小节(heading3+分数表格+bullet)，
-    divider 分节。飞书 Drive 预览这份 .md 时 blockquote/表格/heading 都会渲染成样式块；纯文本降级也不丢内容。"""
+    divider 分节。飞书 Drive 预览这份 .md 时 blockquote/表格/heading 都会渲染成样式块；纯文本降级也不丢内容。
+    dossier_links: {channel_id: 档案飞书链接}(互链，拿不到就温和省略; 上传前 push 流程还会按最新映射刷新一遍)。"""
     n = len(scored)
     delta = ""
     if collect_res.get("pool_before") is not None:
@@ -371,6 +372,11 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
             s = s_by_url.get(c.get("_channel_url"), {})
             L.append(f"### {c.get('channel_name', '?')}  ·  #{c.get('_rank', '?')}")
             L.append("")
+            # 互链: 该达人的飞书档案(channel_id 取自频道链接末段; 映射里没有就省略)
+            cid = (c.get("_channel_url") or "").rstrip("/").rsplit("/", 1)[-1]
+            dl = (dossier_links or {}).get(cid)
+            if dl:
+                L += [f"[🗂️ 达人档案]({dl})", ""]
             # 分数表格(≤6 列，数据进表格不堆正文)
             L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 |", "|---:|---:|---:|---:|---:|---:|",
                   f"| #{s.get('rank', c.get('_rank', '?'))} | {s.get('subscribers', '?')} | "
@@ -486,19 +492,21 @@ def push_bitable(cfg, rows):
 
 
 def push_feishu_docs(cfg, report_path, stats=None):
-    """飞书文档出口: 把当日日报 + 当日达人档案传上飞书云空间(团队总部)，并刷新主页仪表盘大数字。
+    """飞书文档出口(互链顺序固化): 主页 -> 档案(带导航头) -> 日报按最新映射刷新档案链接后上传 -> 回填表格「档案」列。
+    先传档案拿到 URL 再让日报和表格引用，链接永远指向本次最新(文件 URL 每次覆盖上传会轮换)。
     温和降级: 整块 try 包住，任何失败只返回错误串不中断主链(照 push_bitable 惯例)。"""
     try:
         import feishu_docs
-        r_daily = feishu_docs.push_daily_report(cfg, report_path=report_path)
+        r_home = feishu_docs.push_homepage(cfg, dict(stats or {}))
         r_dos = feishu_docs.push_dossiers(cfg)
-        # 主页大数字随日报刷新(带今日日报真实链接)。
-        home_stats = dict(stats or {})
-        home_stats.setdefault("daily_report_url", (r_daily.get("uploaded") or [{}])[0].get("url_or_err", ""))
-        r_home = feishu_docs.push_homepage(cfg, home_stats)
-        return (f"daily={'ok' if r_daily.get('ok') else r_daily.get('error') or r_daily.get('failed')}"
+        patched = feishu_docs.patch_report_dossier_links(report_path, cfg=cfg)
+        r_daily = feishu_docs.push_daily_report(cfg, report_path=report_path)
+        r_bf = feishu_docs.backfill_bitable_dossier_links(cfg)
+        return (f"home={'ok' if r_home.get('ok') else 'err:' + str(r_home.get('error') or r_home.get('url_or_err'))[:60]}"
                 f" dossiers={r_dos.get('counts', r_dos.get('error'))}"
-                f" home={'ok' if r_home.get('ok') else r_home.get('url_or_err') or r_home.get('error')}")
+                f" report_links={patched}"
+                f" daily={'ok' if r_daily.get('ok') else r_daily.get('error') or r_daily.get('failed')}"
+                f" bitable_dossier_col={r_bf.get('updated', r_bf.get('error'))}")
     except Exception as e:
         return f"error: {e}"
 
@@ -573,8 +581,18 @@ def main():
         write_scoreboard_picks(today, scored, cards, pool_by_url)
     scoreboard_results = check_scoreboard(today, scored, cfg)
 
+    # 互链: 日报卡片里放该达人档案的飞书链接(映射读不到就温和省略; 上传前 push 流程还会按最新映射刷新)
+    dossier_links = {}
+    try:
+        import feishu_docs
+        _m = feishu_docs._load_map(cfg.get("feishu_docs", {}).get("map_path", feishu_docs.DEFAULT_MAP_PATH))
+        dossier_links = {k[len("dossier/"):]: v.get("url") for k, v in _m.items()
+                        if k.startswith("dossier/") and isinstance(v, dict) and v.get("url")}
+    except Exception:
+        pass
+
     report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run,
-                               csv_path, scoreboard_results)
+                               csv_path, scoreboard_results, dossier_links=dossier_links)
 
     n = len(scored)
     dtxt = ""

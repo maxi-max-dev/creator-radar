@@ -240,9 +240,11 @@ def _open_cred(cfg):
     folders = ensure_folder_tree(token, oid)
     if folders.get("_error"):
         return None, {"ok": False, "error": "folder tree: %s" % folders["_error"]}
+    doc_map = _load_map(node.get("map_path", DEFAULT_MAP_PATH))
+    doc_map["_folders"] = {k: _folder_url(v) for k, v in folders.items() if not k.startswith("_")}
     ctx = {"cred": cred, "token": token, "oid": oid, "folders": folders,
            "map_path": node.get("map_path", DEFAULT_MAP_PATH),
-           "doc_map": _load_map(node.get("map_path", DEFAULT_MAP_PATH))}
+           "doc_map": doc_map}
     return ctx, None
 
 
@@ -252,12 +254,12 @@ def _folder_url(tok):
 
 def build_homepage_md(cfg, stats, ctx):
     """主页仪表盘 markdown(团队唯一入口)。顶部 callout 放四个大数字，分区导航配说明，底部更新机制+时间。
-    stats: {pool_size, cards_today, blind_test_multiple, scoreboard_status, daily_report_url}。"""
+    stats: {pool_size, cards_today, blind_test_multiple, scoreboard_status}。
+    日报导航链到「日报」文件夹(token 稳定): 互链顺序里主页先于日报上传，链文件会指向已轮换的旧 URL。"""
     f = ctx["folders"]
     doc_map = ctx["doc_map"]
     cred = ctx["cred"]
     bitable_url = cred.get("base_url") or ("https://my.feishu.cn/base/%s" % cred["app_token"])
-    daily_url = stats.get("daily_report_url") or doc_map.get("daily/%s" % date.today().isoformat(), {}).get("url", "")
     now = datetime.now().isoformat(timespec="minutes")
     L = ["# 达人雷达 · 总部", ""]
     # 顶部 callout 大数字块(blockquote 渲染成高亮卡)
@@ -277,9 +279,9 @@ def build_homepage_md(cfg, stats, ctx):
     L += ["### 📊 多维表格（运营主战场）",
           f"{bitable_url}",
           "_每日推荐自动灌进这张表，运营在这里做终审、流转评审状态、跟踪投放。_", ""]
-    L += ["### 📰 今日日报",
-          f"{daily_url or '(今日尚未生成)'}",
-          "_每天 08:30 的池子动态、推荐卡、记分板结算，一页看完。历史日报见「日报」文件夹。_", ""]
+    L += ["### 📰 雷达日报",
+          f"{_folder_url(f.get('日报'))}",
+          "_每天 08:30 的池子动态、推荐卡、记分板结算，一页看完。当日一期在文件夹最上。_", ""]
     L += ["### 🗃️ 达人档案区",
           f"{_folder_url(f.get('达人档案'))}",
           "_每位当日推荐达人一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵、推荐理由。_", ""]
@@ -411,6 +413,138 @@ def build_system_md():
     return "\n".join(L) + "\n"
 
 
+# ----- 互链网络: 档案导航头 / 日报卡片档案链接 / 表格档案列回填 -----
+
+def _dossier_nav(doc_map):
+    """档案飞书副本的头部导航(互链)。上传时注入而不写进本地文件:
+    data/dossiers 每日自动 commit 进公开仓库，红线要求文件/文件夹 token 不进 repo，
+    所以链接只存在于飞书副本，URL 运行时从映射读。日报链到「日报」文件夹(token 稳定不轮换，
+    当日一期在最上)；主页 URL 每次运行先刷新再注入，永远指向现役主页。"""
+    home = doc_map.get("home/index", {}).get("url", "")
+    rep_folder = (doc_map.get("_folders") or {}).get("日报", "")
+    lines = []
+    if home:
+        lines.append("[🛰️ 返回总部主页](%s)  " % home)
+    if rep_folder:
+        lines.append("[📰 雷达日报](%s)  " % rep_folder)
+    return ("\n".join(lines) + "\n\n") if lines else ""
+
+
+def patch_report_dossier_links(report_path, cfg=None, doc_map=None):
+    """日报 md 每张推荐卡小节里补/刷新「达人档案」链接行(按频道名匹配映射)。
+    在 push 流程里于档案上传之后调用，保证链接指向本次最新档案(档案 URL 每日轮换)。
+    reports/ 已 gitignore，链接不进 repo。幂等: 旧链接行被替换不堆叠。返回补上的条数。"""
+    import re
+    if doc_map is None:
+        node = (cfg or {}).get("feishu_docs", {})
+        doc_map = _load_map(node.get("map_path", DEFAULT_MAP_PATH))
+    if not os.path.exists(report_path):
+        return 0
+    by_name = {}
+    for k, v in doc_map.items():
+        if k.startswith("dossier/") and v.get("url") and str(v.get("name", "")).endswith(".md"):
+            by_name[v["name"][:-3]] = v["url"]
+    if not by_name:
+        return 0
+    lines = _read(report_path).splitlines()
+    out, i, n = [], 0, 0
+    while i < len(lines):
+        line = lines[i]
+        out.append(line)
+        m = re.match(r"^###\s+(.+?)\s+·\s+#", line)
+        if m and by_name.get(m.group(1).strip()):
+            url = by_name[m.group(1).strip()]
+            j = i + 1
+            if j < len(lines) and not lines[j].strip():
+                out.append(lines[j])
+                j += 1
+            if j < len(lines) and lines[j].startswith("[🗂️ 达人档案]("):
+                j += 1  # 丢弃旧链接行(重写保新)
+                if j < len(lines) and not lines[j].strip():
+                    j += 1
+            out.append("[🗂️ 达人档案](%s)" % url)
+            out.append("")
+            n += 1
+            i = j
+            continue
+        i += 1
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(out) + "\n")
+    return n
+
+
+def backfill_bitable_dossier_links(cfg):
+    """多维表格「档案」列回填(互链: 表格行 -> 档案文档)。字段不存在自动建(超链接类型)。
+    匹配优先级: 频道链接里含 channel_id > 频道名等于档案标题。全表刷新而非只当日行:
+    档案 URL 每日轮换，老行的链接也必须跟着刷才不会失效。温和降级: 出错只返回错误 dict。"""
+    node = cfg.get("feishu_docs", {})
+    cred_path = os.path.expanduser(node.get("credentials_path", ""))
+    if not cred_path or not os.path.exists(cred_path):
+        return {"ok": False, "error": "NotConfigured: 凭证文件不存在"}
+    try:
+        cred = json.load(open(cred_path))
+        token, traw = _get_token(cred)
+        if not token:
+            return {"ok": False, "error": "token failed: code=%s" % traw.get("code")}
+        A, T = cred.get("app_token"), cred.get("table_id")
+        if not A or not T:
+            return {"ok": False, "error": "凭证缺 app_token/table_id"}
+        doc_map = _load_map(node.get("map_path", DEFAULT_MAP_PATH))
+        dossiers = {k[len("dossier/"):]: v for k, v in doc_map.items()
+                    if k.startswith("dossier/") and v.get("url")}
+        if not dossiers:
+            return {"ok": False, "error": "映射里无档案条目"}
+        # 确保「档案」字段存在(type 15 = 超链接)
+        r = _feishu_call("GET", "/bitable/v1/apps/%s/tables/%s/fields?page_size=100" % (A, T), token=token)
+        names = [f.get("field_name") for f in r.get("data", {}).get("items", [])]
+        if "档案" not in names:
+            c = _feishu_call("POST", "/bitable/v1/apps/%s/tables/%s/fields" % (A, T), token=token,
+                             body={"field_name": "档案", "type": 15})
+            if c.get("code") != 0:
+                return {"ok": False, "error": "建档案字段失败: code=%s %s" % (c.get("code"), str(c.get("msg"))[:80])}
+        # 全表扫描匹配
+        updates, scanned, page = [], 0, ""
+        for _ in range(20):
+            body = {"page_size": 100}
+            if page:
+                body["page_token"] = page
+            r = _feishu_call("POST", "/bitable/v1/apps/%s/tables/%s/records/search" % (A, T),
+                             token=token, body=body)
+            if r.get("code") != 0:
+                return {"ok": False, "error": "records search failed: code=%s" % r.get("code")}
+            for it in r.get("data", {}).get("items", []):
+                scanned += 1
+                fields = it.get("fields", {})
+                link = fields.get("频道链接")
+                url = link.get("link", "") if isinstance(link, dict) else ""
+                hit = next((d for cid, d in dossiers.items() if cid and cid in url), None)
+                if not hit:
+                    nm = fields.get("频道名")
+                    if isinstance(nm, list):
+                        nm = "".join(seg.get("text", "") for seg in nm if isinstance(seg, dict))
+                    nm = (nm or "").strip()
+                    hit = next((d for d in dossiers.values()
+                                if str(d.get("name", "")).endswith(".md") and d["name"][:-3] == nm), None)
+                if hit:
+                    label = hit.get("name", "档案")
+                    label = label[:-3] if label.endswith(".md") else label
+                    updates.append({"record_id": it.get("record_id"),
+                                    "fields": {"档案": {"link": hit["url"], "text": "📄 " + label}}})
+            if not r.get("data", {}).get("has_more"):
+                break
+            page = r.get("data", {}).get("page_token", "")
+        done = 0
+        for i in range(0, len(updates), 100):
+            u = _feishu_call("POST", "/bitable/v1/apps/%s/tables/%s/records/batch_update" % (A, T),
+                             token=token, body={"records": updates[i:i + 100]})
+            if u.get("code") == 0:
+                done += len(updates[i:i + 100])
+        return {"ok": done == len(updates) and done > 0, "scanned": scanned,
+                "matched": len(updates), "updated": done}
+    except Exception as e:
+        return {"ok": False, "error": str(e)}
+
+
 def _dossier_title(md_text, fallback):
     """从 dossier frontmatter 取 channel_name 当文件名; 取不到用 fallback。"""
     for line in md_text.splitlines():
@@ -453,6 +587,8 @@ def _run_uploads(cfg, kind, today=None, explicit_paths=None):
         return {"ok": False, "error": "folder tree: %s" % folders["_error"], "folders": folders}
 
     doc_map = _load_map(map_path)
+    # 文件夹 URL 落映射(repo 外): 档案导航等互链场景运行时从这里读，token 不进仓库
+    doc_map["_folders"] = {k: _folder_url(v) for k, v in folders.items() if not k.startswith("_")}
     uploaded, failed = [], []
 
     if kind == "daily":
@@ -470,12 +606,13 @@ def _run_uploads(cfg, kind, today=None, explicit_paths=None):
         target = folders.get("达人档案")
         ddir = os.path.join(ROOT, "data", "dossiers")
         files = sorted(f for f in os.listdir(ddir) if f.endswith(".md")) if os.path.isdir(ddir) else []
+        nav = _dossier_nav(doc_map)  # 互链导航头，只注入飞书副本(本地文件保持无 token)
         for f in files:
             cid = f[:-3]
             md = _read(os.path.join(ddir, f))
             title = _dossier_title(md, cid)
             fname = "%s.md" % _safe(title)
-            ok, info = _put_doc(token, target, fname, md, "dossier/%s" % cid, doc_map, open_id=oid)
+            ok, info = _put_doc(token, target, fname, nav + md, "dossier/%s" % cid, doc_map, open_id=oid)
             (uploaded if ok else failed).append({"name": fname, "key": "dossier/%s" % cid, "url_or_err": info})
 
     elif kind == "reports":
@@ -521,3 +658,5 @@ if __name__ == "__main__":
         print(json.dumps(push_homepage(cfg), ensure_ascii=False, indent=1))
     elif which == "system":
         print(json.dumps(push_system_doc(cfg), ensure_ascii=False, indent=1))
+    elif which == "backfill":
+        print(json.dumps(backfill_bitable_dossier_links(cfg), ensure_ascii=False, indent=1))
