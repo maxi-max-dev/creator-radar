@@ -80,6 +80,39 @@
     "cap": 3
   },
 
+  "momentum": {
+    "notes": "起势层(第二层雷达: 对的时机)。核心思路: 某频道最近视频的 播放速度(views/天) 显著超过它自己的历史中位数 = 起势信号。绝不跨频道横向比播放数(大频道天然高), 只比频道对自己历史的相对爆发。全部旋钮进这里, 每个都带下面的 notes。",
+    "rss": {
+      "notes": "RSS 采集器参数。top_channels=按 fit 排名拉前 N 个频道(fit 分高的才值得看时机)。throttle 0.5s/请求, 350 个约 3 分钟。",
+      "top_channels": 350,
+      "throttle_seconds": 0.5,
+      "timeout_seconds": 20
+    },
+    "recent_window_days": 45,
+    "recent_window_notes": "近期窗口: 发布在 window_days 内的视频算'近期', 参与爆发比计算; 更老的视频只进历史基线不算近期突破。45 天 ≈ 起势层想捕捉的'正在发生'的时间尺度。",
+    "half_life_days": 30,
+    "half_life_notes": "近期视频的爆发信号按发布距今天数指数衰减(半衰期 30 天): 昨天爆的比 40 天前爆的更值钱。窗口边缘不硬切, 平滑过渡。",
+    "min_videos_for_baseline": 4,
+    "min_videos_notes": "少于这么多条已知视频的频道, 历史中位数不可信, 给中性分 neutral_score 并打 data_coverage='low', 绝不让缺数据=0 分冤杀。",
+    "neutral_score": 0.3,
+    "neutral_notes": "数据不足频道的中性分。取 0.3(略低于中位但非零), 表示'未知不是坏, 但也拿不出证据说它在起势'。",
+    "burst_log_base": 2.0,
+    "burst_cap": 8.0,
+    "burst_notes": "爆发比 = 近期视频 views/天 ÷ 频道历史 views/天 中位。log 压缩(底 2)防单条病毒视频把分数打爆, 再按 burst_cap(8x=3个log2单位)封顶后归一化到[0,1]。8x 已是'现象级起势', 再高不必区分。",
+    "min_days_since_upload": 2.0,
+    "min_days_notes": "算 views/天 时的分母地板: 任何视频天龄不足 min_days 都按 min_days 算, 防刚发的视频分母虚小把 views/天 顶穿。视频仍计入历史基线。",
+    "min_maturity_days": 3.0,
+    "min_maturity_notes": "起势判定的成熟度门槛(关键旋钮, 经敏感度测试定): 只有天龄 >= min_maturity 的视频才有资格当'爆发信号'。理由: 发布 0.3 天的视频 views/天 会因分母极小而虚高, 且还没经过足够时间证明真实观众拉力; 让它先长 3 天再谈起势。这类刚发视频仍进历史基线(它是频道日常产出的一部分), 只是不当突破点。3 天是'新到能代表当下, 又老到 views/天 可信'的平衡点。",
+    "short_weight": 0.5,
+    "short_notes": "shorts 单独降权到 0.5: 短视频播放量体系和长视频不同(推荐流打法, 动辄百万但不代表内容势能), 直接混进长视频历史会污染中位。降权而非剔除, 因为纯 shorts 创作者的爆发也是真信号。",
+    "fusion": {
+      "notes": "融合公式: potential = fit × (1 + gain × momentum)。乘性温和放大: momentum 高时最多把 fit 分放大 (1+gain) 倍, momentum=中性时几乎不动 fit 排名。选乘性不选加性, 因为'对的时机'是对'对的人'的放大器而非独立加分项(一个 fit=0 的人再火也不该被这层捞进来)。gain 是运营策略旋钮。",
+      "gain": 0.6,
+      "momentum_pivot": 0.3,
+      "pivot_notes": "融合时用 (momentum - pivot) 作放大量: momentum 高于 pivot(=neutral) 才正向放大, 低于则轻微压制, 保证'数据不足=中性=不动 fit'这个铁律。"
+    }
+  },
+
   "collect": {
     "notes": "常驻采集器策略。search_terms 覆盖摩托/骑行的多语言检索词(英/西/日)，从既有池子构建思路延伸。refresh 轮转刷新最旧的 N 个频道，discover 每次跑 M 个搜索词发现新面孔。",
     "search_terms": [
