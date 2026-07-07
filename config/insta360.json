@@ -110,5 +110,11 @@
     "top_n_scan": 100
   },
 
+  "scoreboard": {
+    "notes": "预测记分板 v0。每周一存 picks，到期(due_days)后用订阅增长对照全池中位增速结算；增速差在 ±verdict_margin_pct 个百分点内算跑平。",
+    "due_days": 28,
+    "verdict_margin_pct": 2.0
+  },
+
   "outputs": ["report", "imessage"]
 }

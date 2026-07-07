@@ -15,7 +15,9 @@ HISTDIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 
 def _run_ytdlp(target, playlist_items=None):
     """跑 yt-dlp 取单个 target 的 flat JSON。失败返回 None，不抛。"""
-    cmd = ["yt-dlp", target, "-J", "--flat-playlist", "--skip-download", "--no-warnings", "--no-update"]
+    # approximate_date: 让频道页 flat 条目带上近似上传时间戳，零额外请求(只作用于 youtubetab)
+    cmd = ["yt-dlp", target, "-J", "--flat-playlist", "--skip-download", "--no-warnings", "--no-update",
+           "--extractor-args", "youtubetab:approximate_date"]
     if playlist_items:
         cmd += ["--playlist-items", playlist_items]
     try:
@@ -27,24 +29,52 @@ def _run_ytdlp(target, playlist_items=None):
         return None
 
 
+# flat entry 里的管道字段，快照不存(thumbnails 体积大无分析价值)；其余字段全量透传，宁多勿少
+VIDEO_PLUMBING = {"_type", "ie_key", "__x_forwarded_for_ip", "thumbnails"}
+
+
+def _video_record(e):
+    """flat entry -> 原始视频记录: 非管道字段全透传 + video_id/upload_date/is_short。
+    注: 当前 yt-dlp 版本 flat 模式无单视频 view_count，将来版本有就自动带上(透传)，不为它加请求。"""
+    v = {k: val for k, val in e.items() if k not in VIDEO_PLUMBING}
+    v["video_id"] = e.get("id")
+    ts = e.get("timestamp")
+    v["upload_date"] = date.fromtimestamp(ts).isoformat() if ts else None
+    dur = e.get("duration")
+    v["is_short"] = bool((dur is not None and dur <= 60) or "/shorts/" in (e.get("url") or ""))
+    return v
+
+
 def fetch_channel(channel_url, n_videos):
-    """抓一个频道的元数据，返回可写入池子的字段字典(不含 is_positive 等标注)。"""
+    """抓一个频道的元数据，返回池子字段 + _snapshot(视频层原始数据，入池前剥离转 history)。"""
     d = _run_ytdlp(channel_url.rstrip("/") + "/videos", playlist_items=f"1-{n_videos}")
     if not d:
         return None
-    ents = d.get("entries") or []
-    titles = [e.get("title") for e in ents if e.get("title")]
-    ts = [e.get("timestamp") for e in ents if e.get("timestamp")]
-    last_upload = date.fromtimestamp(max(ts)).isoformat() if ts else None
+    videos = [_video_record(e) for e in (d.get("entries") or [])]
+    titles = [v.get("title") for v in videos if v.get("title")]
+    ts = [v.get("timestamp") for v in videos if v.get("timestamp")]
     return {
         "channel_name": d.get("channel") or d.get("uploader"),
         "channel_url": d.get("channel_url") or channel_url,
         "channel_id": d.get("channel_id") or d.get("id"),
         "subscribers": d.get("channel_follower_count"),
+        "channel_view_count": d.get("view_count"),
         "description": d.get("description"),
         "country": None,
         "recent_video_titles": titles,
-        "last_upload_date": last_upload,
+        "last_upload_date": date.fromtimestamp(max(ts)).isoformat() if ts else None,
+        "_snapshot": {"videos": videos},
+    }
+
+
+def make_snapshot(fresh, today, event):
+    """一条完整原始快照(data/history/ 起势层燃料)。结构开放，内容层(字幕/打标)后续按 video_id 外挂。"""
+    return {
+        "date": today, "event": event,
+        "channel_id": fresh.get("channel_id"), "channel_name": fresh.get("channel_name"),
+        "channel_url": fresh.get("channel_url"), "subscribers": fresh.get("subscribers"),
+        "channel_view_count": fresh.get("channel_view_count"),
+        "videos": fresh["_snapshot"]["videos"],
     }
 
 
@@ -57,13 +87,14 @@ def atomic_write_pool(rows):
     os.replace(tmp, POOL)
 
 
-def append_history(rows, today):
-    """当日快照: 每频道一行 (channel_url, subscribers)，给成长斜率信号留数据。"""
+def append_history(snapshots, today):
+    """当日原始快照 append-only: 每个被刷新/新发现的频道一条完整记录，先存后洗。
+    全池订阅面貌不再重复存这里，池子本身每日入库(git)即为全量快照。"""
     os.makedirs(HISTDIR, exist_ok=True)
     path = os.path.join(HISTDIR, f"{today}.jsonl")
     with open(path, "a") as f:
-        for r in rows:
-            f.write(json.dumps({"channel_url": r.get("channel_url"), "subscribers": r.get("subscribers")}) + "\n")
+        for s in snapshots:
+            f.write(json.dumps(s, ensure_ascii=False) + "\n")
 
 
 def do_refresh(rows, cfg, budget, throttle, today):
@@ -71,14 +102,16 @@ def do_refresh(rows, cfg, budget, throttle, today):
     n_vid = cfg["collect"]["videos_per_channel"]
     # 从没刷过的(None)排最前，其余按 last_refreshed 升序; 稳定排序保留原顺序
     order = sorted(range(len(rows)), key=lambda i: rows[i].get("last_refreshed") or "")
-    touched = []
+    touched, snapshots = [], []
     for i in order[:budget]:
         r = rows[i]
         fresh = fetch_channel(r["channel_url"], n_vid)
         r["last_refreshed"] = today
         if fresh:
+            snapshots.append(make_snapshot(fresh, today, "refresh"))
+            fresh.pop("_snapshot")
             # 只覆盖会变的字段，保留 is_positive/source/first_seen 等标注
-            for k in ("subscribers", "recent_video_titles", "last_upload_date", "channel_name"):
+            for k in ("subscribers", "recent_video_titles", "last_upload_date", "channel_name", "channel_view_count"):
                 if fresh.get(k) is not None:
                     r[k] = fresh[k]
             touched.append(r)
@@ -86,7 +119,7 @@ def do_refresh(rows, cfg, budget, throttle, today):
         else:
             print(f"  refresh miss: {r['channel_name']}", file=sys.stderr)
         time.sleep(throttle)
-    return touched
+    return touched, snapshots
 
 
 def do_discover(rows, cfg, n_terms, throttle, today):
@@ -114,7 +147,7 @@ def do_discover(rows, cfg, n_terms, throttle, today):
         time.sleep(throttle)
 
     max_new = ccfg["discover_max_new_per_run"]
-    added = []
+    added, snapshots = [], []
     for curl in candidates.values():
         if len(added) >= max_new:  # 单次入池封顶，防运行时长失控
             print(f"  discover cap hit: {max_new} new channels, stopping", file=sys.stderr)
@@ -127,6 +160,8 @@ def do_discover(rows, cfg, n_terms, throttle, today):
             continue
         if leak_re.search(fresh["channel_name"] or ""):
             continue
+        snapshots.append(make_snapshot(fresh, today, "discover"))
+        fresh.pop("_snapshot")
         fresh.update({
             "source": "auto-discover", "is_positive": False, "positive_source": None,
             "first_seen": today, "last_refreshed": today,
@@ -135,7 +170,7 @@ def do_discover(rows, cfg, n_terms, throttle, today):
         have.add(fresh["channel_url"]); have.add(fresh.get("channel_id"))
         added.append(fresh)
         print(f"  discover NEW: {fresh['channel_name']} subs={fresh.get('subscribers')}", file=sys.stderr)
-    return added
+    return added, snapshots
 
 
 def main():
@@ -155,20 +190,23 @@ def main():
     print(f"pool={n0}", file=sys.stderr)
 
     throttle = ccfg["throttle_seconds"]
-    touched = []
+    touched, snapshots = [], []
     if args.refresh:
         budget = args.budget if args.budget is not None else ccfg["refresh_per_run"]
-        touched = do_refresh(rows, cfg, budget, throttle, today)
+        touched, snaps = do_refresh(rows, cfg, budget, throttle, today)
+        snapshots.extend(snaps)
     added = []
     if args.discover:
         n_terms = args.discover_terms if args.discover_terms is not None else ccfg["discover_terms_per_run"]
-        added = do_discover(rows, cfg, n_terms, throttle, today)
+        added, snaps = do_discover(rows, cfg, n_terms, throttle, today)
+        snapshots.extend(snaps)
 
     atomic_write_pool(rows)
-    append_history(rows, today)
+    append_history(snapshots, today)
 
     result = {"pool_before": n0, "pool_after": len(rows), "discovered": len(added),
-              "refreshed": len(touched), "discovered_names": [a["channel_name"] for a in added]}
+              "refreshed": len(touched), "snapshots": len(snapshots),
+              "discovered_names": [a["channel_name"] for a in added]}
     print(json.dumps(result, ensure_ascii=False))
     return result
 

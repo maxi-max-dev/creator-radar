@@ -3,9 +3,8 @@ __pycache__/
 *.log
 *.err
 
-# 常驻运行的每日产出(轮转/瞬时，不进版本库；基线 runs 仍手动 add)
+# 常驻运行的瞬时产出不进版本库；data/history data/pool data/scoreboard 每日自动 commit(异地备份)
 reports/
-data/history/
 data/backup/
 data/runs/daily/
 data/runs/verify-daemon/

@@ -51,7 +51,9 @@
 
 流程：`collect.py`（yt-dlp 刷新池内频道元数据 + 多语言搜索词发现新频道入池）→ 全池重排 → 与上次运行排名 diff（新进前 100 / 窜升 ≥200 位）→ `explain.py`（本地 ollama chat 模型对候选精读，产可解释推荐卡）→ 日报 `reports/YYYY-MM-DD-radar.md` → 推送（iMessage）→ 追加 `logs/radar.log`。
 
-策略全在 `config/insta360.json` 的 `collect` / `explain` / `outputs` 三节：搜索词、每次预算、节流、推荐卡模型、分发出口。飞书多维表格出口留了接口（`outputs` 加 `"bitable"` 即走占位分支，等凭证接入）。
+数据积累（先存后洗）：每个被刷新/新发现的频道当天落一条完整原始快照到 `data/history/`（append-only jsonl，含视频层 video_id/时长/is_short），每日跑完自动 `git commit` 数据目录（history/pool/scoreboard）并 push，私有仓库即异地备份。预测记分板：每周一把当日推荐存 `data/scoreboard/picks-*.json`（带订阅基线），28 天后自动结算订阅增长对照全池中位增速，跑赢/跑平/跑输写进日报「记分板」一节。
+
+策略全在 `config/insta360.json` 的 `collect` / `explain` / `scoreboard` / `outputs` 四节：搜索词、每次预算、节流、推荐卡模型、结算窗口、分发出口。飞书多维表格出口留了接口（`outputs` 加 `"bitable"` 即走占位分支，等凭证接入）。
 
 定时器：`launchd/com.max.creator-radar.plist`，每天 08:30 跑默认参数。安装：
 

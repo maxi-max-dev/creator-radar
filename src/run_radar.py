@@ -13,6 +13,7 @@ from radar_lib import load_config, load_pool, score_pool
 
 POOL = os.path.join(ROOT, "data", "pool", "creator_pool.jsonl")
 DAILY = os.path.join(ROOT, "data", "runs", "daily")
+SCOREBOARD = os.path.join(ROOT, "data", "scoreboard")
 REPORTS = os.path.join(ROOT, "reports")
 LOGS = os.path.join(ROOT, "logs")
 NOTIFY = "/Users/max/.openclaw/workspace/scripts/notify-imessage.sh"
@@ -141,7 +142,99 @@ def write_cards_table(today, cards, scored, pool_by_url, out_dir):
     return path
 
 
-def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None):
+def write_scoreboard_picks(today, scored, cards, pool_by_url, note=None):
+    """记分板 picks 存档(每周一): 当日推荐 + top50 快照 + 全池订阅基线。
+    全池基线让文件自足: 到期结算时不依赖任何外部历史。幂等，同日已存在则跳过。"""
+    os.makedirs(SCOREBOARD, exist_ok=True)
+    path = os.path.join(SCOREBOARD, f"picks-{today}.json")
+    if os.path.exists(path):
+        return path
+    s_by = {s["channel_url"]: s for s in scored}
+    picks = []
+    for c in cards:
+        s = s_by.get(c.get("_channel_url"), {})
+        picks.append({
+            "channel_url": c.get("_channel_url"),
+            "channel_name": s.get("channel_name") or c.get("channel_name"),
+            "rank_at_pick": s.get("rank", c.get("_rank")),
+            "score_at_pick": s.get("score"),
+            "subscribers_baseline": s.get("subscribers"),
+            "channel_view_count_baseline": pool_by_url.get(c.get("_channel_url"), {}).get("channel_view_count"),
+        })
+    doc = {
+        "picked_date": today,
+        "note": note,
+        "picks": picks,
+        "top50": [{"rank": s["rank"], "channel_url": s["channel_url"], "channel_name": s["channel_name"],
+                   "score": s["score"], "subscribers": s.get("subscribers")} for s in scored[:50]],
+        "pool_size": len(scored),
+        "pool_subscribers_baseline": {s["channel_url"]: s.get("subscribers") for s in scored},
+    }
+    with open(path, "w") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=1)
+    return path
+
+
+def check_scoreboard(today, scored, cfg):
+    """结算到期 picks: 每个 pick 的订阅增长对照全池中位增速给 verdict，写 verdicts 文件(结算一次不重复)。"""
+    sb = cfg.get("scoreboard", {})
+    due_days = sb.get("due_days", 28)
+    margin = sb.get("verdict_margin_pct", 2.0)
+    now_subs = {s["channel_url"]: s.get("subscribers") for s in scored}
+    results = []
+    for pf in sorted(glob.glob(os.path.join(SCOREBOARD, "picks-*.json"))):
+        pdate = os.path.basename(pf)[len("picks-"):-len(".json")]
+        try:
+            age = (date.fromisoformat(today) - date.fromisoformat(pdate)).days
+        except ValueError:
+            continue
+        vf = os.path.join(SCOREBOARD, f"verdicts-for-{pdate}.json")
+        if age < due_days or os.path.exists(vf):
+            continue
+        doc = json.load(open(pf))
+        growths = []
+        for url, b in (doc.get("pool_subscribers_baseline") or {}).items():
+            n = now_subs.get(url)
+            if b and n:
+                growths.append((n - b) / b * 100)
+        median = sorted(growths)[len(growths) // 2] if growths else 0.0
+        verdicts = []
+        for p in doc.get("picks", []):
+            b, n = p.get("subscribers_baseline"), now_subs.get(p.get("channel_url"))
+            if not b or not n:
+                verdicts.append({"channel_name": p.get("channel_name"), "channel_url": p.get("channel_url"),
+                                 "verdict": "数据缺失"})
+                continue
+            g = (n - b) / b * 100
+            v = "跑赢" if g > median + margin else ("跑输" if g < median - margin else "跑平")
+            verdicts.append({"channel_name": p.get("channel_name"), "channel_url": p.get("channel_url"),
+                             "subscribers_baseline": b, "subscribers_now": n,
+                             "growth_pct": round(g, 2), "verdict": v})
+        out = {"picked_date": pdate, "settled_date": today, "window_days": age,
+               "pool_median_growth_pct": round(median, 2), "verdicts": verdicts}
+        with open(vf, "w") as f:
+            json.dump(out, f, ensure_ascii=False, indent=1)
+        results.append(out)
+    return results
+
+
+def commit_snapshots(today):
+    """数据快照自动入库+push(私有仓库当异地备份)。只提交数据路径，push 失败只记结果不中断。"""
+    paths = ["data/history", "data/pool", "data/scoreboard"]
+    msg = f"数据快照 {today}\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
+    try:
+        subprocess.run(["git", "add"] + paths, cwd=ROOT, capture_output=True, text=True)
+        c = subprocess.run(["git", "commit", "-m", msg, "--"] + paths, cwd=ROOT, capture_output=True, text=True)
+        if c.returncode != 0:
+            return f"commit skipped: {(c.stdout + c.stderr).strip().splitlines()[-1][:100]}"
+        p = subprocess.run(["git", "push"], cwd=ROOT, capture_output=True, text=True, timeout=120)
+        return "committed+pushed" if p.returncode == 0 else f"committed, push failed: {p.stderr.strip()[:100]}"
+    except Exception as e:
+        return f"git error: {e}"
+
+
+def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None,
+                 scoreboard_results=None):
     n = len(scored)
     delta = ""
     if collect_res.get("pool_before") is not None:
@@ -186,6 +279,20 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
             L.append("")
     else:
         L += ["_本次未生成推荐卡（无符合条件的新面孔/窜升候选，或模型不可用）。_", ""]
+
+    L += ["## 记分板", ""]
+    if scoreboard_results:
+        for r in scoreboard_results:
+            L.append(f"- **{r['picked_date']} 那期预测到期**（{r['window_days']} 天窗口，全池中位增速 {r['pool_median_growth_pct']}%）：")
+            for v in r["verdicts"]:
+                if v["verdict"] == "数据缺失":
+                    L.append(f"  - {v.get('channel_name', '?')}：数据缺失")
+                else:
+                    L.append(f"  - **{v['channel_name']}** 订阅 {v['subscribers_baseline']} → {v['subscribers_now']}"
+                             f"（{v['growth_pct']:+.2f}%）：{v['verdict']}")
+    else:
+        L.append("记分板：无到期预测")
+    L.append("")
 
     L += ["## 运行统计", "",
           f"- 时间：{datetime.now().isoformat(timespec='seconds')}",
@@ -261,7 +368,12 @@ def main():
 
     csv_path = write_cards_table(today, cards, scored, pool_by_url, out_dir)
 
-    report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path)
+    if date.today().weekday() == 0:  # 周一存本周 picks(可证伪预测)
+        write_scoreboard_picks(today, scored, cards, pool_by_url)
+    scoreboard_results = check_scoreboard(today, scored, cfg)
+
+    report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run,
+                               csv_path, scoreboard_results)
 
     n = len(scored)
     dtxt = ""
@@ -271,10 +383,13 @@ def main():
            f"推荐卡 {len(cards)} 张 → reports/{today}-radar.md")
     push_res = push(cfg, msg, report_path)
 
+    git_res = commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
+
     os.makedirs(LOGS, exist_ok=True)
     summary = (f"{datetime.now().isoformat(timespec='seconds')} pool={n} {dtxt or '+?'} "
                f"refreshed={collect_res.get('refreshed', 0)} discovered={collect_res.get('discovered', 0)} "
-               f"newcomers={len(newcomers)} jumpers={len(jumpers)} cards={len(cards)} push={push_res}")
+               f"newcomers={len(newcomers)} jumpers={len(jumpers)} cards={len(cards)} "
+               f"settled={len(scoreboard_results)} push={push_res} git={git_res}")
     with open(os.path.join(LOGS, "radar.log"), "a") as f:
         f.write(summary + "\n")
 
