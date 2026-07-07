@@ -140,5 +140,11 @@
     "credentials_path": "~/.config/creator-radar/feishu.json"
   },
 
-  "outputs": ["report", "imessage", "bitable"]
+  "feishu_docs": {
+    "notes": "飞书文档出口(把日报 markdown 传上飞书云空间，让飞书成为团队总部)。复用 bitable 同一份凭证文件(app_id/app_secret 取 token)。当前 bot 未开通 docx 建档权限，故 md 以云文件形式上传(飞书点开有 markdown 预览)，Max 自动加成每个文件夹的 full_access。幂等映射(文档 key 到 file_token)存下面 map_path 这个 repo 外文件，敏感标识符不进仓库。失败温和降级只记 log。",
+    "credentials_path": "~/.config/creator-radar/feishu.json",
+    "map_path": "~/.config/creator-radar/feishu_docs_map.json"
+  },
+
+  "outputs": ["report", "imessage", "bitable", "feishu_docs"]
 }

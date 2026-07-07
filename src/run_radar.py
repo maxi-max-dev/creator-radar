@@ -307,45 +307,76 @@ def commit_snapshots(today):
         return f"git error: {e}"
 
 
+def _scoreboard_oneliner(scoreboard_results):
+    """记分板一句话摘要(给日报开头的 callout 用)。"""
+    if not scoreboard_results:
+        return "记分板：本次无到期预测"
+    parts = []
+    for r in scoreboard_results:
+        won = sum(1 for v in r["verdicts"] if v.get("verdict") == "跑赢")
+        parts.append(f"{r['picked_date']} 那期结算：{won}/{len(r['verdicts'])} 跑赢全池中位")
+    return "记分板：" + "；".join(parts)
+
+
 def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None,
                  scoreboard_results=None):
+    """日报 markdown(设计升级版)。开头 callout 摘要(blockquote)，推荐卡每张一个小节(heading3+分数表格+bullet)，
+    divider 分节。飞书 Drive 预览这份 .md 时 blockquote/表格/heading 都会渲染成样式块；纯文本降级也不丢内容。"""
     n = len(scored)
     delta = ""
     if collect_res.get("pool_before") is not None:
         d = collect_res["pool_after"] - collect_res["pool_before"]
-        delta = f"（+{d}）" if d else "（+0）"
+        delta = f"+{d}" if d else "+0"
+    sb_line = _scoreboard_oneliner(scoreboard_results)
+
     L = [f"# 达人雷达日报 · {today}", ""]
+    # 开头 callout 摘要卡(blockquote 在飞书预览里渲染成高亮引用块)
+    L += ["> 📡 **今日摘要**  ",
+          f"> 池子 **{n}** 频道（{delta}） · 本次刷新 **{collect_res.get('refreshed', 0)}** · 新发现入池 **{collect_res.get('discovered', 0)}**  ",
+          f"> 推荐卡 **{len(cards)}** 张 · {'首次运行无排名对比' if first_run else f'新进前100 **{len(newcomers)}** 个'}  ",
+          f"> {sb_line}",
+          "", "---", ""]
+
     L += ["## 今日池子", "",
-          f"- 池子规模：**{n}** 频道 {delta}",
+          f"- 池子规模：**{n}** 频道（{delta}）",
           f"- 本次刷新：{collect_res.get('refreshed', 0)} 个频道元数据",
           f"- 新发现入池：{collect_res.get('discovered', 0)} 个"]
     if collect_res.get("discovered_names"):
         L.append(f"  - {', '.join(collect_res['discovered_names'][:15])}")
-    L.append("")
+    L += ["", "---", ""]
 
     if first_run:
-        L += ["## 排名 diff", "", "_首次运行，无历史排名可对比。下次运行起产出新进/窜升榜。_", ""]
+        L += ["## 排名 diff", "", "_首次运行，无历史排名可对比。下次运行起产出新进/窜升榜。_", "", "---", ""]
     else:
         L += ["## 新进前 100", ""]
         if newcomers:
+            L += ["| 排名 | 频道 | 订阅 | 总分 |", "|---|---|---:|---:|"]
             for s in newcomers[:20]:
-                L.append(f"- #{s['rank']} **{s['channel_name']}** · {s.get('subscribers')} 订阅 · score={s['score']}")
+                L.append(f"| #{s['rank']} | **{s['channel_name']}** | {s.get('subscribers')} | {s['score']} |")
         else:
             L.append("_本次无新面孔进入前 100。_")
         L += ["", "## 窜升榜（排名上升 ≥200 位）", ""]
         if jumpers:
+            L += ["| 频道 | 上升 | 现排名 | 订阅 |", "|---|---:|---:|---:|"]
             for s in jumpers[:20]:
-                L.append(f"- **{s['channel_name']}** ↑{s['rank_delta']} 位 → 现 #{s['rank']} · {s.get('subscribers')} 订阅")
+                L.append(f"| **{s['channel_name']}** | ↑{s['rank_delta']} | #{s['rank']} | {s.get('subscribers')} |")
         else:
             L.append("_本次无频道大幅窜升。_")
-        L.append("")
+        L += ["", "---", ""]
 
     L += ["## 推荐卡", ""]
     if cards:
+        s_by_url = {s["channel_url"]: s for s in scored}
         for c in cards:
+            s = s_by_url.get(c.get("_channel_url"), {})
             L.append(f"### {c.get('channel_name', '?')}  ·  #{c.get('_rank', '?')}")
+            L.append("")
+            # 分数表格(≤6 列，数据进表格不堆正文)
+            L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 |", "|---:|---:|---:|---:|---:|---:|",
+                  f"| #{s.get('rank', c.get('_rank', '?'))} | {s.get('subscribers', '?')} | "
+                  f"{s.get('score', '?')} | {s.get('sem', '?')} | {s.get('sweet', '?')} | {s.get('pov', '?')} |", ""]
             for r in (c.get("why_worth_signing") or []):
-                L.append(f"- 值得签：{r}")
+                L.append(f"- ✅ 值得签：{r}")
             if c.get("risk"):
                 L.append(f"- ⚠️ 风险：{c['risk']}")
             if c.get("first_collab"):
@@ -353,20 +384,24 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
             L.append("")
     else:
         L += ["_本次未生成推荐卡（无符合条件的新面孔/窜升候选，或模型不可用）。_", ""]
+    L += ["---", ""]
 
     L += ["## 记分板", ""]
     if scoreboard_results:
         for r in scoreboard_results:
-            L.append(f"- **{r['picked_date']} 那期预测到期**（{r['window_days']} 天窗口，全池中位增速 {r['pool_median_growth_pct']}%）：")
+            L.append(f"**{r['picked_date']} 那期预测到期**（{r['window_days']} 天窗口，全池中位增速 {r['pool_median_growth_pct']}%）")
+            L.append("")
+            L += ["| 频道 | 订阅(下注时→现在) | 增长 | 结论 |", "|---|---|---:|---|"]
             for v in r["verdicts"]:
                 if v["verdict"] == "数据缺失":
-                    L.append(f"  - {v.get('channel_name', '?')}：数据缺失")
+                    L.append(f"| {v.get('channel_name', '?')} | 数据缺失 | - | 数据缺失 |")
                 else:
-                    L.append(f"  - **{v['channel_name']}** 订阅 {v['subscribers_baseline']} → {v['subscribers_now']}"
-                             f"（{v['growth_pct']:+.2f}%）：{v['verdict']}")
+                    L.append(f"| **{v['channel_name']}** | {v['subscribers_baseline']} → {v['subscribers_now']} | "
+                             f"{v['growth_pct']:+.2f}% | {v['verdict']} |")
+            L.append("")
     else:
-        L.append("记分板：无到期预测")
-    L.append("")
+        L += ["记分板：无到期预测", ""]
+    L += ["---", ""]
 
     L += ["## 运行统计", "",
           f"- 时间：{datetime.now().isoformat(timespec='seconds')}",
@@ -374,6 +409,7 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
           f"- 新进前 100：{len(newcomers)} 个" if not first_run else "- 新进前 100：n/a（首次运行）"]
     if csv_path:
         L.append(f"- 当日推荐表格：data/runs/daily/{today}/cards_table.csv")
+    L += ["", "_本日报每天 08:30 自动生成并同步到飞书总部（达人雷达 / 日报）。_"]
 
     os.makedirs(REPORTS, exist_ok=True)
     path = os.path.join(REPORTS, f"{today}-radar.md")
@@ -449,8 +485,26 @@ def push_bitable(cfg, rows):
         return f"error: {e}"
 
 
-def push(cfg, msg, report_path, bitable_rows=None):
-    """按 config.outputs 分发。report 已写盘; imessage 调 notify 脚本; bitable 灌飞书多维表格。"""
+def push_feishu_docs(cfg, report_path, stats=None):
+    """飞书文档出口: 把当日日报 + 当日达人档案传上飞书云空间(团队总部)，并刷新主页仪表盘大数字。
+    温和降级: 整块 try 包住，任何失败只返回错误串不中断主链(照 push_bitable 惯例)。"""
+    try:
+        import feishu_docs
+        r_daily = feishu_docs.push_daily_report(cfg, report_path=report_path)
+        r_dos = feishu_docs.push_dossiers(cfg)
+        # 主页大数字随日报刷新(带今日日报真实链接)。
+        home_stats = dict(stats or {})
+        home_stats.setdefault("daily_report_url", (r_daily.get("uploaded") or [{}])[0].get("url_or_err", ""))
+        r_home = feishu_docs.push_homepage(cfg, home_stats)
+        return (f"daily={'ok' if r_daily.get('ok') else r_daily.get('error') or r_daily.get('failed')}"
+                f" dossiers={r_dos.get('counts', r_dos.get('error'))}"
+                f" home={'ok' if r_home.get('ok') else r_home.get('url_or_err') or r_home.get('error')}")
+    except Exception as e:
+        return f"error: {e}"
+
+
+def push(cfg, msg, report_path, bitable_rows=None, stats=None):
+    """按 config.outputs 分发。report 已写盘; imessage 调 notify 脚本; bitable 灌飞书多维表格; feishu_docs 传日报+档案+主页上飞书云空间。"""
     results = {}
     for out in cfg.get("outputs", []):
         if out == "report":
@@ -463,6 +517,8 @@ def push(cfg, msg, report_path, bitable_rows=None):
                 results["imessage"] = "skipped: notify-imessage.sh not found"
         elif out == "bitable":
             results["bitable"] = push_bitable(cfg, bitable_rows or [])
+        elif out == "feishu_docs":
+            results["feishu_docs"] = push_feishu_docs(cfg, report_path, stats=stats)
     return results
 
 
@@ -526,7 +582,12 @@ def main():
         dtxt = f"+{collect_res['pool_after'] - collect_res['pool_before']}"
     msg = (f"📡 达人雷达日报：池子{n}({dtxt})，新进前100 {len(newcomers)} 个，"
            f"推荐卡 {len(cards)} 张 → reports/{today}-radar.md")
-    push_res = push(cfg, msg, report_path, bitable_rows=table_rows)
+    # 主页仪表盘大数字随日报刷新的实时口径
+    sb_status = ("首份 picks 已存档，2026-08-04 结算" if not scoreboard_results
+                 else f"最近结算 {len(scoreboard_results)} 期")
+    docs_stats = {"pool_size": n, "cards_today": len(cards), "blind_test_multiple": "4.6",
+                  "scoreboard_status": sb_status}
+    push_res = push(cfg, msg, report_path, bitable_rows=table_rows, stats=docs_stats)
 
     git_res = commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
 
