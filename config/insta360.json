@@ -6,6 +6,25 @@
 
   "leak_tokens_pattern": "insta\\s*360|insta360|影石|antigravity|think\\s*bold",
 
+  "identity": {
+    "notes": "身份过滤器 v1 词典与阈值(纯规则层, 零模型成本, 只跑产品路径=score/run_radar 展示与排序)。铁律: backtest.py 官方指标路径绝不引用此节, 打分的语义盲测该剃词照剃。词典中英双语(B站错误全是中文)。来源: 2026-07-07 盲投后果审计的行动分级建议, 把 33 个 ❌ 里能规则化的部分拦在入库时。已合作(already_partner)复用上面 leak_tokens_pattern + partner_extra_pattern + 26 正例名单(positives_path); 其余身份靠下面各正则。off_topic(玄学/网文/ASMR 误召回)刻意不在此层, 交下游轻量 LLM 兜底。",
+    "positives_path": "data/positives/positives.jsonl",
+    "partner_extra_pattern": "ambassador|affiliate|优惠码|折扣码|discount code|promo code|运动相机影石|品牌大使|合作达人|creator partner",
+    "competitor_pattern": "\\bgopro\\b|\\bdji\\b|\\bakaso\\b|\\bsjcam\\b|osmo\\s*(?:action|pocket)|大疆|action\\s*4|hero\\s*1[0-3]",
+    "competitor_official_pattern": "\\bgopro\\b|\\bdji\\b|大疆|osmo",
+    "competitor_staff_pattern": "creative director at gopro|gopro (?:employee|staff|team|creative director)|works? at gopro|gopro 员工|gopro 创意总监|dji (?:employee|staff|team)|大疆员工",
+    "brand_vendor_pattern": "研发|智造|致力于打造|品牌方|器材店|官方(?:号|频道|账号)|招商|私信合作|商务合作|performance products|器材深度|飞控|无人机系统|硬件厂商|厂商|旗舰店|专卖店|经销|总代理|официальн|official\\s+(?:store|channel|account)|our\\s+products|our\\s+customers|带货|种草|安利运动相机",
+    "reposter_pattern": "搬运|侵删|代录|录播|合集|混剪|剪辑搬运|二次搬运|电子榨菜|推文|漫推|爽文|compilation|reaction|re-?upload|reupload|clips? channel|highlights? channel|repost",
+    "marketing_finance_pattern": "理财|致富|暴富|财富自由|交易(?:员|致富|技巧)|永远不要设置止损|炒股|股票|基金定投|币圈|区块链投资|灵性觉醒|身心疗愈|玄学|风水|塔罗|冥想助眠|助眠|白日梦疗愈|好物(?:分享|安利|推荐|持续)|种草|带货|理性购物|全网最低|优惠券|返利|下单链接|直播间下单|商品橱窗|正能量短视频",
+    "marketing_notes": "营销号/理财致富/玄学疗愈/带货种草负面词典(Max 2026-07-07 点名必拦第三类)。素材=盲投审计 B站 ❌ 案例(高维实验室 交易致富/白日梦疗愈所 ASMR/素雅精品安利 好物带货/大鹏快开车 续航带货)。命中即 🔴, 理由=marketing_or_finance。这批是运动影像品牌绝不该发合作邀请的账号类型, 与内容契合无关。",
+    "org_account_pattern": "杂志|magazine|\\bmedia\\b|媒体|俱乐部|flight\\s+group|flying\\s+club|协会|\\bassociation\\b|我们是一(?:家|个)|我们致力|our\\s+editorial|新闻资讯|测评机构",
+    "dead_days": 365,
+    "stale_days": 60,
+    "dead_tiny_subs": 500,
+    "dead_tiny_sweet": 0.05,
+    "grade_notes": "action_grade 判级(照审计 行动分级 建议): 🔴 命中 already_partner/competitor/brand_or_vendor/reposter/dead_account 任一即自动拦截; 🟢 需内容契合(sem 命中)且 last_upload<=stale_days 且无任何红/黄标; 其余(stale/无上传日期/机构号/小语种/format 存疑)为 🟡 人工核验。already_partner 是正确命中(转存量维护流), 单独计数不算误召回。"
+  },
+
   "embedding": {
     "endpoint": "http://127.0.0.1:11434/api/embed",
     "model": "bge-m3",
