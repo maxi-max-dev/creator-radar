@@ -147,3 +147,62 @@ def fuse_momentum(scored, momentum_path, cfg):
         scored[i]["potential_rank"] = rank
         scored[i]["potential_pct"] = round(rank / n * 100, 1)
     return scored
+
+
+def fuse_trends(scored, trend_path, breakout_path, cfg):
+    """产品路径专用: 浪层(trend)+破圈比(breakout)并进 scored 行, 照 TRENDS.md 第7节接线。
+
+    铁律(与 fuse_momentum 同一保护逻辑, Max 已认可"趋势是放大器不是保票"):
+      - 浪层是放大器不是独立加分: potential *= (1 + gain × trend), 乘性温和放大。
+      - 只有 data_coverage=ok 且 trend>0(真上浪有证据)才放大; trend=0(没上浪≠差)与
+        数据不足(no_terms/none 的中性 0.3)一律不动 potential, 绝不压 fit。
+      - trend_chaser(晚进场蹭热点)只作展示层 ⚠️ 徽章: 追加进 identity_flags, 不改任何分数。
+      - backtest.py 绝不 import 本函数, 冻结考试池官方指标零影响。
+
+    就地给每个 scored 行加:
+      trend(浪层分, 原始 trend_score 含中性) / trend_cov / trend_chaser
+      breakout(破圈比, 原始 views÷粉丝盘 倍数, >1=破圈; 缺数据 None) / breakout_score(log 归一)
+    并在放大后重算 potential / potential_rank / potential_pct(fit 的 score/rank 永远不动)。
+    trend_path/breakout_path 缺失时: 字段全填中性/None, potential 不动(优雅降级)。
+    """
+    fconf = cfg.get("trends", {}).get("fusion", {})
+    gain = fconf.get("gain", 0.0)
+
+    t_by_url = {}
+    if trend_path and os.path.exists(trend_path):
+        for t in json.load(open(trend_path)):
+            t_by_url[t["channel_url"]] = t
+    b_by_url = {}
+    if breakout_path and os.path.exists(breakout_path):
+        for b in json.load(open(breakout_path)):
+            b_by_url[b["channel_url"]] = b
+
+    for s in scored:
+        t = t_by_url.get(s["channel_url"])
+        tval = t["trend_score"] if t else 0.0
+        tcov = t["data_coverage"] if t else "none"
+        chaser = bool(t and t.get("trend_chaser"))
+        s["trend"] = round(tval, 4)
+        s["trend_cov"] = tcov
+        s["trend_chaser"] = chaser
+        b = b_by_url.get(s["channel_url"])
+        s["breakout"] = round(b["top_ratio"], 3) if (b and b.get("top_ratio") is not None) else None
+        s["breakout_score"] = b.get("breakout_score") if b else None
+        # 放大: 仅真上浪(coverage=ok 且 trend>0)。基底是 fuse_momentum 融合后的 potential;
+        # momentum 未跑时 potential 缺失, 以 score 为基底(浪层独立可用)。
+        base = s.get("potential", s["score"])
+        eff = tval if (tcov == "ok" and tval > 0) else 0.0
+        s["potential"] = round(base * (1 + gain * eff), 5)
+        # 蹭热点 ⚠️ 徽章并进身份标签列(展示层, 不进分级判定)
+        if chaser:
+            flags = s.setdefault("identity_flags", [])
+            if "trend_chaser" not in flags:
+                flags.append("trend_chaser")
+
+    # 放大改变了 potential, 重算 potential 排名(仍只进产品展示)
+    order = sorted(range(len(scored)), key=lambda i: -scored[i]["potential"])
+    n = len(scored)
+    for rank, i in enumerate(order, 1):
+        scored[i]["potential_rank"] = rank
+        scored[i]["potential_pct"] = round(rank / n * 100, 1)
+    return scored

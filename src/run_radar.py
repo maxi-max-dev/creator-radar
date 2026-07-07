@@ -9,11 +9,12 @@ from datetime import date, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-from radar_lib import load_config, load_pool, score_pool, fuse_momentum
+from radar_lib import load_config, load_pool, score_pool, fuse_momentum, fuse_trends
 import identity_filter
 
 POOL = os.path.join(ROOT, "data", "pool", "creator_pool.jsonl")
 RSS_DIR = os.path.join(ROOT, "data", "rss")
+TRENDS_DIR = os.path.join(ROOT, "data", "trends")
 DAILY = os.path.join(ROOT, "data", "runs", "daily")
 SCOREBOARD = os.path.join(ROOT, "data", "scoreboard")
 REPORTS = os.path.join(ROOT, "reports")
@@ -205,11 +206,61 @@ def run_rss_momentum(cfg_path, pool_path, ranked_path, today):
         return None
 
 
+def run_trends_layer(cfg_path, pool_path, today, dry_run=False):
+    """浪层每日集成(TRENDS.md 第7节 步骤1+2): 四路趋势采集 -> trend_score + breakout 打分。
+    返回 (trend_scores_path, breakout_scores_path), 任一失败对应返回 None(fuse 优雅降级)。
+
+    dry-run 铁律(总控裁量): 掐掉浪层**外部采集**(google/bilibili/reddit 三路真实外网请求),
+    只留 pool_wave(池内浪, 复用已有 RSS+池子字段, 零新增网络)。这比 momentum 的 RSS 采集更严:
+    RSS 是拉 YouTube 官方只读 feed(保留), 浪层外部三路涉及第三方端点(dry-run 一律不碰)。
+    打分器(trends.py/breakout.py)是纯本地计算, 照常跑。任何失败只记 stderr 不中断主链。"""
+    out_dir = os.path.join(DAILY, today)
+    os.makedirs(out_dir, exist_ok=True)
+    trend_out = os.path.join(out_dir, "trend_scores.json")
+    terms_out = os.path.join(out_dir, "rising_terms.json")
+    brk_out = os.path.join(out_dir, "breakout_scores.json")
+    # 1) 采集(append 到 data/trends/<today>.jsonl; 四路独立 try, 失败只记原因)
+    cmd = ["python3", os.path.join(HERE, "collect_trends.py"), "--date", today]
+    if dry_run:
+        cmd += ["--only", "pool_wave"]  # 外部三路掐掉, 池内浪零网络保留
+    try:
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=900)
+        sys.stderr.write(p.stderr[-1500:] if p.stderr else "")
+    except Exception as e:
+        sys.stderr.write(f"[trends] 采集异常(不致命): {e}\n")
+    trends_files = sorted(glob.glob(os.path.join(TRENDS_DIR, "*.jsonl")))
+    rss_files = sorted(glob.glob(os.path.join(RSS_DIR, "*.jsonl")))
+    if not trends_files or not rss_files:
+        sys.stderr.write("[trends] 无趋势/RSS 快照, 跳过浪层(fuse 将优雅降级)\n")
+        return None, None
+    trends_path, rss_path = trends_files[-1], rss_files[-1]
+    # 2) 打分(纯本地)
+    tp = bp = None
+    try:
+        p = subprocess.run(["python3", os.path.join(HERE, "trends.py"), "--trends", trends_path,
+                            "--pool", pool_path, "--rss", rss_path,
+                            "--out-scores", trend_out, "--out-terms", terms_out],
+                           capture_output=True, text=True, timeout=600)
+        sys.stderr.write(p.stderr[-1500:] if p.stderr else "")
+        tp = trend_out if os.path.exists(trend_out) else None
+    except Exception as e:
+        sys.stderr.write(f"[trends] trend 打分异常(不致命): {e}\n")
+    try:
+        p = subprocess.run(["python3", os.path.join(HERE, "breakout.py"), "--pool", pool_path,
+                            "--rss", rss_path, "--out", brk_out],
+                           capture_output=True, text=True, timeout=600)
+        sys.stderr.write(p.stderr[-1500:] if p.stderr else "")
+        bp = brk_out if os.path.exists(brk_out) else None
+    except Exception as e:
+        sys.stderr.write(f"[trends] breakout 打分异常(不致命): {e}\n")
+    return tp, bp
+
+
 # 表格列序固定，也是将来 bitable 出口的 schema 母版。
-# 起势分/潜力分(momentum 集成) + 行动分级/身份标签(身份过滤器) 加在分数区后、命中主题前。
+# 起势分/潜力分(momentum) + 浪层分/破圈比(trends/breakout) + 行动分级/身份标签(身份过滤器)。
 CSV_COLUMNS = ["日期", "排名", "频道名", "频道链接", "订阅数", "排名百分位", "总分", "语义分", "甜点分",
-               "POV标记分", "起势分", "潜力分", "行动分级", "身份标签", "命中主题", "是否新发现",
-               "排名变动", "值得签1", "值得签2", "值得签3", "风险", "首次合作建议", "状态"]
+               "POV标记分", "起势分", "潜力分", "浪层分", "破圈比", "行动分级", "身份标签", "命中主题",
+               "是否新发现", "排名变动", "值得签1", "值得签2", "值得签3", "风险", "首次合作建议", "状态"]
 
 
 def build_table_rows(today, cards, scored, pool_by_url):
@@ -230,6 +281,7 @@ def build_table_rows(today, cards, scored, pool_by_url):
             "总分": s.get("score"), "语义分": s.get("sem"),
             "甜点分": s.get("sweet"), "POV标记分": s.get("pov"),
             "起势分": s.get("momentum"), "潜力分": s.get("potential"),
+            "浪层分": s.get("trend"), "破圈比": s.get("breakout"),
             "行动分级": s.get("action_grade") or "", "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
             "命中主题": s.get("themes_hit") or [],
             "是否新发现": p.get("source") == "auto-discover",
@@ -264,6 +316,8 @@ def write_cards_table(today, rows, out_dir):
                 f"{r['POV标记分']:.4f}" if r["POV标记分"] is not None else "",
                 f"{r['起势分']:.4f}" if r.get("起势分") is not None else "",
                 f"{r['潜力分']:.5f}" if r.get("潜力分") is not None else "",
+                f"{r['浪层分']:.4f}" if r.get("浪层分") is not None else "",
+                f"{r['破圈比']:.3f}" if r.get("破圈比") is not None else "",
                 r.get("行动分级", ""),
                 r.get("身份标签", ""),
                 "、".join(r["命中主题"]),
@@ -457,12 +511,14 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
             dl = (dossier_links or {}).get(cid)
             if dl:
                 L += [f"[🗂️ 达人档案]({dl})", ""]
-            # 分数表格: fit 三分量 + 起势分/潜力分(三层雷达各自透明)
-            L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 | 起势分 | 潜力分 |",
-                  "|---:|---:|---:|---:|---:|---:|---:|---:|",
+            # 分数表格: fit 三分量 + 起势/潜力 + 浪层/破圈(四层雷达各自透明)
+            _brk = s.get("breakout")
+            L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 | 起势分 | 潜力分 | 浪层分 | 破圈比 |",
+                  "|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
                   f"| #{s.get('rank', c.get('_rank', '?'))} | {s.get('subscribers', '?')} | "
                   f"{s.get('score', '?')} | {s.get('sem', '?')} | {s.get('sweet', '?')} | {s.get('pov', '?')} | "
-                  f"{s.get('momentum', '?')} | {s.get('potential', '?')} |", ""]
+                  f"{s.get('momentum', '?')} | {s.get('potential', '?')} | "
+                  f"{s.get('trend', '?')} | {(_brk if _brk is not None else '?')} |", ""]
             for r in (c.get("why_worth_signing") or []):
                 L.append(f"- ✅ 值得签：{r}")
             if c.get("risk"):
@@ -823,7 +879,13 @@ def main():
     # 铁律: 只在产品展示层跑, backtest 官方指标不经此。词典可看品牌 token(already_partner 需要)。
     identity_filter.annotate_scored(scored, pool_by_url, cfg)
 
-    # 融合+身份标注后重写 ranked.json(含 momentum/potential/action_grade, 供下游 explain/表格/记分板)
+    # 浪层+破圈比集成(TRENDS.md 第7节): 趋势采集(dry-run 掐外部三路留 pool_wave) -> 打分 -> 融合。
+    # 必须在 annotate_scored 之后(trend_chaser ⚠️ 徽章追加进 identity_flags)。
+    # 铁律: 放大器不是独立加分, trend=0/数据不足不动 potential; fit 的 score/rank 永远不动。
+    trend_path, breakout_path = run_trends_layer(args.config, POOL, today, dry_run=args.dry_run)
+    fuse_trends(scored, trend_path, breakout_path, cfg)
+
+    # 融合+身份标注后重写 ranked.json(含 momentum/potential/trend/breakout/action_grade, 供下游取用)
     with open(ranked_path, "w") as f:
         json.dump(scored, f, ensure_ascii=False, indent=1)
 

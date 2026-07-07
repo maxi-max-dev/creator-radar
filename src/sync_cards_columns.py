@@ -24,7 +24,8 @@ sys.path.insert(0, HERE)
 import identity_filter
 
 FT_TEXT, FT_NUMBER = 1, 2
-NEW_FIELDS = [("起势分", FT_NUMBER), ("潜力分", FT_NUMBER), ("行动分级", FT_TEXT), ("身份标签", FT_TEXT)]
+NEW_FIELDS = [("起势分", FT_NUMBER), ("潜力分", FT_NUMBER), ("浪层分", FT_NUMBER), ("破圈比", FT_NUMBER),
+              ("行动分级", FT_TEXT), ("身份标签", FT_TEXT)]
 
 
 def _call(method, path, token=None, body=None):
@@ -158,6 +159,10 @@ def main():
             f["起势分"] = round(s["momentum"], 4)
         if s.get("potential") is not None:
             f["潜力分"] = round(s["potential"], 5)
+        if s.get("trend") is not None:
+            f["浪层分"] = round(s["trend"], 4)
+        if s.get("breakout") is not None:
+            f["破圈比"] = round(s["breakout"], 3)
         updates.append({"record_id": rec["record_id"], "fields": f})
 
     written = 0

@@ -133,6 +133,14 @@
     }
   },
 
+  "trends": {
+    "notes": "浪层(第四层雷达: 对的浪)+ 破圈比。采集=collect_trends.py 四路(pool_wave 池内浪零网络 / google / bilibili / reddit), 打分=trends.py(trend_score=match×early×onwave) + breakout.py(views÷粉丝盘)。铁律: 趋势是放大器不是保票(Max 已认可), trend=0(没上浪)绝不压 fit; 数据不足给中性分且不参与放大; trend_chaser 触发只在身份标签列显示 ⚠️ 不改分。dry-run 掐外部三路只留 pool_wave(零网络)。",
+    "fusion": {
+      "gain": 0.3,
+      "notes": "浪层融合(乘性温和放大, 照 TRENDS.md 第7节建议): potential *= (1 + gain × trend)。只有 data_coverage=ok 且 trend>0(真上浪有证据)才放大; trend=0 或数据不足(no_terms/none 的中性 0.3)一律不动 potential, 保证「没上浪≠差」「缺数据≠差」。gain=0.3 取 momentum gain(0.6) 的一半: trends-v1 是单日横截面近似(TRENDS.md 局限1/7 自认有乐观偏差), 攒够多日快照升级成真浪后再考虑调大。运营策略旋钮。"
+    }
+  },
+
   "collect": {
     "notes": "常驻采集器策略。search_terms 覆盖摩托/骑行的多语言检索词(英/西/日)，从既有池子构建思路延伸。refresh 轮转刷新最旧的 N 个频道，discover 每次跑 M 个搜索词发现新面孔。",
     "search_terms": [

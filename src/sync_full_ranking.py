@@ -41,6 +41,8 @@ FULL_RANKING_FIELDS = [
     ("总分", FT_NUMBER),
     ("起势分", FT_NUMBER),
     ("潜力分", FT_NUMBER),
+    ("浪层分", FT_NUMBER),
+    ("破圈比", FT_NUMBER),
     ("行动分级", FT_TEXT),
     ("身份标签", FT_TEXT),
     ("拦截原因", FT_TEXT),
@@ -51,9 +53,9 @@ FULL_RANKING_FIELDS = [
     ("入池日期", FT_TEXT),
 ]
 
-# B站榜单 = 全池榜单去掉档案列 + 去掉起势分/潜力分(B站无 momentum, 免留永久空列)。
+# B站榜单 = 全池榜单去掉档案列 + 去掉起势/潜力/浪层/破圈(B站无 RSS 视频级数据, 免留永久空列)。
 # 保留 行动分级/身份标签/拦截原因(B站池正是身份过滤器价值最大的地方: 理财/玄学/带货/搬运)。
-_BILI_DROP = {"档案", "起势分", "潜力分"}
+_BILI_DROP = {"档案", "起势分", "潜力分", "浪层分", "破圈比"}
 BILI_RANKING_FIELDS = [(n, t) for (n, t) in FULL_RANKING_FIELDS if n not in _BILI_DROP]
 
 
@@ -240,6 +242,10 @@ def build_full_ranking_records(ranked, pool_by_url, dossier_links, top_dossier_n
             f["起势分"] = round(s["momentum"], 4)
         if s.get("potential") is not None:
             f["潜力分"] = round(s["potential"], 5)
+        if s.get("trend") is not None:
+            f["浪层分"] = round(s["trend"], 4)
+        if s.get("breakout") is not None:
+            f["破圈比"] = round(s["breakout"], 3)
         if s.get("rank") and s["rank"] <= top_dossier_n:
             dl = dossier_links.get(cid)
             if dl:
