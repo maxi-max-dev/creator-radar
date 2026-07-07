@@ -1,0 +1,111 @@
+{
+  "brand": "insta360",
+  "platform": "bilibili",
+  "notes": "达人雷达 B站(国内侧)品牌配置 v0。与 config/insta360.json 同构，仅把策略数值换成中文生态语境：themes 变体改中文创作者措辞、platform_markers 改中文拍摄信号、sweet_spot 峰值上调到 B站中腰部规模。主题内核仍来自影石官方选人逻辑逆向工程（vault: AI先锋大赛-影石/AI先锋大赛-影石选人逻辑-逆向工程），8 主题中可被账号级文本(UP名/签名/近期标题)承载的 6 个入选，其余(垂类权威性/早期潜力增长斜率)需时序或跨账号基准数据，排 v2。未用任何正例标签调参。",
+
+  "leak_tokens_pattern": "insta\\s*360|insta360|影石|antigravity|think\\s*bold|一镜到底|全景相机x5|带着影石",
+
+  "embedding": {
+    "endpoint": "http://127.0.0.1:11434/api/embed",
+    "model": "bge-m3",
+    "batch_size": 32
+  },
+
+  "doc_fields": {
+    "description_chars": 600,
+    "recent_titles_chars": 600
+  },
+
+  "verticals": ["moto", "cycling"],
+
+  "themes": {
+    "pov_native": {
+      "weight": 0.25,
+      "notes": "主题3 产品原生玩法 / 第一视角。B站语境：POV/头盔相机/全景机位/沉浸式。",
+      "variants": [
+        "第一视角摩托骑行 POV 头盔相机机位，沉浸式骑行画面，全景运动相机拍摄，机车 onboard 视角",
+        "第一视角山地车穿越骑行 POV 胸前机位，沉浸式下坡画面，全景运动相机拍摄，公路车骑行视角"
+      ]
+    },
+    "adventure_bold": {
+      "weight": 0.15,
+      "notes": "主题1+2 敢想/逆境挑战。B站语境：硬核挑战/极限/突破极限/野外冒险。",
+      "variants": [
+        "硬核大胆挑战极限，摩旅穿越无人区野外冒险，突破自我的机车长途探险，敢想敢做",
+        "硬核大胆挑战极限，越野跑登山穿越荒野，突破自我的户外探险，敢想敢做不走寻常路"
+      ]
+    },
+    "authentic_vlog": {
+      "weight": 0.20,
+      "notes": "主题5 真实性/自制内容。B站语境：真实日常 vlog/自拍/原声/一个人拍。",
+      "variants": [
+        "真实自拍的摩旅日常 vlog，个人化叙事，一个人骑车分享真实骑行生活，原声记录",
+        "真实自拍的骑行日常 vlog，个人化叙事，一个人上路分享真实运动生活，原声记录"
+      ]
+    },
+    "journey_narrative": {
+      "weight": 0.15,
+      "notes": "主题2+6 长途叙事/环游。B站语境：环华/川藏/长途/几万公里/纪录片。",
+      "variants": [
+        "长途摩旅环游中国跨越多省，骑行川藏线几万公里的路上纪录片，一路克服艰难",
+        "长途骑行公路车环游多个国家，川藏线徒步穿越的旅途纪录片，一路克服艰难险阻"
+      ]
+    },
+    "gear_native": {
+      "weight": 0.15,
+      "notes": "主题3+8 器材原生玩法/拍摄技法。B站语境：装备/机位/固定/拍摄教程。",
+      "variants": [
+        "摩托车拍摄装备机位测评，给骑行者的运动相机固定与拍摄技法教程，穿越机 FPV 航拍",
+        "骑行拍摄装备机位测评，给车友的运动相机固定与拍摄技法教程，Vlog 运镜技巧"
+      ]
+    },
+    "vertical_craft": {
+      "weight": 0.10,
+      "notes": "主题4+8 垂类技能上限/硬核技术流。B站语境：专业/硬核技术流/赛道/技巧。",
+      "variants": [
+        "专业级骑行技术，机车赛道压弯技巧，硬核技术流摩托车驾驶，高手进阶",
+        "专业级骑行技术，速降山地车赛道技巧，硬核技术流公路车骑行，高手进阶"
+      ]
+    }
+  },
+
+  "signal_weights": {
+    "semantic": 0.70,
+    "sweet_spot": 0.18,
+    "platform_markers": 0.12
+  },
+
+  "sweet_spot": {
+    "log10_mu": 5.7,
+    "log10_sigma": 1.15,
+    "unknown_subs_score": 0.3,
+    "notes": "中腰部甜点，峰值约 50 万粉。这是策略旋钮，不是硬门槛。依据：B站已核实的影石中腰部正例(逆向工程台账)——小丙摩托车评中心 72 万、徐云流浪中国 ~190 万、神奇阿宇 104 万，都落在 10 万-200 万这个带内，故峰值比 YouTube 配置(8 万，log10_mu=4.9)上调。原因：B站国内用户基数大、可被搜索路由发现的运动户外 UP 主粉丝量整体高于 YouTube 同层级，且影石国内合作的垂类广度更大(含造物型如阿宇)。sigma 放宽到 1.15 让 10 万-150 万都拿到不错的分，百万级顶流(影视飓风 1400 万+)仍被压低，符合『发现下一个』而非认名人的设计。运营可调。"
+  },
+
+  "platform_markers": {
+    "notes": "中文原生拍摄标记密度，封顶归一。对应影石国内合作证据里反复出现的第一视角/全景/头盔机位/无剪辑原声等信号词。",
+    "pattern": "第一视角|pov|头盔相机|头盔机位|胸前机位|全景|360|沉浸式|无剪辑|一镜到底|原声|onboard|穿越机|fpv|运动相机|车载视角",
+    "cap": 3
+  },
+
+  "collect": {
+    "notes": "B站(国内侧)采集器策略 v0。入口=本机 RSSHub 服务的 bilibili 视频搜索路由(vsearch，带 guest buvid 自动续、412 自愈)做种子发现，逐 UP 主用 api.bilibili.com 的 card 端点(免签名)补粉丝数/签名。search_terms 覆盖摩旅/机车/公路车/滑雪/自由潜/冲浪/越野跑/穿越机/徒步/骑行等中文运动户外词。绝不下载任何视频/音频，只拉公开元数据。节流≥3 秒(B站风控比 YouTube 凶)，单点失败跳过，断点续跑。",
+    "rsshub_base": "http://127.0.0.1:1200",
+    "vsearch_route": "/bilibili/vsearch/",
+    "card_endpoint": "https://api.bilibili.com/x/web-interface/card?mid=",
+    "search_terms": [
+      "摩旅", "机车vlog", "摩托车骑行", "骑行川藏", "公路车",
+      "山地车", "滑雪", "单板滑雪", "自由潜", "冲浪",
+      "越野跑", "穿越机", "fpv", "徒步", "骑行",
+      "环华摩旅", "户外露营", "潜水", "登山", "第一视角"
+    ],
+    "throttle_seconds": 3.5,
+    "min_titles_for_enrich": 1,
+    "target_min_authors": 300,
+    "target_max_authors": 800,
+    "budget_minutes": 90,
+    "state_file": "data/pool/bilibili_collect_state.json"
+  },
+
+  "outputs": ["report"]
+}
