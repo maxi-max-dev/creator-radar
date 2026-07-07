@@ -2,7 +2,7 @@
 """达人雷达公共库: 配置加载 + embedding + 打分。
 策略数值(权重/阈值/查询词)一律来自 config，本文件不允许出现硬编码。
 """
-import json, math, re, sys, urllib.request, time
+import json, math, os, re, sys, urllib.request, time
 
 
 def load_config(path):
@@ -104,4 +104,46 @@ def score_pool(rows, cfg):
     for i, s in enumerate(scored):
         s["rank"] = i + 1
         s["pct"] = round((i + 1) / n * 100, 1)
+    return scored
+
+
+def fuse_momentum(scored, momentum_path, cfg):
+    """产品路径专用: 把起势层(momentum)融进 fit 分, 产出 potential 分与 potential 排名。
+
+    铁律: 只改产品路径的展示/排序, 绝不碰 backtest。backtest.py 直接调 score_pool 不经此函数,
+    冻结考试池官方数字因此不受任何影响。
+
+    融合公式(乘性放大器): potential = score × (1 + gain × (momentum − pivot))
+      - momentum 高于 pivot(=neutral) 才正向放大 fit; 低于则轻微压制。
+      - 数据不足频道 momentum=neutral(pivot), 放大量=0, potential==score, 排名不动。
+      - 选乘性不选加性: '对的时机'是对'对的人'的放大器, 一个 fit 极低的人再火也不该被这层捞进来。
+
+    就地给每个 scored 行加 momentum / momentum_cov / potential 字段, 并加 potential_rank/potential_pct。
+    momentum_path 不存在时: momentum 全填中性, potential==score(优雅降级, 排名不变)。
+    返回 scored(已加字段, 原 score 排名不变, potential 排名另存字段)。
+    """
+    fconf = cfg["momentum"]["fusion"]
+    gain = fconf["gain"]
+    pivot = fconf["momentum_pivot"]
+    neutral = cfg["momentum"]["neutral_score"]
+
+    m_by_url = {}
+    if momentum_path and os.path.exists(momentum_path):
+        for m in json.load(open(momentum_path)):
+            m_by_url[m["channel_url"]] = m
+
+    for s in scored:
+        m = m_by_url.get(s["channel_url"])
+        mval = m["momentum_score"] if m else neutral
+        mcov = m["data_coverage"] if m else "none"
+        s["momentum"] = round(mval, 4)
+        s["momentum_cov"] = mcov
+        s["potential"] = round(s["score"] * (1 + gain * (mval - pivot)), 5)
+
+    # potential 排名(独立于 score 排名, 只进产品展示)
+    order = sorted(range(len(scored)), key=lambda i: -scored[i]["potential"])
+    n = len(scored)
+    for rank, i in enumerate(order, 1):
+        scored[i]["potential_rank"] = rank
+        scored[i]["potential_pct"] = round(rank / n * 100, 1)
     return scored

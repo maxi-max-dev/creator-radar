@@ -1,0 +1,38 @@
+{
+ "note": "时间回滚 mini-demo 的原始佐证数据。诚实声明: 只有 2026-07 当前快照的播放量, 没有历史逐日播放速度, 所以这不是真正的'回到上榜前'时光机, 而是'对已知登上影石官方名册的创作者, 当前 momentum 是否点亮'的表面效度检验。要做真回滚, 需要每日 RSS 快照攒够历史(见 MOMENTUM.md 局限与明日积累计划)。",
+ "roster_source": "vault 🚀项目/AI先锋大赛-影石/AI先锋大赛-名册时间线与JD情报.md (2026-07-06 Wayback 台账)",
+ "ambassadors_checked": [
+  {
+   "name": "Adam Riemann",
+   "roster_status": "982k 订阅的成熟探险摩托创作者, fit#262(甜点函数刻意把百万级压到中段)",
+   "subscribers": 982000,
+   "momentum": 0.898,
+   "coverage": "ok",
+   "brightest_recent": {"title": "Riding from Croatia to Montenegro unsupported | Iron...", "views": 95959, "age_days": 4.6, "burst_ratio": 14.15},
+   "verdict": "momentum 点亮: 近期长片 9.6 万播放=自身中位 14 倍, 4.6 天龄。这是名册级创作者当前正处爆发的正面例证。"
+  },
+  {
+   "name": "Fabio Wibmer",
+   "roster_status": "2023 批次影石大使, 804 万订阅顶流, fit#1003(甜点函数最底)",
+   "subscribers": 8040000,
+   "momentum": 0.0,
+   "coverage": "stale",
+   "latest_upload_days_ago": 122,
+   "verdict": "momentum=0(stale): 最近一次上传 122 天前, 当前没有起势。诚实结论=名气≠此刻在起势; 起势层量的是'现在正发生', 不是历史地位。"
+  },
+  {
+   "name": "Anne Gumiran",
+   "roster_status": "2023 批次名册人名; 池内同名频道仅 1540 订阅(极可能是同名小号, 非本人主账号), fit#971",
+   "subscribers": 1540,
+   "momentum": 0.0,
+   "coverage": "stale",
+   "latest_upload_days_ago": 278,
+   "verdict": "momentum=0(stale): 池内该同名账号 278 天没更新。诚实标注: 身份很可能对不上(同名), 数据不足以下任何'上榜前'结论。"
+  }
+ ],
+ "honest_takeaways": [
+  "三位名册大使里, 只有 Adam Riemann 当前在起势(0.898), 两位老牌大使当前沉寂(momentum=0)。",
+  "这符合三层叙事的设计: fit 找对的人(名册大使多数是已签的顶流, 被甜点函数刻意压到中段), momentum 只负责'此刻谁在爆'。两层正交, 各管一维。",
+  "本 demo 无法证明'上榜前 momentum 已点亮'——因为只有当前快照。真正的时光机需要历史逐日播放速度, 从今天起每日 RSS 快照即为此积累。"
+ ]
+}
