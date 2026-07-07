@@ -116,5 +116,10 @@
     "verdict_margin_pct": 2.0
   },
 
-  "outputs": ["report", "imessage"]
+  "bitable": {
+    "notes": "飞书多维表格出口。敏感凭证(app_id/app_secret/app_token/table_id)一律不进 repo，全在下面这个本机文件里(chmod 600)。字段 schema 与 cards_table.csv 同构，状态列永远不写。",
+    "credentials_path": "~/.config/creator-radar/feishu.json"
+  },
+
+  "outputs": ["report", "imessage", "bitable"]
 }
