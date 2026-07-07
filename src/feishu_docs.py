@@ -678,7 +678,7 @@ def build_homepage_items(cfg, stats, ctx):
         _big_number_card(stats.get("pool_size", "?"), "候选池频道数", "🗂️"),
         _big_number_card(stats.get("cards_today", "?"), "今日推荐达人", "⭐"),
         _big_number_card(stats.get("dossier_count", "?"), "已建达人档案", "🗃️"),
-        _big_number_card("%s×" % stats.get("blind_test_multiple", "4.6"), "盲测密度 / 随机基线", "🎯"),
+        _big_number_card("%s×" % stats.get("blind_test_multiple", "4.6"), "盲测密度/随机基线(冻结考试池1106)", "🎯"),
     ]))
     items.append(("callout", (["📊 **记分板**：%s" % stats.get("scoreboard_status",
                               "首份 picks 已存档，2026-08-04 结算")], "info")))
@@ -820,7 +820,7 @@ def build_system_md():
           "", "---", ""]
     L += ["## 五、证明过什么", "",
           "在 1,085 个全球摩托/骑行 YouTube 频道的真实池子上，打分前剔除全部品牌 token(看不到任何合作痕迹)，",
-          "引擎把影石历史真实合作过的达人以 **4.6 倍于随机基线**的密度排进前 5%。全程零样本，未用任何正例标签调参。", "",
+          "引擎在 1,106 频道的冻结考试池上，把影石历史真实合作过的达人以 **4.6 倍于随机基线**的密度排进前 5%（官方指标只在冻结考试池复现；生产池每日生长，当前 2,400+）。全程零样本，未用任何正例标签调参。", "",
           "| 指标 | 全部正例(26) | 中腰部子集(20) | 随机基线 |",
           "|---|---|---|---|",
           "| 前 5% 召回 | 23% | 20% | 5% |",
