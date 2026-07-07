@@ -110,6 +110,25 @@
     "top_n_scan": 100
   },
 
+  "cross_platform": {
+    "notes": "跨平台矩阵检测(零网络)。正则扫池子文本字段，检出 IG/TikTok/Facebook/X/个人网站的链接与 handle。会经营多平台矩阵的创作者商业成熟度更高，是选人信号，进达人档案。run_radar 每日采集后重扫，幂等重写整个 cross_platform.jsonl。纯机械提取无可调数值，此节仅作说明与开关。",
+    "enabled": true
+  },
+
+  "comments": {
+    "notes": "评论采样(有预算与隐私红线)。对当日排序 top_channels 频道，每频道取最近 videos_per_channel 个视频，每视频抓 comments_per_video 条热门评论(comment_sort=top)。隐私红线: 只留文本与点赞数，作者只存 sha256 前 8 位，绝不入库作者名/头像/链接。预算红线: 每天总请求 <= budget_requests_per_day，单频道失败跳过不中断。dedup_days 天内抓过的频道跳过(去重账本 fetched_index.json)。禁止下载视频/音频本体。产出 data/comments/ 保持 gitignore(第三方用户内容不进仓库)，用途=受众质量信号+内容打标语料+将来喂飞书 AI 总结。",
+    "top_channels": 50,
+    "videos_per_channel": 2,
+    "comments_per_video": 20,
+    "dedup_days": 7,
+    "budget_requests_per_day": 120
+  },
+
+  "dossiers": {
+    "notes": "达人档案 MD。对当日推荐卡(cards)的每个频道生成一页 data/dossiers/<channel_id>.md，进公开仓库与飞书文档。含基本盘/订阅快照史/近期视频表/评论区概况(只写统计禁引原文)/跨平台矩阵/当日推荐卡，顶部带 YAML frontmatter。幂等重跑覆盖。数量跟随当日推荐卡数(explain.max_cards)，此节仅作说明与开关。",
+    "enabled": true
+  },
+
   "scoreboard": {
     "notes": "预测记分板 v0。每周一存 picks，到期(due_days)后用订阅增长对照全池中位增速结算；增速差在 ±verdict_margin_pct 个百分点内算跑平。",
     "due_days": 28,

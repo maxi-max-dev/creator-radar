@@ -102,6 +102,55 @@ def gen_cards(cfg_path, ranked_path, out_dir, top_n=None, max_cards=None):
     return json.load(open(cards_path)) if os.path.exists(cards_path) else []
 
 
+def _last_json_line(text):
+    """从子进程 stdout 末尾找最后一行合法 JSON(各工具都把结果打成 stdout 最后一行)。"""
+    for line in reversed((text or "").strip().splitlines()):
+        try:
+            return json.loads(line)
+        except json.JSONDecodeError:
+            continue
+    return None
+
+
+def run_cross_platform(cfg_path):
+    """跨平台矩阵重扫(零网络)。温和降级: 失败只返回错误串。"""
+    try:
+        p = subprocess.run(["python3", os.path.join(HERE, "cross_platform.py")],
+                           capture_output=True, text=True, timeout=120)
+        sys.stderr.write(p.stderr)
+        res = _last_json_line(p.stdout)
+        return res if res is not None else {"error": "no json output"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def run_dossiers(cfg_path):
+    """当日推荐卡频道各产一页档案 MD。温和降级: 失败只返回错误串。"""
+    try:
+        p = subprocess.run(["python3", os.path.join(HERE, "dossier.py"), "--config", cfg_path],
+                           capture_output=True, text=True, timeout=180)
+        sys.stderr.write(p.stderr)
+        res = _last_json_line(p.stdout)
+        return res if res is not None else {"error": "no json output"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def run_comments(cfg_path, top_n=None):
+    """top N 频道评论采样(受预算+去重账本约束)。温和降级: 失败只返回错误串。
+    评论采样含真实网络请求，超时给足(单频道多视频)。"""
+    cmd = ["python3", os.path.join(HERE, "comments.py"), "--config", cfg_path]
+    if top_n is not None:
+        cmd += ["--top-n", str(top_n)]
+    try:
+        p = subprocess.run(cmd, capture_output=True, text=True, timeout=1800)
+        sys.stderr.write(p.stderr)
+        res = _last_json_line(p.stdout)
+        return res if res is not None else {"error": "no json output"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
 # 表格列序固定，也是将来 bitable 出口的 schema 母版
 CSV_COLUMNS = ["日期", "排名", "频道名", "频道链接", "订阅数", "排名百分位", "总分", "语义分", "甜点分",
                "POV标记分", "命中主题", "是否新发现", "排名变动", "值得签1", "值得签2", "值得签3",
@@ -243,8 +292,9 @@ def check_scoreboard(today, scored, cfg):
 
 
 def commit_snapshots(today):
-    """数据快照自动入库+push(私有仓库当异地备份)。只提交数据路径，push 失败只记结果不中断。"""
-    paths = ["data/history", "data/pool", "data/scoreboard"]
+    """数据快照自动入库+push(私有仓库当异地备份)。只提交数据路径，push 失败只记结果不中断。
+    data/dossiers 进库(会进公开仓库+飞书文档); data/comments 绝不加(第三方用户内容，gitignore 守着)。"""
+    paths = ["data/history", "data/pool", "data/scoreboard", "data/dossiers"]
     msg = f"数据快照 {today}\n\nCo-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
     try:
         subprocess.run(["git", "add"] + paths, cwd=ROOT, capture_output=True, text=True)
@@ -454,6 +504,12 @@ def main():
 
     cards = gen_cards(args.config, ranked_path, out_dir, top_n=smoke_top_n, max_cards=smoke_max_cards)
 
+    # explain 之后的三件富化: 跨平台重扫 -> 当日推荐卡频道档案 -> top50 评论采样。
+    # 全部温和降级(失败只记 log 不中断主链)。评论采样的 top_n 跟随 --top-n 冒烟参数。
+    cross_res = run_cross_platform(args.config) if cfg.get("cross_platform", {}).get("enabled", True) else {"skipped": True}
+    dossier_res = run_dossiers(args.config) if cfg.get("dossiers", {}).get("enabled", True) else {"skipped": True}
+    comments_res = run_comments(args.config, top_n=smoke_top_n)
+
     table_rows = build_table_rows(today, cards, scored, pool_by_url)
     csv_path = write_cards_table(today, table_rows, out_dir)
 
@@ -475,9 +531,13 @@ def main():
     git_res = commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
 
     os.makedirs(LOGS, exist_ok=True)
+    cross_txt = f"{cross_res.get('with_any', '?')}/{cross_res.get('total', '?')}" if "error" not in cross_res else "err"
+    comm_txt = (f"{comments_res.get('channels_ok', '?')}ok/{comments_res.get('comments_written', '?')}c"
+                if "error" not in comments_res else "err")
     summary = (f"{datetime.now().isoformat(timespec='seconds')} pool={n} {dtxt or '+?'} "
                f"refreshed={collect_res.get('refreshed', 0)} discovered={collect_res.get('discovered', 0)} "
                f"newcomers={len(newcomers)} jumpers={len(jumpers)} cards={len(cards)} "
+               f"cross={cross_txt} dossiers={dossier_res.get('generated', 'err')} comments={comm_txt} "
                f"settled={len(scoreboard_results)} push={push_res} git={git_res}")
     with open(os.path.join(LOGS, "radar.log"), "a") as f:
         f.write(summary + "\n")
