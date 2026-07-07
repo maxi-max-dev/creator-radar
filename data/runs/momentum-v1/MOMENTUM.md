@@ -115,7 +115,7 @@ gain = 0.6,  pivot = 0.3 (=neutral)
 **起势层绝不进冻结考试池的官方指标。** 实现上由结构保证:
 - `backtest.py` 直接调 `score_pool()`, 从不 import `fuse_momentum`, 全文件零 momentum 引用。
 - 融合逻辑 `radar_lib.fuse_momentum()` 是独立函数, 只被产品路径(`score.py --momentum` / 将来 `run_radar`)调用。
-- 实测: 本 worktree 池(=exam_pool_v1, 1106 频道)跑 backtest, recall@top5%/@top10% 与官方 v1.2 **逐字节一致**(6/26=23% · 7/26=27%)。recall@top20% 数字不同是因为官方 v1.2 跑在主仓 2422 频道大池上(top20% 的绝对截断更大, 更多正例落入), 与 momentum 无关——momentum 一个字都没碰 backtest。
+- 实测: 本 worktree 池(=exam_pool_v1, 1106 频道)跑 backtest, recall@top5%/@top10% 与官方 v1.2 **逐字节一致**(6/26=23% · 7/26=27%)。recall@top20% 数字不同(27% vs 官方 42%)是因为本 worktree 基于合并前代码, 配置还是六主题旧版(v1.1), 而官方 v1.2 是删除实验后的五主题新配置; 两者都跑在同一个 1106 冻结考试池上(勘误 2026-07-07: 本行原写「官方 v1.2 跑在 2422 大池」是错误归因, 由挑刺官 Round 1 刺#1 抓出, ablation fresh-baseline 六主题在 1106 上 top20%=27% 与本 worktree 一致, 证实差异来自配置版本而非池子)。与 momentum 无关——momentum 一个字都没碰 backtest。
 
 ## 六、run_radar 集成说明
 
