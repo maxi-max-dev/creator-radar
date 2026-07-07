@@ -517,6 +517,7 @@ def build_homepage_md(cfg, stats, ctx):
     L += ["## 核心数字", "",
           f"> 🗂️ 候选池规模 **{stats.get('pool_size', '?')}** 频道",
           f"> ⭐ 今日推荐 **{stats.get('cards_today', '?')}** 位达人",
+          f"> 🗃️ 达人档案 **{stats.get('dossier_count', '?')}** 份（top50 全量建档）",
           f"> 🎯 盲测密度 **{stats.get('blind_test_multiple', '4.6')} 倍** 于随机基线(前 5%)",
           f"> 📊 记分板 {stats.get('scoreboard_status', '首份 picks 已存档，2026-08-04 结算')}",
           "", "---", ""]
@@ -530,7 +531,8 @@ def build_homepage_md(cfg, stats, ctx):
           f"_每天 08:30 的池子动态、推荐卡、记分板结算，一页看完。历史日报在[日报文件夹]({_folder_url(f.get('日报'))})。_", ""]
     L += ["### 🗃️ 达人档案区",
           f"[打开达人档案文件夹]({_folder_url(f.get('达人档案'))})",
-          "_每位当日推荐达人一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵、推荐理由。每篇头部可一键回本页。_", ""]
+          f"_榜单前 {stats.get('dossier_count', '?')} 名每位一页：基本盘、订阅快照史、近期视频、评论区概况、跨平台矩阵。"
+          "进前 5 名的附当日推荐卡（值得签/风险/首次合作建议），其余仅数据不含推荐语。每篇头部可一键回本页。_", ""]
     L += ["### 📁 报告区",
           f"[打开报告文件夹]({_folder_url(f.get('报告'))})",
           "_方法论与验证：行业方法对比、盲测验证报告、删除实验裁判。给评委和队友看的深度材料。_", ""]
@@ -558,6 +560,7 @@ def push_homepage(cfg, stats=None):
     stats = dict(stats or {})
     stats.setdefault("pool_size", _guess_pool_size())
     stats.setdefault("cards_today", _guess_cards_today())
+    stats.setdefault("dossier_count", _guess_dossier_count())
     stats.setdefault("blind_test_multiple", "4.6")
     stats.setdefault("scoreboard_status", "首份 picks 已存档，2026-08-04 结算")
     md = build_homepage_md(cfg, stats, ctx)
@@ -596,6 +599,15 @@ def _guess_cards_today():
     try:
         p = os.path.join(ROOT, "data", "runs", "daily", date.today().isoformat(), "cards.json")
         return len(json.load(open(p)))
+    except Exception:
+        return "?"
+
+
+def _guess_dossier_count():
+    """从 data/dossiers/*.md 数档案份数(主页大数字兜底)。"""
+    try:
+        d = os.path.join(ROOT, "data", "dossiers")
+        return sum(1 for f in os.listdir(d) if f.endswith(".md"))
     except Exception:
         return "?"
 

@@ -16,17 +16,21 @@ updated: 2026-07-07
 
 ## 订阅快照史
 
-_暂无带日期的订阅快照（随每日运行开始积累）。_
+| 日期 | 订阅数 |
+|---|---|
+| 2026-07-07 | 149,000 |
+
+_目前仅一天快照，随每日运行积累时间线。_
 
 ## 近期视频
 
 | 标题 | 时长 | 类型 | 发布日期 |
 |---|---|---|---|
-| 2026 Tata Sierra 1.5 Diesel AT POVDrive ／ Is It Better? ／ 0-100 Test & Review Walkaround ／ REVLIMITS | 未知 | 未知 | 未知 |
-| Relaxing Alto K10 Vxi AMT POVDrive 🎧 ／ Anchal Bypass to Kottarakara ／ 4K Binaural ASMR | 未知 | 未知 | 未知 |
-| The Ultimate Moody Night Drive - Heavy Rain POV Drive ／ VW Vento 1.5 TDI DSG ／ RevLimits | 未知 | 未知 | 未知 |
-| 2026 VW Taigun GT Plus Sport 1.5 TSI POV ／ 0-100 Test, Close Call & Highway Run! | 未知 | 未知 | 未知 |
-| ​Upgrading My Swift! 🚗 UNO Minda Horn Install + Swift ZDi Spoiler & Antenna Upgrade ／ RevLimits | 未知 | 未知 | 未知 |
+| Tata Sierra Diesel Automatic POV Drive! 🚙 ／ Real-World 0-100 Test & Review in Kollam ／ REVLIMITS | 22:48 | 长视频 | 2026-07-06 |
+| Relaxing Alto K10 Vxi AMT POVDrive 🎧 ／ Anchal Bypass to Kottarakara ／ 4K Binaural ASMR | 20:39 | 长视频 | 2026-07-04 |
+| The Ultimate Moody Night Drive - Heavy Rain POV Drive ／ VW Vento 1.5 TDI DSG ／ RevLimits | 24:03 | 长视频 | 2026-07-01 |
+| 2026 VW Taigun GT Plus Sport 1.5 TSI POV ／ 0-100 Test, Close Call & Highway Run! | 22:10 | 长视频 | 2026-06-29 |
+| ​Upgrading My Swift! 🚗 UNO Minda Horn Install + Swift ZDi Spoiler & Antenna Upgrade ／ RevLimits | 8:38 | 长视频 | 2026-06-27 |
 
 ## 评论区概况
 

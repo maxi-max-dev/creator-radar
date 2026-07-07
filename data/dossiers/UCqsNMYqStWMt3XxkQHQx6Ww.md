@@ -16,17 +16,21 @@ updated: 2026-07-07
 
 ## 订阅快照史
 
-_暂无带日期的订阅快照（随每日运行开始积累）。_
+| 日期 | 订阅数 |
+|---|---|
+| 2026-07-07 | 217,000 |
+
+_目前仅一天快照，随每日运行积累时间线。_
 
 ## 近期视频
 
 | 标题 | 时长 | 类型 | 发布日期 |
 |---|---|---|---|
-| Kawasaki Versys 1100 sound [RAW Onboard] | 未知 | 未知 | 未知 |
-| Yamaha XSR700 riding HARD! (and slow) [RAW Onboard] | 未知 | 未知 | 未知 |
-| CFMOTO 675NK sound [RAW Onboard] | 未知 | 未知 | 未知 |
-| Benda Napoleonbob 250 sound [RAW Onboard] | 未知 | 未知 | 未知 |
-| TRUE RETRO! Royal Enfield Classic 650 sound & quick review [RAW Onboard] | 未知 | 未知 | 未知 |
+| Kawasaki Versys 1100 sound [RAW Onboard] | 14:16 | 长视频 | 2026-02-07 |
+| Yamaha XSR700 riding HARD! (and slow) [RAW Onboard] | 10:15 | 长视频 | 2026-01-07 |
+| CFMOTO 675NK sound [RAW Onboard] | 11:33 | 长视频 | 2026-01-07 |
+| Benda Napoleonbob 250 sound [RAW Onboard] | 13:11 | 长视频 | 2025-12-07 |
+| TRUE RETRO! Royal Enfield Classic 650 sound & quick review [RAW Onboard] | 12:01 | 长视频 | 2025-11-07 |
 
 ## 评论区概况
 

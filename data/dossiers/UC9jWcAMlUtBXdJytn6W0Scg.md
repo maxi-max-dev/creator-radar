@@ -16,17 +16,21 @@ updated: 2026-07-07
 
 ## 订阅快照史
 
-_暂无带日期的订阅快照（随每日运行开始积累）。_
+| 日期 | 订阅数 |
+|---|---|
+| 2026-07-07 | 178,000 |
+
+_目前仅一天快照，随每日运行积累时间线。_
 
 ## 近期视频
 
 | 标题 | 时长 | 类型 | 发布日期 |
 |---|---|---|---|
-| Made the Overtake... Then He Crashed Behind Me ／ Full Race Onboard | 未知 | 未知 | 未知 |
-| 600cc Battle at the BRNO MotoGP Circuit ／ FULL RACE | 未知 | 未知 | 未知 |
-| Passing 1000cc Bikes on a 600cc ／ Kawasaki Ninja ZX6R POV | 未知 | 未知 | 未知 |
-| Nürburgring Nordschleife: Following Racer-Influencers (No Ring Experience) | 未知 | 未知 | 未知 |
-| He almost caused a COLLISION! (I started swearing) ／ ZX10R Full Race | 未知 | 未知 | 未知 |
+| Made the Overtake... Then He Crashed Behind Me ／ Full Race Onboard | 19:24 | 长视频 | 2026-07-06 |
+| 600cc Battle at the BRNO MotoGP Circuit ／ FULL RACE | 19:59 | 长视频 | 2026-06-23 |
+| Passing 1000cc Bikes on a 600cc ／ Kawasaki Ninja ZX6R POV | 12:10 | 长视频 | 2026-05-07 |
+| Nürburgring Nordschleife: Following Racer-Influencers (No Ring Experience) | 8:39 | 长视频 | 2026-03-07 |
+| He almost caused a COLLISION! (I started swearing) ／ ZX10R Full Race | 14:16 | 长视频 | 2026-02-07 |
 
 ## 评论区概况
 

@@ -182,18 +182,21 @@ def build_md(card, scored_row, pool_row, cross_rec, timeline, cstats, today):
         L.append("_未检出其他平台链接（不代表没有，仅代表频道公开文本里没写）。_")
     L.append("")
 
-    # --- 当日推荐卡 ---
-    L += ["## 当日推荐卡", "", f"_生成于 {today}。_", ""]
-    whys = card.get("why_worth_signing") or []
-    if whys:
-        L.append("**值得签：**")
-        for w in whys:
-            L.append(f"- {w}")
-        L.append("")
-    if card.get("risk"):
-        L += ["**风险：**", f"- {card['risk']}", ""]
-    if card.get("first_collab"):
-        L += ["**首次合作建议：**", f"- {card['first_collab']}", ""]
+    # --- 当日推荐卡(仅当有卡时才出这一节; 无卡的档案温和省略，绝不伪造推荐语) ---
+    card = card or {}
+    has_card = bool(card.get("why_worth_signing") or card.get("risk") or card.get("first_collab"))
+    if has_card:
+        L += ["## 当日推荐卡", "", f"_生成于 {today}。_", ""]
+        whys = card.get("why_worth_signing") or []
+        if whys:
+            L.append("**值得签：**")
+            for w in whys:
+                L.append(f"- {w}")
+            L.append("")
+        if card.get("risk"):
+            L += ["**风险：**", f"- {card['risk']}", ""]
+        if card.get("first_collab"):
+            L += ["**首次合作建议：**", f"- {card['first_collab']}", ""]
 
     return "\n".join(L).rstrip() + "\n"
 
@@ -291,17 +294,78 @@ def generate(cfg, today, out_dir=DOSSIERS):
     return {"generated": len(written), "files": written}
 
 
+def generate_topn(cfg, today, top_n, out_dir=DOSSIERS):
+    """对当日 ranked.json 前 top_n 频道各生成一页档案。
+    有推荐卡的频道(前若干名)带推荐卡节; 无卡的省略该节(build_md 里判定，不伪造推荐语)。
+    其余数据(视频表/评论/跨平台/快照史)与 generate() 完全同源。幂等: 覆盖。"""
+    day = os.path.join(DAILY, today)
+    ranked_path = os.path.join(day, "ranked.json")
+    if not os.path.exists(ranked_path):
+        return {"generated": 0, "reason": "缺 ranked.json", "files": [], "with_card": 0}
+    scored = json.load(open(ranked_path))
+    pool_size = len(scored)
+
+    cards_path = os.path.join(day, "cards.json")
+    cards_by_url = {}
+    if os.path.exists(cards_path):
+        for c in json.load(open(cards_path)):
+            if c.get("_channel_url"):
+                cards_by_url[c["_channel_url"]] = c
+
+    pool_by_url = {}
+    for l in open(POOL):
+        r = json.loads(l)
+        pool_by_url[r.get("channel_url")] = r
+    cross_by_url, cross_by_id = load_cross()
+
+    os.makedirs(out_dir, exist_ok=True)
+    written, with_card, no_cid = [], 0, 0
+    for s in scored[:top_n]:
+        url = s.get("channel_url")
+        p = pool_by_url.get(url, {})
+        cid = p.get("channel_id")
+        if not cid:
+            no_cid += 1
+            print(f"  dossier skip (no channel_id): {s.get('channel_name')}", file=sys.stderr)
+            continue
+        srow = dict(s)
+        srow["_pool_size"] = pool_size
+        card = cards_by_url.get(url, {})
+        if card:
+            with_card += 1
+        cross_rec = cross_by_url.get(url) or cross_by_id.get(cid)
+        timeline = sub_timeline(cid, url)
+        cstats = comment_stats(cid, today)
+        md = build_md(card, srow, p, cross_rec, timeline, cstats, today)
+        path = os.path.join(out_dir, f"{cid}.md")  # 幂等: 覆盖
+        with open(path, "w") as f:
+            f.write(md)
+        written.append(path)
+        print(f"  dossier ok: {s.get('channel_name')} -> {os.path.basename(path)}"
+              f"{' [card]' if card else ''}", file=sys.stderr)
+
+    return {"generated": len(written), "with_card": with_card,
+            "skipped_no_cid": no_cid, "files": written}
+
+
 def main():
     ap = argparse.ArgumentParser(description="达人档案 MD 生成(纯拼装既有产物，不碰 LLM)")
     ap.add_argument("--config", required=True)
     ap.add_argument("--date", help="目标日期(默认今天)")
     ap.add_argument("--out", default=DOSSIERS)
+    ap.add_argument("--top-n", type=int, help="给当日排序前 N 频道各出一页(有卡带卡节，无卡省略)。不给则只对当日推荐卡频道生成。")
     args = ap.parse_args()
     cfg = load_config(args.config)
     today = args.date or date.today().isoformat()
-    stats = generate(cfg, today, out_dir=args.out)
-    print(f"达人档案生成: {stats['generated']} 份 -> {args.out}", file=sys.stderr)
-    print(json.dumps({"generated": stats["generated"]}, ensure_ascii=False))
+    if args.top_n:
+        stats = generate_topn(cfg, today, args.top_n, out_dir=args.out)
+        print(f"达人档案生成(top{args.top_n}): {stats['generated']} 份"
+              f"(其中带推荐卡 {stats.get('with_card', 0)} 份) -> {args.out}", file=sys.stderr)
+        print(json.dumps(stats, ensure_ascii=False))
+    else:
+        stats = generate(cfg, today, out_dir=args.out)
+        print(f"达人档案生成: {stats['generated']} 份 -> {args.out}", file=sys.stderr)
+        print(json.dumps({"generated": stats["generated"]}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
