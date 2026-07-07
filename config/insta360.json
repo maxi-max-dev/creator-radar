@@ -7,8 +7,19 @@
   "leak_tokens_pattern": "insta\\s*360|insta360|影石|antigravity|think\\s*bold",
 
   "identity": {
-    "notes": "身份过滤器 v1 词典与阈值(纯规则层, 零模型成本, 只跑产品路径=score/run_radar 展示与排序)。铁律: backtest.py 官方指标路径绝不引用此节, 打分的语义盲测该剃词照剃。词典中英双语(B站错误全是中文)。来源: 2026-07-07 盲投后果审计的行动分级建议, 把 33 个 ❌ 里能规则化的部分拦在入库时。已合作(already_partner)复用上面 leak_tokens_pattern + partner_extra_pattern + 26 正例名单(positives_path); 其余身份靠下面各正则。off_topic(玄学/网文/ASMR 误召回)刻意不在此层, 交下游轻量 LLM 兜底。",
+    "notes": "身份过滤器 v1 词典与阈值(纯规则层, 零模型成本, 只跑产品路径=score/run_radar 展示与排序)。铁律: backtest.py 官方指标路径绝不引用此节, 打分的语义盲测该剃词照剃。词典中英双语(B站错误全是中文)。来源: 2026-07-07 盲投后果审计的行动分级建议, 把 33 个 ❌ 里能规则化的部分拦在入库时。已合作(already_partner)= leak_tokens_pattern + partner_extra_pattern + 26 正例名单(positives_path) + already_partner_ids(打标层新挖的按 channel_id 精确匹配, 名字不可靠故用 id)。off_topic 兜底(W7, 2026-07-07): 接 tagger 打标层的 vertical 字段, vertical=other(垂类不属运动影像十类之一, 如汽车/航空)→ 自动转 🟡 + off_topic_suspect 标(只标注不物理删除); tags_path 缺失或频道无标签则此兜底优雅跳过。",
     "positives_path": "data/positives/positives.jsonl",
+    "tags_path": "data/tags/tags_for_scoring.jsonl",
+    "already_partner_ids": [
+      "UCEFhmF6U2N6P_Liw0Sh7psA",
+      "UC_iK6Kch7xF-rkKWJyYHRPA",
+      "UCjcANXkXDbYqQ34F_UTql5w",
+      "UCqNjawDop_oy2ZqGJEIs0pg",
+      "UCyHbxqcKbiijjmfL8e2io9w",
+      "UCW8VJPzJgc4_QCGozT-tDbw"
+    ],
+    "already_partner_ids_notes": "打标层(2026-07-07)从字幕/简介新挖出的已合作线索, 按 channel_id 精确并入 already_partner(名字有重名/尾空格风险, 只认 id): tristantakevideo / HB Bikes / Juliet Elliott / Backcountry Adv Moto / STR1KEStudioz / Kris Panji。命中即 🔴 already_partner, 转存量维护, 不算误召回。",
+    "off_topic_verticals": ["other"],
     "partner_extra_pattern": "ambassador|affiliate|优惠码|折扣码|discount code|promo code|运动相机影石|品牌大使|合作达人|creator partner",
     "competitor_pattern": "\\bgopro\\b|\\bdji\\b|\\bakaso\\b|\\bsjcam\\b|osmo\\s*(?:action|pocket)|大疆|action\\s*4|hero\\s*1[0-3]",
     "competitor_official_pattern": "\\bgopro\\b|\\bdji\\b|大疆|osmo",

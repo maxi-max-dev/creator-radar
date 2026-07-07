@@ -60,6 +60,31 @@ def _load_positives(cfg):
     return ids, urls
 
 
+def _load_tags(cfg):
+    """打标层产物 tags_for_scoring.jsonl -> {channel_id: vertical}。
+    供 off_topic 兜底(W7): vertical=other 的频道自动转 🟡。找不到文件返回空 dict(优雅降级, 无兜底)。"""
+    node = cfg.get("identity", {})
+    p = node.get("tags_path")
+    if not p:
+        return {}
+    path = p if os.path.isabs(p) else os.path.join(ROOT, p)
+    out = {}
+    if not os.path.exists(path):
+        return out
+    for line in open(path):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        cid = r.get("channel_id")
+        if cid:
+            out[cid] = r.get("vertical")
+    return out
+
+
 def _c(pat):
     """大小写不敏感编译; 空模式返回一个永不匹配的正则。"""
     return re.compile(pat, re.I) if pat else re.compile(r"(?!x)x")
@@ -74,6 +99,9 @@ def build_identity_index(cfg):
         "idn": idn,
         "pos_ids": pos_ids,
         "pos_urls": pos_urls,
+        "partner_ids": set(idn.get("already_partner_ids", [])),
+        "tags_by_id": _load_tags(cfg),
+        "off_topic_verticals": set(idn.get("off_topic_verticals", ["other"])),
         "leak_re": _c(cfg.get("leak_tokens_pattern", "")),
         "partner_extra_re": _c(idn.get("partner_extra_pattern", "")),
         "competitor_re": _c(idn.get("competitor_pattern", "")),
@@ -131,16 +159,20 @@ def annotate(row, index, sem=None, sweet=None, today=None):
     reasons = []  # (grade, label) 供分级; grade ∈ {red, yellow}
 
     # ---------- 🔴 硬拦截类 ----------
-    # 1) already_partner: 正例名单命中, 或简介/标题带影石痕迹/优惠码/ambassador
+    # 1) already_partner: 正例名单命中 / 打标层新挖的 partner_ids(按 channel_id) / 简介带影石痕迹 / 优惠码 / ambassador
     url = (row.get("channel_url") or "").rstrip("/")
-    in_positive = row.get("channel_id") in index["pos_ids"] or url in index["pos_urls"]
+    cid = row.get("channel_id")
+    in_positive = cid in index["pos_ids"] or url in index["pos_urls"]
+    in_partner_list = bool(cid) and cid in index["partner_ids"]
     leak_hit = bool(index["leak_re"].search(text))
     partner_hit = bool(index["partner_extra_re"].search(text))
-    if in_positive or leak_hit or partner_hit:
+    if in_positive or in_partner_list or leak_hit or partner_hit:
         flags.append("already_partner")
         why = []
         if in_positive:
             why.append("在26正例名单")
+        if in_partner_list:
+            why.append("在已合作名单(打标层新增)")
         if leak_hit:
             why.append("简介带影石痕迹")
         if partner_hit:
@@ -202,6 +234,13 @@ def annotate(row, index, sem=None, sweet=None, today=None):
         flags.append("org_account")
         reasons.append(("yellow", "org_account(媒体/机构/俱乐部信号 → 走机构合作而非达人盲投)"))
 
+    # off_topic 兜底(W7): 打标层判定 vertical=other(垂类不属运动影像十类, 如汽车/航空) → 疑似跑题误召回。
+    # 只标注 + 转 🟡 人工核验, 绝不物理删除。无标签(频道未打标或 tags_path 缺失)则不触发。
+    vertical = index["tags_by_id"].get(cid)
+    if vertical is not None and vertical in index["off_topic_verticals"]:
+        flags.append("off_topic_suspect")
+        reasons.append(("yellow", f"off_topic_suspect(打标层判 vertical={vertical}, 疑似非运动影像 → 人工核验内容相关性)"))
+
     # ---------- 判级 ----------
     reds = [lbl for g, lbl in reasons if g == "red"]
     yellows = [lbl for g, lbl in reasons if g == "yellow"]
@@ -238,6 +277,9 @@ def annotate_scored(scored, pool_by_url, cfg, today=None):
         row.setdefault("channel_name", s.get("channel_name"))
         row.setdefault("channel_url", s.get("channel_url"))
         row.setdefault("subscribers", s.get("subscribers"))
+        # channel_id 供 already_partner_ids 精确匹配与 off_topic 兜底的 tag 查询(pool 行有则用其值)。
+        if s.get("channel_id"):
+            row.setdefault("channel_id", s.get("channel_id"))
         res = annotate(row, index, sem=s.get("sem"), sweet=s.get("sweet"), today=today)
         s["identity_flags"] = res["identity_flags"]
         s["action_grade"] = res["action_grade"]
@@ -257,6 +299,7 @@ FLAG_LABELS = {
     "stale": "久未更新",
     "no_upload_date": "无上传日期",
     "org_account": "媒体/机构",
+    "off_topic_suspect": "off_topic 疑似",
     # 浪层的蹭热点标记(radar_lib.fuse_rising/fuse_trends 追加, 非本层判定): 只做展示层 ⚠️ 徽章, 不进分级
     "trend_chaser": "⚠️蹭热点",
     # 在涨证据 >80% 来自同一条视频(radar_lib.fuse_rising 追加): 只标注不改分(Max 拍板采纳)
