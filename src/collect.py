@@ -33,13 +33,36 @@ def _run_ytdlp(target, playlist_items=None):
 VIDEO_PLUMBING = {"_type", "ie_key", "__x_forwarded_for_ip", "thumbnails"}
 
 
-def _video_record(e):
-    """flat entry -> 原始视频记录: 非管道字段全透传 + video_id/upload_date/is_short。
+def _upload_precision(d, ref=None):
+    """W14(2026-07-08) 日期精度标记: yt-dlp flat 模式对老视频只给相对时间("1 year ago"),
+    经 extract_relative_time → datetime_from_str('now-1year') 换算成绝对日期后, 会把当前月-日/日
+    保留、只回退年(或月), 导致老视频停更天数落在抓取日附近= 伪精度(见 REPORT.md 数据可信度发现)。
+
+    换算规律(yt-dlp _base.py extract_relative_time 已核实):
+      年级("N years ago") → 月与日都等于抓取日的月-日, 年更早;
+      月级("N months ago") → 日等于抓取日的日, 年-月更早;
+      日/周级或精确日期 → 与抓取日月-日不同(除非真的同月同日)。
+    据此按'与抓取日的月-日重合度'反推精度下界。ref=抓取参照日(默认今天)。
+    保守方向: 宁可判粗(→ 下游 🟡)不判细, 真·同月同日上传的极少数按粗算不冤(只影响活性核验的松紧)。"""
+    if d is None:
+        return None
+    ref = ref or date.today()
+    if (d.month, d.day) == (ref.month, ref.day) and d.year < ref.year:
+        return "year"
+    if d.day == ref.day and (d.year, d.month) < (ref.year, ref.month):
+        return "month"
+    return "day"
+
+
+def _video_record(e, ref=None):
+    """flat entry -> 原始视频记录: 非管道字段全透传 + video_id/upload_date/upload_precision/is_short。
     注: 当前 yt-dlp 版本 flat 模式无单视频 view_count，将来版本有就自动带上(透传)，不为它加请求。"""
     v = {k: val for k, val in e.items() if k not in VIDEO_PLUMBING}
     v["video_id"] = e.get("id")
     ts = e.get("timestamp")
-    v["upload_date"] = date.fromtimestamp(ts).isoformat() if ts else None
+    d = date.fromtimestamp(ts) if ts else None
+    v["upload_date"] = d.isoformat() if d else None
+    v["upload_precision"] = _upload_precision(d, ref)  # W14: day/month/year 精度标记
     dur = e.get("duration")
     v["is_short"] = bool((dur is not None and dur <= 60) or "/shorts/" in (e.get("url") or ""))
     return v
@@ -50,9 +73,15 @@ def fetch_channel(channel_url, n_videos):
     d = _run_ytdlp(channel_url.rstrip("/") + "/videos", playlist_items=f"1-{n_videos}")
     if not d:
         return None
-    videos = [_video_record(e) for e in (d.get("entries") or [])]
+    today = date.today()
+    videos = [_video_record(e, ref=today) for e in (d.get("entries") or [])]
     titles = [v.get("title") for v in videos if v.get("title")]
     ts = [v.get("timestamp") for v in videos if v.get("timestamp")]
+    # W14: last_upload_precision = 最近一条视频(=last_upload_date 指向的那条)的精度标记。
+    last_prec = None
+    if ts:
+        last_d = date.fromtimestamp(max(ts))
+        last_prec = _upload_precision(last_d, today)
     return {
         "channel_name": d.get("channel") or d.get("uploader"),
         "channel_url": d.get("channel_url") or channel_url,
@@ -63,6 +92,7 @@ def fetch_channel(channel_url, n_videos):
         "country": None,
         "recent_video_titles": titles,
         "last_upload_date": date.fromtimestamp(max(ts)).isoformat() if ts else None,
+        "last_upload_precision": last_prec,
         "_snapshot": {"videos": videos},
     }
 
@@ -111,7 +141,8 @@ def do_refresh(rows, cfg, budget, throttle, today):
             snapshots.append(make_snapshot(fresh, today, "refresh"))
             fresh.pop("_snapshot")
             # 只覆盖会变的字段，保留 is_positive/source/first_seen 等标注
-            for k in ("subscribers", "recent_video_titles", "last_upload_date", "channel_name", "channel_view_count"):
+            # W14: last_upload_precision 随 last_upload_date 一起刷新(精度字段从采集自然长出, 不回填历史)
+            for k in ("subscribers", "recent_video_titles", "last_upload_date", "last_upload_precision", "channel_name", "channel_view_count"):
                 if fresh.get(k) is not None:
                     r[k] = fresh[k]
             touched.append(r)

@@ -94,7 +94,7 @@
 | W11 | architecture「相关工作与我们的取舍」小节 | 外审#J4 | ✅ ba1ea21：五条文献全核实（MMR/LambdaMART/冷启动/达人发现综述/RAG），architecture 第十节 |
 | W12 | deck v5.2：「我们怎么审自己」三重自审页（盲投审计 80 候选+挑刺台账 19 刺+删除实验 9 删 7 疼；41% 若出现必与 🟢84%/❌0 成对）+「答卷不是 PPT，是一张已经在跑的多维表格」框定语 | 外审#J1 #J5 | 🔜 排 W2 数字修正后 |
 | W13 | 交付形态兜底：飞书 base 分享权限开 anyone_can_view（CC 禁区，Max 手动两步）+ 榜单脱敏 CSV 离线版进交表附件 | 外审#J5 | ⏳ 进 7/16 交表 checklist |
-| W14 | 红灯词典修复 P0-P3（源自 W8 复核）：reposter 裸词词组化+「do not repost」排除；already_partner 品牌词命中分级（🔴只留名册/优惠码/自述大使三类实锤）；竞品官方号改简介模板指纹+前缀判定；日期精度标记（相对时间存精度，dead/stale 按下界，年级精度不做日级裁决）。验证门：7 误拦转绿黄、GoPro Motorsports 转 🔴、33❌ 集拦截 ≥23、26 正例 partner 标记 100% 保持 | W8 复核 | 🔜 批次二 |
+| W14 | 红灯词典修复 P0-P3（源自 W8 复核）：reposter 裸词词组化+「do not repost」排除；already_partner 品牌词命中分级（🔴只留名册/优惠码/自述大使三类实锤）；竞品官方号改简介模板指纹+前缀判定；日期精度标记（相对时间存精度，dead/stale 按下界，年级精度不做日级裁决）。验证门：7 误拦转绿黄、GoPro Motorsports 转 🔴、33❌ 集拦截 ≥23、26 正例 partner 标记 100% 保持 | W8 复核 | ✅ 2026-07-08 批次二（commit `__P0COMMIT__`）：**验证门四项全过**。①7 误拦全转绿黄：CycleCruza/hafizayong/Langona/Vital MTB→🟢，Chris Rogers/Danny Mcgee/World of Ozz→🟡 brand_mention（提及 Antigravity/insta360 但无优惠码/大使/赞助实锤）；②GoPro Motorsports→🔴（简介模板指纹命中「GoPro helps the world…」公司模板句）；③33❌ 集重跑=**改精不改松**：可评估的 YouTube ❌ 子集 🔴 由基线 13→11，唯二减项 SAWAAR/Moto with Cam 正是 P3 强制释放的「2025-07-07 抓取日 366 天伪精度临界僵尸」（→🟡 stale），且 GoPro 漏网净补拦 +1；Bilibili 19 ❌ 在**新旧两版都只出 🟡 no_upload_date**（insta360_bilibili.json 无 identity 节=先存问题，非本次回退，已另立跟进）；④26 正例 already_partner 标记 100% 保持（显式 id 集兜底）。附：exam md5 不变、backtest.py 零改动、annotate_scored 真跑 ranked top200=🟢91/🟡78/🔴31。改动文件 `config/insta360.json`+`src/identity_filter.py`+`src/collect.py`（新增 last_upload_precision 字段）+`docs/architecture.md`（采集层数据可信度局限节） |
 
 Round 1 记分：19 根中 8 根当场答上（含 2 根被新跑的数据终结）、1 根刺本身失实、10 根转为工作项（1 根当场修完）。
 

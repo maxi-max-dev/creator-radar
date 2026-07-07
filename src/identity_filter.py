@@ -104,11 +104,17 @@ def build_identity_index(cfg):
         "off_topic_verticals": set(idn.get("off_topic_verticals", ["other"])),
         "leak_re": _c(cfg.get("leak_tokens_pattern", "")),
         "partner_extra_re": _c(idn.get("partner_extra_pattern", "")),
+        "partner_sponsored_re": _c(idn.get("partner_sponsored_pattern", "")),
         "competitor_re": _c(idn.get("competitor_pattern", "")),
         "competitor_official_re": _c(idn.get("competitor_official_pattern", "")),
+        "competitor_official_desc_re": _c(idn.get("competitor_official_desc_pattern", "")),
+        "competitor_official_prefix_re": _c(idn.get("competitor_official_name_prefix", "")),
         "competitor_staff_re": _c(idn.get("competitor_staff_pattern", "")),
         "brand_vendor_re": _c(idn.get("brand_vendor_pattern", "")),
         "reposter_re": _c(idn.get("reposter_pattern", "")),
+        "reposter_channel_re": _c(idn.get("reposter_channel_pattern", "")),
+        "reposter_title_comp_re": _c(idn.get("reposter_title_compilation", "")),
+        "reposter_guard_re": _c(idn.get("reposter_original_guard_pattern", "")),
         "marketing_re": _c(idn.get("marketing_finance_pattern", "")),
         "org_re": _c(idn.get("org_account_pattern", "")),
         "dead_days": idn.get("dead_days", 365),
@@ -140,10 +146,47 @@ def _days_since(iso_day, today=None):
     return (today - d).days
 
 
-def _looks_official_name(name):
-    """频道名/简介是否像'官方号'(用于竞品官方 vs 竞品用户号的半自动初判)。"""
+# W14(2026-07-08) 日期精度: yt-dlp flat 元数据对老视频只给相对时间("1 year ago"),
+# 换算成绝对日期后落在抓取日, 导致停更天数在老频道上是伪精度(见 REPORT.md 数据可信度发现)。
+# 采集层给每条记录新增 last_upload_precision ∈ {day, month, year}(见 collect.py)。
+# dead/stale 判定按精度下界: 年级精度不做日级裁决(临界一律 🟡, 不 🔴)。
+# 无此字段的历史记录(pool 里精度字段还没自然长出来)按"未知精度=保守 year"处理。
+_PRECISION_TO_BOUND_DAYS = {"day": 1, "month": 31, "year": 365}
+
+
+def _upload_precision(row):
+    """取记录的 last_upload_precision; 缺失(老记录)按最保守的 'year' 处理(=按下界最松)。"""
+    p = row.get("last_upload_precision")
+    if p in _PRECISION_TO_BOUND_DAYS:
+        return p
+    return "year"
+
+
+def _days_lower_bound(days, precision):
+    """按精度取停更天数的下界: 年级精度的 '停更 X 天' 真实含义是'至少 X - 365 天'(最乐观)。
+    dead 判定用下界=最乐观值, 保证'伪精度不硬拦'(365~730 天且精度=year 的临界一律不判死)。
+    返回 (下界天数, 精度是否为日级)。"""
+    if days is None:
+        return None, False
+    slack = _PRECISION_TO_BOUND_DAYS.get(precision, 365)
+    # 日级精度: 下界=本值(slack=1, 减 1 无实质影响); 月/年级: 下界=本值减去该精度粒度。
+    lower = days - (slack - 1) if slack > 1 else days
+    return max(lower, 0), (precision == "day")
+
+
+def _looks_official_name(name, prefix_re=None):
+    """频道名是否像竞品'官方系'(用于竞品官方 vs 竞品用户号的半自动初判)。
+
+    W14(2026-07-08)改法: 弃 `bike$` 类后缀碰运气, 改用竞品词前缀正则(名字以 gopro/dji 等开头
+    =官方系, 如 'GoPro Bike'/'GoPro Motorsports'); 保留 official/官方 显式词与裸竞品名。
+    prefix_re 由 index['competitor_official_prefix_re'] 传入(config 可调)。
+    """
     n = (name or "").lower()
-    return bool(re.search(r"\bofficial\b|官方|\bbike\b$", n)) or n.strip() in ("gopro", "dji", "akaso", "sjcam")
+    if re.search(r"\bofficial\b|官方", n):
+        return True
+    if prefix_re is not None and prefix_re.search(name or ""):
+        return True
+    return n.strip() in ("gopro", "dji", "akaso", "sjcam")
 
 
 def annotate(row, index, sem=None, sweet=None, today=None):
@@ -159,34 +202,51 @@ def annotate(row, index, sem=None, sweet=None, today=None):
     reasons = []  # (grade, label) 供分级; grade ∈ {red, yellow}
 
     # ---------- 🔴 硬拦截类 ----------
-    # 1) already_partner: 正例名单命中 / 打标层新挖的 partner_ids(按 channel_id) / 简介带影石痕迹 / 优惠码 / ambassador
+    # 1) already_partner 分级(W14 2026-07-08): 🔴 只留三类实锤 → ①显式 id 集(26正例+官方名册+打标层
+    #    already_partner_ids)②优惠码 ③自述 ambassador/大使/sponsored by insta360。
+    #    仅命中品牌词(leak_tokens 如 Antigravity/insta360 出现在评测标题)而无上述实锤 → 🟡 brand_mention。
+    #    根因: Chris Rogers/Danny Mcgee 标题提 Antigravity(评测非合作)、World of Ozz 标题提 Insta360 X5
+    #    (评测非合作)原被 leak_hit 误判 🔴; Vital MTB 'Unaffiliated' 里的 affiliate 假命中已在词典层修掉。
     url = (row.get("channel_url") or "").rstrip("/")
     cid = row.get("channel_id")
     in_positive = cid in index["pos_ids"] or url in index["pos_urls"]
     in_partner_list = bool(cid) and cid in index["partner_ids"]
-    leak_hit = bool(index["leak_re"].search(text))
-    partner_hit = bool(index["partner_extra_re"].search(text))
-    if in_positive or in_partner_list or leak_hit or partner_hit:
+    leak_hit = bool(index["leak_re"].search(text))                       # 品牌词出现(不足以定 🔴)
+    partner_hit = bool(index["partner_extra_re"].search(text))           # 优惠码/自述大使等实锤
+    sponsored_hit = bool(index["partner_sponsored_re"].search(text))     # sponsored by insta360 / 带编号联盟码
+    hard_partner = in_positive or in_partner_list or partner_hit or sponsored_hit
+    if hard_partner:
         flags.append("already_partner")
         why = []
         if in_positive:
             why.append("在26正例名单")
         if in_partner_list:
             why.append("在已合作名单(打标层新增)")
-        if leak_hit:
-            why.append("简介带影石痕迹")
-        if partner_hit:
-            why.append("带优惠码/ambassador")
-        reasons.append(("red", "already_partner(已合作/带码: " + "、".join(why) + " → 转存量维护)"))
+        if partner_hit or sponsored_hit:
+            why.append("带优惠码/自述大使/sponsored by insta360")
+        reasons.append(("red", "already_partner(实锤: " + "、".join(why) + " → 转存量维护)"))
+    elif leak_hit:
+        # 只命中品牌词、无实锤 → 提及品牌不等于合作, 转 🟡 人工确认(不再 🔴 误伤器材评测大号)
+        flags.append("brand_mention")
+        reasons.append(("yellow", "brand_mention(提及影石/Antigravity 等品牌词但无优惠码/大使/赞助实锤, 疑似评测提及非合作 → 人工确认)"))
 
-    # 2) competitor: 竞品词命中 且 (官方名信号 或 在职自述)
+    # 2) competitor(W14 2026-07-08): 竞品词命中 且 (在职自述 / 官方名前缀 / 官方简介模板指纹)。
+    #    弃 bike$ 后缀碰运气, 改 ①频道名以竞品词开头(GoPro Motorsports/GoPro Bike) ②简介模板指纹
+    #    (同竞品多子频道共用的公司模板句)。补拦 GoPro Motorsports(简介=GoPro 公司模板逐字原文, 原漏网)。
     comp_hit = bool(index["competitor_re"].search(text))
     if comp_hit:
         staff_hit = bool(index["competitor_staff_re"].search(text))
-        official_hit = bool(index["competitor_official_re"].search(text)) and _looks_official_name(name)
+        desc_template_hit = bool(index["competitor_official_desc_re"].search(text))
+        name_official = _looks_official_name(name, index["competitor_official_prefix_re"])
+        official_hit = desc_template_hit or (bool(index["competitor_official_re"].search(text)) and name_official)
         if staff_hit or official_hit:
             flags.append("competitor")
-            tag = "在职员工" if staff_hit else "官方号"
+            if staff_hit:
+                tag = "在职员工"
+            elif desc_template_hit:
+                tag = "官方号(简介模板指纹)"
+            else:
+                tag = "官方号(频道名前缀)"
             reasons.append(("red", f"competitor(竞品{tag}, 命中 gopro/dji/akaso 等 → 拦截)"))
         else:
             # 竞品词命中但更像'用户提到用过竞品器材', 不拦, 交人工看一眼
@@ -198,22 +258,39 @@ def annotate(row, index, sem=None, sweet=None, today=None):
         flags.append("brand_or_vendor")
         reasons.append(("red", "brand_or_vendor(品牌/厂商/器材店/招商信号 → 拦截, 非创作者)"))
 
-    # 4) reposter: 搬运/侵删/合集/代录/录播
-    if index["reposter_re"].search(text):
+    # 4) reposter(W14 2026-07-08 裸词治理): 先看原创者反搬运声明护栏('Do not repost')= 原创信号, 命中即豁免。
+    #    否则命中实锤搬运词(reposter_re: 搬运/侵删/代录/录播/reupload) 或 频道定位词组(reposter_channel_re:
+    #    rider submissions / compilation channel / 全网录播) 或 近多条标题都是合集型(>=2 条) → 🔴。
+    #    单标题碰 reaction/compilation 不再拦(CycleCruza 'YouTubers Reaction'/Langona 土耳其语 REACTION 是原创)。
+    reposter_guarded = bool(index["reposter_guard_re"].search(text))
+    comp_titles = sum(1 for t in (row.get("recent_video_titles") or [])
+                      if index["reposter_title_comp_re"].search(t or ""))
+    reposter_signal = (bool(index["reposter_re"].search(text))
+                       or bool(index["reposter_channel_re"].search(text))
+                       or comp_titles >= 2)
+    if reposter_signal and not reposter_guarded:
         flags.append("reposter")
-        reasons.append(("red", "reposter(搬运/侵删/合集/代录/录播信号 → 拦截, 非原创)"))
+        why = "频道定位为投稿合集/reaction/录播代录" if comp_titles >= 2 or index["reposter_channel_re"].search(text) \
+            else "简介明写搬运/侵删/代录/录播"
+        reasons.append(("red", f"reposter({why} → 拦截, 非原创)"))
 
     # 4b) marketing_or_finance: 营销号/理财致富/玄学疗愈/带货种草(Max 点名必拦第三类)
     if index["marketing_re"].search(text):
         flags.append("marketing_or_finance")
         reasons.append(("red", "marketing_or_finance(理财致富/玄学疗愈/带货种草/营销号信号 → 拦截, 非运动影像创作者)"))
 
-    # 5) dead_account: 停更 > dead_days, 或 订阅<tiny 且 sweet≈0
+    # 5) dead_account(W14 2026-07-08 精度化): 停更判定按精度下界。yt-dlp 对老视频只给相对时间,
+    #    换算绝对日期后停更天数在老频道上是伪精度(年级)。dead 用下界(=最乐观停更天数): 只有下界仍
+    #    > dead_days 才判死; 年级精度的临界(365~730 天)下界 <= 0~365 不达线, 一律不硬拦 → 落 🟡 stale。
+    #    无 last_upload_precision 字段的老记录按'未知=year'保守处理(精度字段从下次采集自然长出, 不回填)。
     days = _days_since(row.get("last_upload_date"), today)
+    precision = _upload_precision(row)
+    days_lb, is_day_precise = _days_lower_bound(days, precision)
     is_dead = False
-    if days is not None and days > index["dead_days"]:
+    if days_lb is not None and days_lb > index["dead_days"]:
         is_dead = True
-        reasons.append(("red", f"dead_account(停更 {days} 天 > {index['dead_days']} → 拦截, 僵尸号)"))
+        prec_note = "" if is_day_precise else f", 精度={precision}按下界"
+        reasons.append(("red", f"dead_account(停更下界 {days_lb} 天 > {index['dead_days']}{prec_note} → 拦截, 僵尸号)"))
     elif (row.get("subscribers") is not None and row["subscribers"] < index["dead_tiny_subs"]
           and sweet is not None and sweet <= index["dead_tiny_sweet"]):
         is_dead = True
@@ -226,9 +303,14 @@ def annotate(row, index, sem=None, sweet=None, today=None):
         # 无上传日期(YT last_upload 缺失, 或 B站本就没这字段) = data_coverage 不足
         flags.append("no_upload_date")
         reasons.append(("yellow", "no_upload_date(无上传日期, data_coverage 不足 → 补活性数据)"))
-    elif index["stale_days"] < days <= index["dead_days"]:
+    elif not is_dead and days > index["stale_days"]:
+        # 停更超 stale_days 但未判死(含年级精度躲过 dead 下界的 366+ 天临界僵尸) → 🟡 核验弃坑。
+        # W14: 上界不再硬卡 dead_days; 年级精度临界(下界未过线)落这里而非 🔴 硬拦。
         flags.append("stale")
-        reasons.append(("yellow", f"stale(停更 {days} 天, 60~365 → 核验是否弃坑)"))
+        if precision != "day" and days > index["dead_days"]:
+            reasons.append(("yellow", f"stale(停更 {days} 天但精度={precision}, 下界 {days_lb} 天未过 {index['dead_days']} 死线 → 年级精度不做日级裁决, 核验是否弃坑)"))
+        else:
+            reasons.append(("yellow", f"stale(停更 {days} 天, >{index['stale_days']} → 核验是否弃坑)"))
 
     if index["org_re"].search(text):
         flags.append("org_account")
@@ -290,6 +372,7 @@ def annotate_scored(scored, pool_by_url, cfg, today=None):
 # 供 run_radar / 日报组装用的短标签映射(机器键 -> 中文短标签, 表格「身份标签」列用)
 FLAG_LABELS = {
     "already_partner": "已合作/带码",
+    "brand_mention": "提及品牌(疑非合作)",
     "competitor": "竞品官方/在职",
     "competitor_mention": "提及竞品器材",
     "brand_or_vendor": "品牌/厂商/器材店",
