@@ -547,6 +547,11 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
           f"- 新发现入池：{collect_res.get('discovered', 0)} 个"]
     if collect_res.get("discovered_names"):
         L.append(f"  - {', '.join(collect_res['discovered_names'][:15])}")
+    # 起势层覆盖披露(W5): 有真实起势证据(RSS 拉到播放数、momentum_cov=ok)的频道数 / 全池。
+    # RSS 预算已提至全池, 此行如实报覆盖率, 拿不到证据的频道走中性分(不冤杀), 覆盖率随每日快照爬升。
+    m_ok = sum(1 for s in scored if s.get("momentum_cov") == "ok")
+    cov_pct = f"{m_ok / n * 100:.0f}%" if n else "n/a"
+    L.append(f"- 起势数据覆盖：**{m_ok}/{n}**（{cov_pct}）；未覆盖频道走中性分不惩罚，覆盖率随每日快照爬升")
     L += ["", "---", ""]
 
     # 「窜升榜 / 排名 diff」已正式退役: 起势层(在涨分)已接班「谁正在被越来越多陌生人看到」。

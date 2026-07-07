@@ -114,8 +114,8 @@
   "momentum": {
     "notes": "起势层(第二层雷达: 对的时机)。核心思路: 某频道最近视频的 播放速度(views/天) 显著超过它自己的历史中位数 = 起势信号。绝不跨频道横向比播放数(大频道天然高), 只比频道对自己历史的相对爆发。全部旋钮进这里, 每个都带下面的 notes。",
     "rss": {
-      "notes": "RSS 采集器参数。top_channels=按 fit 排名拉前 N 个频道(fit 分高的才值得看时机)。throttle 0.5s/请求, 350 个约 3 分钟。",
-      "top_channels": 350,
+      "notes": "RSS 采集器参数。top_channels=按 fit 排名拉前 N 个频道(fit 分高的才值得看时机); 采集器对 top_n 自然按池子实际大小封顶(取完即止), 故大数=全池。W5(2026-07-07): 从 350 提到全池(100000 上限=覆盖当前约 2400 全部, 池子再长也吃得下), 消除起势层 81% 兜底率。全池约 2400 次请求、throttle 0.5s/请求约 20 分钟网络时间(可承受); 单频道失败隔离(逐频道 try/except, 不中断整链)、单频道 timeout_seconds 超时与 throttle_seconds 节流照旧。",
+      "top_channels": 100000,
       "throttle_seconds": 0.5,
       "timeout_seconds": 20
     },
