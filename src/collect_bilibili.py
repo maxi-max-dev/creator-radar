@@ -17,6 +17,7 @@
   python3 src/collect_bilibili.py --config config/insta360_bilibili.json --reset   # 清空断点重跑
 """
 import argparse, html, json, os, re, sys, time, urllib.parse, urllib.request
+from email.utils import parsedate_to_datetime
 
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
@@ -25,6 +26,17 @@ TITLE_RE = re.compile(r"<title>(.*?)</title>", re.S)
 AUTHOR_RE = re.compile(r"<author>(.*?)</author>", re.S)
 AID_RE = re.compile(r"AuthorID:\s*(\d+)")
 LEN_RE = re.compile(r"Length:\s*([\d:]+)")
+PUBDATE_RE = re.compile(r"<pubDate>(.*?)</pubDate>", re.S)
+
+
+def _pubdate_to_iso(s):
+    """RSSHub 的 RFC822 pubDate(如 'Tue, 07 Jul 2026 07:16:27 GMT') -> 'YYYY-MM-DD'。解析不了返回 None。"""
+    if not s:
+        return None
+    try:
+        return parsedate_to_datetime(s.strip()).date().isoformat()
+    except (TypeError, ValueError, IndexError):
+        return None
 
 
 def repo_root():
@@ -42,7 +54,8 @@ def clean(s):
 
 
 def parse_vsearch(xml):
-    """从 RSSHub vsearch XML 解析出 [(uid, author_name, video_title, duration)]。"""
+    """从 RSSHub vsearch XML 解析出 [(uid, author_name, video_title, duration, pub_iso)]。
+    pub_iso = 该视频发布日 'YYYY-MM-DD'(从 <pubDate> 解析, 零额外请求)。用于便宜地补 last_upload_date。"""
     out = []
     for it in ITEM_RE.findall(xml):
         aid = AID_RE.search(it)
@@ -51,11 +64,13 @@ def parse_vsearch(xml):
         title = TITLE_RE.search(it)
         author = AUTHOR_RE.search(it)
         length = LEN_RE.search(it)
+        pub = PUBDATE_RE.search(it)
         out.append((
             aid.group(1),
             clean(author.group(1)) if author else "",
             clean(title.group(1)) if title else "",
             length.group(1) if length else "",
+            _pubdate_to_iso(pub.group(1)) if pub else None,
         ))
     return out
 
@@ -116,6 +131,8 @@ def write_pool(path, authors):
                 "video_durations": a.get("durations", [])[:10],
                 "found_terms": sorted(a.get("terms", [])),
                 "last_refreshed": time.strftime("%Y-%m-%d"),
+                # 从 vsearch pubDate 便宜拿到的最近上传日(可能缺, 缺时身份过滤器走 🟡 data_coverage 不足)
+                "last_upload_date": a.get("last_upload_date"),
             }
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
     os.replace(tmp, path)
@@ -167,7 +184,7 @@ def main():
             time.sleep(throttle)
             continue
         new_here = 0
-        for uid, aname, title, dur in rows:
+        for uid, aname, title, dur, pub_iso in rows:
             a = authors.setdefault(uid, {"titles": [], "durations": [], "terms": [], "enriched": False})
             if aname and not a.get("search_name"):
                 a["search_name"] = aname
@@ -175,6 +192,10 @@ def main():
             if title and title not in a["titles"]:
                 a["titles"].append(title)
                 a["durations"].append(dur)
+            # last_upload_date = 该 UP 主在搜索结果里见过的最新发布日(零额外请求, 便宜补活性字段)。
+            # vsearch 按 pubdate 排, 同一 UP 主可能多条, 取最大日期。
+            if pub_iso and pub_iso > (a.get("last_upload_date") or ""):
+                a["last_upload_date"] = pub_iso
             if term not in a["terms"]:
                 a["terms"].append(term)
         state["done_terms"].append(term)

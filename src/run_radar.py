@@ -9,9 +9,11 @@ from datetime import date, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
-from radar_lib import load_config, load_pool, score_pool
+from radar_lib import load_config, load_pool, score_pool, fuse_momentum
+import identity_filter
 
 POOL = os.path.join(ROOT, "data", "pool", "creator_pool.jsonl")
+RSS_DIR = os.path.join(ROOT, "data", "rss")
 DAILY = os.path.join(ROOT, "data", "runs", "daily")
 SCOREBOARD = os.path.join(ROOT, "data", "scoreboard")
 REPORTS = os.path.join(ROOT, "reports")
@@ -166,10 +168,48 @@ def run_transcripts(cfg_path, today, top_n=None):
         return {"error": str(e)}
 
 
-# 表格列序固定，也是将来 bitable 出口的 schema 母版
+def run_rss_momentum(cfg_path, pool_path, ranked_path, today):
+    """起势层每日集成(MOMENTUM.md 第六节 步骤1+2): RSS 采集 -> momentum 打分。
+    返回 momentum_scores.json 路径(供 fuse_momentum), 失败返回 None(fuse 会优雅降级为全中性)。
+
+    RSS 采集是**只读网络**(拉 YouTube 官方 feed, 零下载), 按 --dry-run 铁律它可保留:
+    dry-run 只掐真实推送(iMessage/飞书/commit), 不掐只读采集。momentum 打分是纯本地计算。
+    采集器 append 友好(同日多跑不重复建文件, 攒历史), momentum 就地整算。"""
+    stamp = today  # collect_rss 用 UTC 日期命名; 与主链 today(本地)可能差一天, 故显式对齐取产物
+    mom_dir = os.path.join(DAILY, today)
+    os.makedirs(mom_dir, exist_ok=True)
+    mom_path = os.path.join(mom_dir, "momentum_scores.json")
+    # 1) RSS 采集(只读). 失败不致命: 没有当日 RSS 就用已存在的最近一份, 再没有就跳过 momentum。
+    try:
+        p = subprocess.run(["python3", os.path.join(HERE, "collect_rss.py"), "--config", cfg_path,
+                            "--pool", pool_path, "--ranked", ranked_path, "--out", RSS_DIR],
+                           capture_output=True, text=True, timeout=1800)
+        sys.stderr.write(p.stderr[-1500:] if p.stderr else "")
+    except Exception as e:
+        sys.stderr.write(f"[momentum] RSS 采集异常(不致命): {e}\n")
+    # 找当日 RSS(UTC 命名可能是 today 或前后一天), 取最新一份
+    rss_files = sorted(glob.glob(os.path.join(RSS_DIR, "*.jsonl")))
+    if not rss_files:
+        sys.stderr.write("[momentum] 无 RSS 快照, 跳过 momentum(fuse 将全中性降级)\n")
+        return None
+    rss_path = rss_files[-1]
+    # 2) momentum 打分(纯本地)
+    try:
+        p = subprocess.run(["python3", os.path.join(HERE, "momentum.py"), "--config", cfg_path,
+                            "--pool", pool_path, "--rss", rss_path, "--out", mom_path],
+                           capture_output=True, text=True, timeout=600)
+        sys.stderr.write(p.stderr[-1500:] if p.stderr else "")
+        return mom_path if os.path.exists(mom_path) else None
+    except Exception as e:
+        sys.stderr.write(f"[momentum] 打分异常(不致命): {e}\n")
+        return None
+
+
+# 表格列序固定，也是将来 bitable 出口的 schema 母版。
+# 起势分/潜力分(momentum 集成) + 行动分级/身份标签(身份过滤器) 加在分数区后、命中主题前。
 CSV_COLUMNS = ["日期", "排名", "频道名", "频道链接", "订阅数", "排名百分位", "总分", "语义分", "甜点分",
-               "POV标记分", "命中主题", "是否新发现", "排名变动", "值得签1", "值得签2", "值得签3",
-               "风险", "首次合作建议", "状态"]
+               "POV标记分", "起势分", "潜力分", "行动分级", "身份标签", "命中主题", "是否新发现",
+               "排名变动", "值得签1", "值得签2", "值得签3", "风险", "首次合作建议", "状态"]
 
 
 def build_table_rows(today, cards, scored, pool_by_url):
@@ -189,6 +229,8 @@ def build_table_rows(today, cards, scored, pool_by_url):
             "排名百分位": s.get("pct"),
             "总分": s.get("score"), "语义分": s.get("sem"),
             "甜点分": s.get("sweet"), "POV标记分": s.get("pov"),
+            "起势分": s.get("momentum"), "潜力分": s.get("potential"),
+            "行动分级": s.get("action_grade") or "", "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
             "命中主题": s.get("themes_hit") or [],
             "是否新发现": p.get("source") == "auto-discover",
             "排名变动": s.get("rank_delta"),
@@ -220,6 +262,10 @@ def write_cards_table(today, rows, out_dir):
                 f"{r['语义分']:.4f}" if r["语义分"] is not None else "",
                 f"{r['甜点分']:.4f}" if r["甜点分"] is not None else "",
                 f"{r['POV标记分']:.4f}" if r["POV标记分"] is not None else "",
+                f"{r['起势分']:.4f}" if r.get("起势分") is not None else "",
+                f"{r['潜力分']:.5f}" if r.get("潜力分") is not None else "",
+                r.get("行动分级", ""),
+                r.get("身份标签", ""),
                 "、".join(r["命中主题"]),
                 "是" if r["是否新发现"] else "否",
                 _fmt_delta(r["排名变动"]),
@@ -334,7 +380,7 @@ def _scoreboard_oneliner(scoreboard_results):
 
 
 def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None,
-                 scoreboard_results=None, dossier_links=None):
+                 scoreboard_results=None, dossier_links=None, blocked=None):
     """日报 markdown(设计升级版)。开头 callout 摘要(blockquote)，推荐卡每张一个小节(heading3+分数表格+bullet)，
     divider 分节。飞书 Drive 预览这份 .md 时 blockquote/表格/heading 都会渲染成样式块；纯文本降级也不丢内容。
     dossier_links: {channel_id: 档案飞书链接}(互链，拿不到就温和省略; 上传前 push 流程还会按最新映射刷新一遍)。"""
@@ -380,22 +426,43 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
             L.append("_本次无频道大幅窜升。_")
         L += ["", "---", ""]
 
+    # 今日拦截(身份过滤器 🔴): 列名字+原因, 不只个数, 让运营一眼复核。绝不物理删数据, 仅不进推荐卡。
+    L += ["## 今日拦截", ""]
+    if blocked:
+        L.append(f"推荐卡扫描区内命中 🔴 自动拦截 **{len(blocked)}** 个，不进推荐卡"
+                 f"（仍保留在全池榜单表 + 拦截原因列，人工终审自行决定去留）：")
+        L.append("")
+        L += ["| 频道 | 排名 | 身份标签 | 拦截原因 |", "|---|---:|---|---|"]
+        for b in blocked:
+            L.append(f"| **{b['name']}** | #{b['rank']} | {b['flags']} | {b['reason']} |")
+        L.append("")
+    else:
+        L += ["_扫描区内本次无 🔴 拦截。_", ""]
+    L += ["---", ""]
+
     L += ["## 推荐卡", ""]
     if cards:
         s_by_url = {s["channel_url"]: s for s in scored}
         for c in cards:
             s = s_by_url.get(c.get("_channel_url"), {})
-            L.append(f"### {c.get('channel_name', '?')}  ·  #{c.get('_rank', '?')}")
+            grade = s.get("action_grade", "")
+            fl = identity_filter.flags_zh(s.get("identity_flags"))
+            L.append(f"### {grade} {c.get('channel_name', '?')}  ·  #{c.get('_rank', '?')}")
             L.append("")
+            if fl:
+                L.append(f"身份标签：{fl}")
+                L.append("")
             # 互链: 该达人的飞书档案(channel_id 取自频道链接末段; 映射里没有就省略)
             cid = (c.get("_channel_url") or "").rstrip("/").rsplit("/", 1)[-1]
             dl = (dossier_links or {}).get(cid)
             if dl:
                 L += [f"[🗂️ 达人档案]({dl})", ""]
-            # 分数表格(≤6 列，数据进表格不堆正文)
-            L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 |", "|---:|---:|---:|---:|---:|---:|",
+            # 分数表格: fit 三分量 + 起势分/潜力分(三层雷达各自透明)
+            L += ["| 排名 | 订阅 | 总分 | 语义 | 甜点 | POV标记 | 起势分 | 潜力分 |",
+                  "|---:|---:|---:|---:|---:|---:|---:|---:|",
                   f"| #{s.get('rank', c.get('_rank', '?'))} | {s.get('subscribers', '?')} | "
-                  f"{s.get('score', '?')} | {s.get('sem', '?')} | {s.get('sweet', '?')} | {s.get('pov', '?')} |", ""]
+                  f"{s.get('score', '?')} | {s.get('sem', '?')} | {s.get('sweet', '?')} | {s.get('pov', '?')} | "
+                  f"{s.get('momentum', '?')} | {s.get('potential', '?')} |", ""]
             for r in (c.get("why_worth_signing") or []):
                 L.append(f"- ✅ 值得签：{r}")
             if c.get("risk"):
@@ -546,7 +613,7 @@ def sync_full_ranking_table(cfg, scored, pool_by_url, dry_run=False):
         return {"ok": False, "error": str(e)}
 
 
-def run_bili_line(bili_cfg_path, today, budget=None, dry_run=False):
+def run_bili_line(bili_cfg_path, today, budget=None, dry_run=False, main_cfg=None):
     """B站(国内侧)线: 小预算刷新采集 -> 打分排序 -> B站榜单(飞书第三张表) -> 返回摘要供日报。
     与 YouTube 线串行(主跑完再跑)。B站采集器 CLI = collect_bilibili.py --config <bili配置> [--reset]。
     dry_run: 采集(只读公开元数据)与打分照常跑，只跳过第 3 步真实灌表(同 sync_full_ranking_table 的理由)。
@@ -576,6 +643,13 @@ def run_bili_line(bili_cfg_path, today, budget=None, dry_run=False):
         bpool_by_url = {r["channel_url"]: r for r in brows}
         for s in bscored:
             s["themes_hit"] = themes_hit(bpool_by_url.get(s["channel_url"], {}), tkw)
+        # 身份过滤器: B站榜单也贴行动分级。identity 词典是双语共享的, bili config 没有 identity 节时
+        # 借用主 config 的(main_cfg 由调用方传入)。词典中文词专治 B站那批错误(理财/玄学/带货/搬运)。
+        if "identity" not in bcfg and main_cfg and "identity" in main_cfg:
+            bcfg = dict(bcfg)
+            bcfg["identity"] = main_cfg["identity"]
+            # leak 泄漏词用 bili 自己的(含 一镜到底/全景相机x5 等 B站措辞), 已在 bcfg 里, 不覆盖。
+        identity_filter.annotate_scored(bscored, bpool_by_url, bcfg)
         res["top5"] = [{"rank": s["rank"], "name": s["channel_name"],
                         "subs": s.get("subscribers"), "score": s["score"]} for s in bscored[:5]]
         # 落一份 B站排序产物到 runs(便于复现与排查)
@@ -740,7 +814,33 @@ def main():
     with open(ranked_path, "w") as f:
         json.dump(scored, f, ensure_ascii=False, indent=1)
 
+    # 起势层(momentum)集成: RSS 采集(只读, dry-run 保留) -> momentum 打分 -> 融合出 potential。
+    # ranked.json 已落盘(collect_rss 按 fit 排名决定拉取优先级)。momentum 缺失时 fuse 优雅降级为全中性。
+    momentum_path = run_rss_momentum(args.config, POOL, ranked_path, today)
+    fuse_momentum(scored, momentum_path, cfg)
+
+    # 身份过滤器(产品路径): 给每个 scored 行贴 identity_flags / action_grade / grade_reasons。
+    # 铁律: 只在产品展示层跑, backtest 官方指标不经此。词典可看品牌 token(already_partner 需要)。
+    identity_filter.annotate_scored(scored, pool_by_url, cfg)
+
+    # 融合+身份标注后重写 ranked.json(含 momentum/potential/action_grade, 供下游 explain/表格/记分板)
+    with open(ranked_path, "w") as f:
+        json.dump(scored, f, ensure_ascii=False, indent=1)
+
     cards = gen_cards(args.config, ranked_path, out_dir, top_n=smoke_top_n, max_cards=smoke_max_cards)
+
+    # 🔴 拦截的频道不进推荐卡(Max 拍板: 系统预标注辅助人工终审, 推荐卡只放可外联/待核验)。
+    # 绝不物理删除数据: 全池榜单表仍保留 🔴 行 + 拦截原因列。这里只是推荐卡出口的过滤。
+    grade_by_url = {s["channel_url"]: s.get("action_grade") for s in scored}
+    cards = [c for c in cards if grade_by_url.get(c.get("_channel_url")) != "🔴"]
+
+    # 今日拦截清单(给日报「今日拦截 N 个」用): 取推荐卡扫描区(top_n_scan)内被判 🔴 的频道,
+    # 列出名字 + 首条拦截原因, 让运营一眼复核。这是"本会拦掉哪些否则会被推荐的候选"的诚实口径。
+    scan_n = smoke_top_n or cfg.get("explain", {}).get("top_n_scan", 100)
+    blocked = [{"name": s.get("channel_name"), "rank": s.get("rank"),
+                "flags": identity_filter.flags_zh(s.get("identity_flags")),
+                "reason": (s.get("grade_reasons") or [""])[0]}
+               for s in scored[:scan_n] if s.get("action_grade") == "🔴"]
 
     # explain 之后的三件富化: 跨平台重扫 -> 当日推荐卡频道档案 -> top50 评论采样。
     # 全部温和降级(失败只记 log 不中断主链)。评论采样的 top_n 跟随 --top-n 冒烟参数。
@@ -767,7 +867,7 @@ def main():
         pass
 
     report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run,
-                               csv_path, scoreboard_results, dossier_links=dossier_links)
+                               csv_path, scoreboard_results, dossier_links=dossier_links, blocked=blocked)
 
     n = len(scored)
     dtxt = ""
@@ -792,7 +892,7 @@ def main():
     # dry-run 下采集/打分照常跑(只读公开元数据), 只跳过榜单真实灌表(同上一条理由)。
     bili_res = None
     if not args.skip_bili and cfg.get("platform") != "bilibili" and os.path.exists(args.bili_config):
-        bili_res = run_bili_line(args.bili_config, today, budget=args.budget, dry_run=args.dry_run)
+        bili_res = run_bili_line(args.bili_config, today, budget=args.budget, dry_run=args.dry_run, main_cfg=cfg)
         append_bili_section(report_path, bili_res)
 
     git_res = "skipped: dry-run" if args.dry_run else commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
