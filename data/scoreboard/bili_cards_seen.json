@@ -1,5 +1,24 @@
 {
- "https://space.bilibili.com/1867759108": "2026-07-08",
- "https://space.bilibili.com/392367725": "2026-07-08",
- "https://space.bilibili.com/484139816": "2026-07-08"
+ "https://space.bilibili.com/1867759108": {
+  "date": "2026-07-08",
+  "reason": "🤖AI复核疑似内容离题(conf 0.80): 主轴电动车续航评测属汽车类非运动影像; W18 审计❌同判",
+  "status": "rejected"
+ },
+ "https://space.bilibili.com/338379427": {
+  "date": "2026-07-08",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/392367725": {
+  "date": "2026-07-08",
+  "reason": "🤖AI复核疑似搬运/合集(conf 0.95): 标题反复出现他人创作者ID(andre_rankle/El Gringo等), 简介自称'花飞图书馆'; W18 审计❌同判",
+  "status": "rejected"
+ },
+ "https://space.bilibili.com/484139816": {
+  "date": "2026-07-08",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/541463818": {
+  "date": "2026-07-08",
+  "status": "carded"
+ }
 }

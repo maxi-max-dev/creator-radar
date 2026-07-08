@@ -924,9 +924,17 @@ def append_bili_cards_section(report_path, bcards_res):
             L += [f"_B站推荐卡本次 0 张（{r.get('note', '无符合条件的 🟡 新频道')}）。_", ""]
         else:
             names = r.get("names") or []
-            L.append(f"今天给达人推荐表补了 **{r.get('picked')}** 张 B站卡（平台=B站，红绿灯 🟡）：{'、'.join(names)}")
+            L.append(f"今天给达人推荐表补了 **{r.get('picked')}** 张 B站卡（平台=B站，红绿灯 🟡，已过 AI 复核闸门）：{'、'.join(names)}")
             L.append("")
             L.append("> B站无上传日期，红绿灯只到 🟡，活性请人工核一眼近期更新再定；完整档案/dossier 暂留空（关联只指向 YouTube 全池表）。")
+            L.append("")
+        # W22.1: 闸门判退如实披露(与「今日拦截」同款诚实口径, 让运营一眼复核闸门拦了谁)
+        gate = r.get("gate") or {}
+        rej = gate.get("rejected") or []
+        if rej:
+            L.append(f"AI 闸门判退 **{len(rej)}** 个（不出卡，仍留 B站榜单表供终审）：")
+            for x in rej:
+                L.append(f"- {x.get('name')}：{x.get('reason')}")
             L.append("")
         with open(report_path, "a") as f:
             f.write("\n".join(L) + "\n")
@@ -1156,6 +1164,10 @@ def main():
                 # bitable 凭证/avatar_enrich 开关走 B站 config; 缺则借主 config(两者同一份 base 凭证)。
                 if not bcfg.get("bitable"):
                     bcfg["bitable"] = cfg.get("bitable", {})
+                # W22.1: AI 闸门配置同样借主 config(与 run_bili_line 的 ai_cfg 同款借用逻辑),
+                # 保证闸门的 model/超时/conf 阈值与主链复核层一个口径。
+                if not bcfg.get("ai_review") and cfg.get("ai_review"):
+                    bcfg["ai_review"] = cfg["ai_review"]
                 bili_cards_res = bili_cards.push_bili_cards(bcfg, bili_res["scored"], today, dry_run=args.dry_run)
                 append_bili_cards_section(report_path, bili_cards_res)
                 print("B站推荐卡:", json.dumps(bili_cards_res, ensure_ascii=False))
