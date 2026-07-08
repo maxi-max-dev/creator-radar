@@ -11,6 +11,7 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 from radar_lib import load_config, load_pool, score_pool, fuse_rising
 import identity_filter
+import ai_review
 import schema
 
 # 引擎版本戳(打进 scoreboard picks, 让每期预测可追溯是哪版引擎下的注)。
@@ -518,7 +519,7 @@ def _blocked_reason_dist(blocked):
 
 
 def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run, csv_path=None,
-                 scoreboard_results=None, dossier_links=None, blocked=None):
+                 scoreboard_results=None, dossier_links=None, blocked=None, ai_review_stats=None):
     """日报 markdown(三词化 · 结论先行)。开头三行结论(建议联系谁/拦下谁/对账状态)，
     推荐卡每张一个小节(三词分数表 + 证据 + 值得签)，「窜升榜/排名 diff」已退役(起势层接班)。
     dossier_links: {channel_id: 档案飞书链接}(互链，拿不到就温和省略; 上传前 push 流程还会按最新映射刷新一遍)。"""
@@ -573,6 +574,16 @@ def write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_
         L.append("")
     else:
         L += ["_扫描区内本次无 🔴 拦截。_", ""]
+    # AI 复核层退回(规则灯之上的语义过滤; 只降级不升级, 🟢→🟡 + 🤖AI复核 标)。
+    ar = ai_review_stats or {}
+    if ar.get("enabled"):
+        dg = ar.get("downgraded_green", 0)
+        fy = ar.get("flagged_yellow", 0)
+        rv = ar.get("reviewed", 0)
+        L.append("**AI 复核退回 %d 个**（复核 %d 个候选：🟢→🟡 降级 %d，🟡 加疑点标 %d）"
+                 "——规则灯之上的语义过滤，把疑似搬运/合集、机构带货、内容离题的候选退出可直接联系队列，"
+                 "只降级不升级、不物理删除，仍留在全池榜单表供人工终审。" % (dg, rv, dg, fy))
+        L.append("")
     L += ["---", ""]
 
     L += ["## 推荐卡", ""]
@@ -817,6 +828,12 @@ def run_bili_line(bili_cfg_path, today, budget=None, dry_run=False, main_cfg=Non
             bcfg["identity"] = main_cfg["identity"]
             # leak 泄漏词用 bili 自己的(含 一镜到底/全景相机x5 等 B站措辞), 已在 bcfg 里, 不覆盖。
         identity_filter.annotate_scored(bscored, bpool_by_url, bcfg)
+        # AI 复核层(B站线): 同 YT, 规则灯之上语义过滤只降级不升级(StoneFPV/大鹏 这类搬运/带货正是 B站坑)。
+        # B站无上传日期→无🟢, 范围退化为 fit topN; ai_review 配置借用主 config(bcfg 已并入 main identity, ai_review 走同一 cfg 节)。
+        ai_cfg = bcfg if bcfg.get("ai_review") else (main_cfg or bcfg)
+        res["ai_review"] = ai_review.review_scored(bscored, bpool_by_url, ai_cfg, today=today,
+                                                   line_label="/BILI", progress=dry_run)
+        print("AI 复核(B站):", json.dumps(res["ai_review"], ensure_ascii=False))
         res["top5"] = [{"rank": s["rank"], "name": s["channel_name"],
                         "subs": s.get("subscribers"), "score": s["score"]} for s in bscored[:5]]
         # 落一份 B站排序产物到 runs(便于复现与排查)
@@ -998,7 +1015,16 @@ def main():
     # 铁律: 只改产品路径展示/排序, fit 的 score/rank 永远不动; backtest 官方指标零引用。
     fuse_rising(scored, momentum_path, trend_path, breakout_path, cfg)
 
-    # 融合+身份标注后重写 ranked.json(含 momentum/trend/breakout/rising/potential/action_grade, 供下游取用)
+    # AI 复核层(2026-07-08 Max 拍板): 规则灯之上再加一层语义过滤, **只降级不升级**。
+    # 必须在 annotate/fuse 之后(需要终态 action_grade), 在 ranked.json 重写之前(降级要被下游看到)。
+    # 复核范围=fit topN ∪ 全部🟢, 受 max_candidates_per_line/budget_seconds 两道闸门限流(在线自限时)。
+    # 就地把 🟢 疑似搬运/机构/离题的降 🟡 + 贴 🤖AI复核 标 + 落中文理由(走拦截原因列)。
+    # 铁律: 只减不加、绝不物理删、already_partner 零接触; 整层失败优雅跳过不断链; --dry-run 照跑(本地 ollama 无网络副作用)。
+    ai_review_stats = ai_review.review_scored(scored, pool_by_url, cfg, today=today,
+                                              line_label="/YT", progress=args.dry_run)
+    print("AI 复核(YT):", json.dumps(ai_review_stats, ensure_ascii=False))
+
+    # 融合+身份标注+AI复核后重写 ranked.json(含 momentum/trend/breakout/rising/potential/action_grade, 供下游取用)
     with open(ranked_path, "w") as f:
         json.dump(scored, f, ensure_ascii=False, indent=1)
 
@@ -1042,7 +1068,8 @@ def main():
     scoreboard_results = check_scoreboard(today, scored, cfg)
 
     report_path = write_report(today, collect_res, scored, newcomers, jumpers, cards, pool_by_url, first_run,
-                               csv_path, scoreboard_results, dossier_links=dossier_links, blocked=blocked)
+                               csv_path, scoreboard_results, dossier_links=dossier_links, blocked=blocked,
+                               ai_review_stats=ai_review_stats)
 
     n = len(scored)
     dtxt = ""

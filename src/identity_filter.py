@@ -442,6 +442,8 @@ FLAG_LABELS = {
     "trend_chaser": "⚠️蹭热点",
     # 在涨证据 >80% 来自同一条视频(radar_lib.fuse_rising 追加): 只标注不改分(Max 拍板采纳)
     "single_video_driven": "⚠️单视频驱动",
+    # AI 复核层(src/ai_review.py 追加): 规则灯之上语义复核, 只降级不升级(🟢→🟡 / 🟡 加标)。
+    "ai_review_flagged": "🤖AI复核",
 }
 
 

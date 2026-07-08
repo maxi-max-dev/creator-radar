@@ -216,6 +216,20 @@
     "top_n_scan": 100
   },
 
+  "ai_review": {
+    "notes": "AI 复核层(2026-07-08 Max 拍板): 规则红绿灯之上再加一层语义过滤, 只减不加(AI 只有降级权: 🟢→🟡 / 🟡 加标, 绝不升级/自动🔴/物理删)。复核范围=每平台 fit top_n ∪ 全部🟢, 再受 max_candidates_per_line + budget_seconds 两道闸门限流让在线主链自限时(实测 qwen3:8b 思考态单候选~50s, 故在线只复核少量高 fit 候选; 离线验收用 --all 把闸门开大复核全量出数)。喂本地 ollama qwen3:8b 素材=频道名/简介/近期标题/命中主题/订阅/脱敏标签, 严格 JSON, 解析失败重试1次后跳过(宁可漏不可炸)。已合作/正例零接触。结果缓存 data/ai_review/(gitignore, 按日期+channel_id 幂等)。confidence_threshold 以下的负面判定不降级(防误退好人)。--dry-run 照跑(本地无网络副作用)。",
+    "enabled": true,
+    "model": "qwen3:8b",
+    "endpoint": "http://127.0.0.1:11434/api/chat",
+    "temperature": 0.0,
+    "timeout_seconds": 90,
+    "top_n": 40,
+    "max_candidates_per_line": 12,
+    "budget_seconds": 600,
+    "confidence_threshold": 0.70,
+    "titles_max": 8
+  },
+
   "cross_platform": {
     "notes": "跨平台矩阵检测(零网络)。正则扫池子文本字段，检出 IG/TikTok/Facebook/X/个人网站的链接与 handle。会经营多平台矩阵的创作者商业成熟度更高，是选人信号，进达人档案。run_radar 每日采集后重扫，幂等重写整个 cross_platform.jsonl。纯机械提取无可调数值，此节仅作说明与开关。",
     "enabled": true
@@ -231,10 +245,10 @@
   },
 
   "transcripts": {
-    "notes": "字幕记录层(内容打标地基语料+原始数据全记录)。对当日排序 top_channels 频道每频道最近 videos_per_channel 视频拉字幕清洗落盘。语言优先人工字幕命中 langs，否则自动字幕原声轨(*-orig 真源语言，非机翻)，再退回 langs 兜底。预算红线每天<=budget_videos_per_day 视频，节流复用 collect.throttle_seconds，单视频失败跳过。video 级去重账本 fetched_index.json 抓过永不重抓，无字幕记占位防重试。禁下载视频/音频本体(--skip-download 恒开)。产出 data/transcripts/ 保持 gitignore(整段字幕=第三方版权内容)。",
-    "top_channels": 50,
+    "notes": "字幕记录层(内容打标地基语料+原始数据全记录)。对当日排序 top_channels 频道每频道最近 videos_per_channel 视频拉字幕清洗落盘。语言优先人工字幕命中 langs，否则自动字幕原声轨(*-orig 真源语言，非机翻)，再退回 langs 兜底。预算红线每天<=budget_videos_per_day 视频，节流复用 collect.throttle_seconds，单视频失败跳过。video 级去重账本 fetched_index.json 抓过永不重抓，无字幕记占位防重试。禁下载视频/音频本体(--skip-download 恒开)。产出 data/transcripts/ 保持 gitignore(整段字幕=第三方版权内容)。2026-07-08 W19 扩量: top_channels 50→100、budget_videos_per_day 150→300(标签验收铺量); 单视频超时走 collect 层, 幂等去重账本挡重抓, 预算翻倍主要拉长明晨心跳时长不影响在线主链。",
+    "top_channels": 100,
     "videos_per_channel": 3,
-    "budget_videos_per_day": 150,
+    "budget_videos_per_day": 300,
     "langs": ["en"]
   },
 

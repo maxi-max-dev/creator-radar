@@ -15,3 +15,5 @@ data/comments/
 data/transcripts/
 # 打标 raw 视图含第三方字幕短引句，不进公开仓库；for_scoring 纯标签可进。
 data/tags/tags_raw.jsonl
+# AI 复核层缓存(每日 verdict)：瞬时产出，不进版本库。
+data/ai_review/
