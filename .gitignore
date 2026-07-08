@@ -17,3 +17,5 @@ data/transcripts/
 data/tags/tags_raw.jsonl
 # AI 复核层缓存(每日 verdict)：瞬时产出，不进版本库。
 data/ai_review/
+# 达人头像缓存(公开元数据 og:image, 只取图片本体; 绝不下载视频/音频)。瞬时产出不进公开仓库。
+data/avatars/

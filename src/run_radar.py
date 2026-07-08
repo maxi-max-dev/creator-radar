@@ -744,11 +744,38 @@ def push_bitable(cfg, rows):
         res = _feishu_call("POST",
                            f"/bitable/v1/apps/{cred['app_token']}/tables/{cred['table_id']}/records/batch_create",
                            token=tok, body={"records": records})
-        if res.get("code") == 0:
-            return f"appended {len(records)} rows"
-        return f"batch_create failed: code={res.get('code')} {str(res.get('msg'))[:80]}"
+        if res.get("code") != 0:
+            return f"batch_create failed: code={res.get('code')} {str(res.get('msg'))[:80]}"
+        # W21 门面富化(失败安全, 绝不挡主链): 给刚追加的新卡回填 频道头像 + 完整档案关联。
+        # batch_create 按序返回 record_id, 与 rows 对齐; 开关 cfg.bitable.avatar_enrich(默认开)。
+        enrich_msg = _enrich_new_cards(cfg, rows, res)
+        return f"appended {len(records)} rows{enrich_msg}"
     except Exception as e:
         return f"error: {e}"
+
+
+def _enrich_new_cards(cfg, rows, batch_res):
+    """W21: 给 push_bitable 刚追加的新卡富化头像+关联。整块 try 包住, 任何失败只返回提示串, 绝不抛。
+    默认开(cfg.bitable.avatar_enrich != False); 头像与关联各自失败安全(见 cards_enrich.enrich_records)。"""
+    try:
+        if cfg.get("bitable", {}).get("avatar_enrich") is False:
+            return " (enrich off)"
+        created = (batch_res.get("data") or {}).get("records") or []
+        targets = []
+        for row, rec in zip(rows, created):
+            rid = rec.get("record_id")
+            if rid:
+                targets.append({"record_id": rid, "name": row.get("频道名", ""),
+                                "url": row.get("频道链接", "")})
+        if not targets:
+            return ""
+        import cards_enrich
+        r = cards_enrich.enrich_records(cfg, targets)
+        if r.get("ok"):
+            return f" (enrich: 头像 {r.get('avatar_ok')}/{r.get('avatar_ok', 0) + r.get('avatar_fail', 0)}, 关联 {r.get('link_ok')})"
+        return f" (enrich skipped: {str(r.get('error'))[:50]})"
+    except Exception as e:
+        return f" (enrich err: {str(e)[:50]})"
 
 
 def push_feishu_docs(cfg, report_path, stats=None):

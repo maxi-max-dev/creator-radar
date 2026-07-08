@@ -264,8 +264,9 @@
   },
 
   "bitable": {
-    "notes": "飞书多维表格出口。敏感凭证(app_id/app_secret/app_token/table_id)一律不进 repo，全在下面这个本机文件里(chmod 600)。字段 schema 与 cards_table.csv 同构，状态列永远不写。",
-    "credentials_path": "~/.config/creator-radar/feishu.json"
+    "notes": "飞书多维表格出口。敏感凭证(app_id/app_secret/app_token/table_id)一律不进 repo，全在下面这个本机文件里(chmod 600)。字段 schema 与 cards_table.csv 同构，状态列永远不写。avatar_enrich=cards 表新卡是否自动回填频道头像(公开元数据 og:image，绝不下视频/音频本体)+完整档案关联；默认开，任一步失败静默留空绝不挡主链，置 false 可整体关闭。",
+    "credentials_path": "~/.config/creator-radar/feishu.json",
+    "avatar_enrich": true
   },
 
   "feishu_docs": {

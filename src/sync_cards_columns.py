@@ -30,10 +30,8 @@ FT_TEXT, FT_NUMBER, FT_MULTI = 1, 2, 4
 NEW_FIELDS = [("起势分", FT_NUMBER), ("潜力分", FT_NUMBER), ("浪层分", FT_NUMBER), ("破圈比", FT_NUMBER),
               ("红绿灯", FT_TEXT), ("身份标签", FT_TEXT),
               (schema.COL_SUBS_TEXT, FT_TEXT), (schema.COL_THEME_TAGS, FT_MULTI)]
-# 主题标签多选预置选项(中文标签来自 schema.THEME_LABELS)。cards 表加此列时一次配好。
-_THEME_COLOR = {"POV原生": 5, "真实vlog": 6, "长途纪录": 7, "器材玩法": 9, "硬核技术": 10, "极限挑战": 11}
-_FIELD_OPTIONS = {schema.COL_THEME_TAGS: [{"name": lbl, "color": _THEME_COLOR.get(lbl, 4)}
-                                          for lbl in schema.THEME_LABELS.values()]}
+# 主题标签多选预置选项: 单一来源 = schema.THEME_OPTIONS(W21 收拢, 原本地副本已删)。cards 表加此列时一次配好。
+_FIELD_OPTIONS = {schema.COL_THEME_TAGS: schema.THEME_OPTIONS}
 
 
 def _call(method, path, token=None, body=None):

@@ -46,25 +46,9 @@ _FT = {
     schema.COL_EVIDENCE: FT_TEXT, "档案": FT_URL, "入池日期": FT_TEXT,
 }
 
-# 预置选项 + 颜色(飞书 color index 0-54)。建字段时一次配好, 写入端只给选项名, 飞书自动上色。
-# 红绿灯单选四态: 🟢绿 / 🟡黄 / 🔴红 / 🏢蓝(官方联动)。
-_LIGHT_OPTIONS = [
-    {"name": "🟢", "color": 3},    # 绿
-    {"name": "🟡", "color": 1},    # 黄
-    {"name": "🔴", "color": 0},    # 红
-    {"name": "🏢官方联动", "color": 8},   # 蓝(区别于三色灯, Max: 别家公司变个颜色转官方 BD)
-]
-# 主题标签多选六项(中文标签来自 schema.THEME_LABELS), 各配一色便于一眼分辨。
-_THEME_COLOR = {
-    "POV原生": 5, "真实vlog": 6, "长途纪录": 7, "器材玩法": 9, "硬核技术": 10, "极限挑战": 11,
-}
-_THEME_OPTIONS = [{"name": lbl, "color": _THEME_COLOR.get(lbl, 4)} for lbl in schema.THEME_LABELS.values()]
-
-# 列名 -> 预置选项(仅 select/multi 列有)。_reconcile_fields 建这些列时带上 property.options。
-_FIELD_OPTIONS = {
-    schema.COL_LIGHT: _LIGHT_OPTIONS,
-    schema.COL_THEME_TAGS: _THEME_OPTIONS,
-}
+# 预置选项 + 颜色: 单一来源 = schema.FIELD_OPTIONS(W21 收拢, 原来这里的本地副本已删)。
+# 红绿灯四态(绿/黄/红/蓝官方联动) + 主题六色, 全在 schema。建字段带 options, 写入端只给选项名飞书自动上色。
+_FIELD_OPTIONS = schema.FIELD_OPTIONS
 
 FULL_RANKING_FIELDS = [(n, _FT[n]) for n in schema.FULL_RANKING_COLUMNS]
 
@@ -198,9 +182,13 @@ def _migrate_field_names(token, app_token, tid, renames):
 
 
 def _reconcile_fields(token, app_token, tid, fields):
-    """幂等补字段: 查现有字段名, 只建缺的。返回本次新建的字段名列表。
+    """幂等补字段: 查现有字段名, 只建缺的; 建完再幂等复位「已存在字段」的颜色/进度条(防重建被冲掉)。
+    返回本次新建的字段名列表。
     W17: select/multi 字段(红绿灯/主题标签)建时带 property.options(预置选项 + 颜色), 飞书写入端只给选项名即可。
-    W20: 建字段时一并声明显示格式(数字列 formatter)与描述(schema 单一来源), 新表重建不丢格式/自解释。"""
+    W20: 建字段时一并声明显示格式(数字列 formatter)与描述(schema 单一来源), 新表重建不丢格式/自解释。
+    W21: 新建进度条列(对路分/在涨分)带 ui_type=Progress; 且新增「复位」步——对表上已存在的
+         红绿灯/主题标签/进度条列, 用 PUT 幂等把 schema 的颜色/进度条打回去, 保证每日主链
+         先清后写 或 任何人手动改乱都不会让观感退化(飞书对无变化的 PUT 回 1254606 DataNotChange, 视作成功)。"""
     existing = _list_field_names(token, app_token, tid)
     added = []
     for name, ftype in fields:
@@ -213,6 +201,10 @@ def _reconcile_fields(token, app_token, tid, fields):
         # W20: 数字列显示格式(保留两位小数/千分位/整数, schema.FIELD_FORMATTERS 单一来源)。
         if ftype == FT_NUMBER and name in schema.FIELD_FORMATTERS:
             prop["formatter"] = schema.FIELD_FORMATTERS[name]
+        # W21: 进度条列(对路分/在涨分)建时即带 Progress ui_type + 0-1 range(ui_type 是 field 顶层键, 非 property)。
+        if name in schema.FIELD_UI_PROGRESS:
+            prop.update(schema.FIELD_UI_PROGRESS[name])
+            body["ui_type"] = "Progress"
         if prop:
             body["property"] = prop
         # W20: 字段描述(schema.FIELD_DESCRIPTIONS 单一来源; 描述须为对象格式)。
@@ -223,7 +215,69 @@ def _reconcile_fields(token, app_token, tid, fields):
         if c.get("code") == 0:
             added.append(name)
         time.sleep(0.1)
+    # W21 复位: 已存在的颜色/进度条列, 幂等打回 schema 定义(防冲掉)。只动这几类, 不碰其它列。
+    _restore_field_display(token, app_token, tid)
     return added
+
+
+def _restore_field_display(token, app_token, tid):
+    """W21 幂等复位: 把表上「已存在」的 红绿灯/主题标签 选项颜色、对路分/在涨分 进度条,
+    按 schema 定义 PUT 回去。飞书对无变化的 PUT 回 code=1254606(DataNotChange), 视作成功(观感已就位)。
+    绝不改数据, 只改字段显示属性; 只处理 schema 声明过的富化列, 其余字段一概不碰。返回操作摘要 dict。"""
+    fmeta = {}   # name -> (field_id, type, ui_type, property)
+    page_token = None
+    for _ in range(50):
+        path = "/bitable/v1/apps/%s/tables/%s/fields?page_size=100" % (app_token, tid)
+        if page_token:
+            path += "&page_token=" + page_token
+        r = _feishu_call("GET", path, token=token)
+        if r.get("code") != 0:
+            return {"ok": False, "error": "list fields failed"}
+        data = r.get("data", {})
+        for it in data.get("items", []):
+            if it.get("field_name") and it.get("field_id"):
+                fmeta[it["field_name"]] = (it["field_id"], it.get("type"),
+                                           it.get("ui_type"), it.get("property") or {})
+        page_token = data.get("page_token")
+        if not data.get("has_more"):
+            break
+    OK = (0, 1254606)  # 1254606 = DataNotChange(已是目标态), 与成功同义
+    restored = []
+    # 选项颜色(红绿灯/主题标签): PUT 现存选项, 带 id 保历史选项、按 schema 名字对齐颜色。
+    # ⚠️只对「真的是单选/多选(type 3/4)」的列动手: cards 表红绿灯是历史 Text 列(铁律不改类型), 必须跳过。
+    for name, opts_def in _FIELD_OPTIONS.items():
+        if name not in fmeta:
+            continue
+        fid, ftype, _uit, prop = fmeta[name]
+        if ftype not in (FT_SINGLE, FT_MULTI):   # 非 select 列(如 cards 的文本红绿灯): 不碰
+            continue
+        cur = {o.get("name"): o for o in (prop.get("options") or [])}
+        merged = []
+        for od in opts_def:                       # schema 定义的选项(带目标颜色)
+            ex = cur.get(od["name"])
+            merged.append({"id": ex["id"], "name": od["name"], "color": od["color"]} if ex
+                          else {"name": od["name"], "color": od["color"]})
+        for nm, o in cur.items():                 # 表上有但 schema 没有的存量选项: 原样保留不丢
+            if nm not in {od["name"] for od in opts_def}:
+                merged.append({"id": o["id"], "name": nm, "color": o.get("color", 0)})
+        r = _feishu_call("PUT", "/bitable/v1/apps/%s/tables/%s/fields/%s" % (app_token, tid, fid),
+                         token=token, body={"field_name": name, "type": ftype, "property": {"options": merged}})
+        if r.get("code") in OK:
+            restored.append("%s(色)" % name)
+        time.sleep(0.1)
+    # 进度条(对路分/在涨分): 若现状不是 Progress, PUT 成 Progress + 0-1 range。只对 Number 列动手。
+    for name, ui in schema.FIELD_UI_PROGRESS.items():
+        if name not in fmeta:
+            continue
+        fid, ftype, uit, _prop = fmeta[name]
+        if ftype != FT_NUMBER:                   # 防御: 只对数字列设进度条
+            continue
+        r = _feishu_call("PUT", "/bitable/v1/apps/%s/tables/%s/fields/%s" % (app_token, tid, fid),
+                         token=token, body={"field_name": name, "type": FT_NUMBER, "ui_type": "Progress", "property": dict(ui)})
+        if r.get("code") in OK:
+            restored.append("%s(进度条)" % name)
+        time.sleep(0.1)
+    return {"ok": True, "restored": restored}
 
 
 def _migrate_select_fields(token, app_token, tid):
