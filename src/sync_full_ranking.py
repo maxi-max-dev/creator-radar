@@ -199,15 +199,25 @@ def _migrate_field_names(token, app_token, tid, renames):
 
 def _reconcile_fields(token, app_token, tid, fields):
     """幂等补字段: 查现有字段名, 只建缺的。返回本次新建的字段名列表。
-    W17: select/multi 字段(红绿灯/主题标签)建时带 property.options(预置选项 + 颜色), 飞书写入端只给选项名即可。"""
+    W17: select/multi 字段(红绿灯/主题标签)建时带 property.options(预置选项 + 颜色), 飞书写入端只给选项名即可。
+    W20: 建字段时一并声明显示格式(数字列 formatter)与描述(schema 单一来源), 新表重建不丢格式/自解释。"""
     existing = _list_field_names(token, app_token, tid)
     added = []
     for name, ftype in fields:
         if name in existing:
             continue
         body = {"field_name": name, "type": ftype}
+        prop = {}
         if name in _FIELD_OPTIONS:
-            body["property"] = {"options": _FIELD_OPTIONS[name]}
+            prop["options"] = _FIELD_OPTIONS[name]
+        # W20: 数字列显示格式(保留两位小数/千分位/整数, schema.FIELD_FORMATTERS 单一来源)。
+        if ftype == FT_NUMBER and name in schema.FIELD_FORMATTERS:
+            prop["formatter"] = schema.FIELD_FORMATTERS[name]
+        if prop:
+            body["property"] = prop
+        # W20: 字段描述(schema.FIELD_DESCRIPTIONS 单一来源; 描述须为对象格式)。
+        if name in schema.FIELD_DESCRIPTIONS:
+            body["description"] = {"text": schema.FIELD_DESCRIPTIONS[name], "disable_sync": True}
         c = _feishu_call("POST", "/bitable/v1/apps/%s/tables/%s/fields" % (app_token, tid),
                          token=token, body=body)
         if c.get("code") == 0:
@@ -281,6 +291,9 @@ def _ensure_table(token, app_token, table_key, table_name, fields, tables_ledger
             #   1) 改名迁移(老列名 总分/行动分级 -> 对路分/红绿灯, 保历史数据; 否则 reconcile 当缺列重建=重复)。
             #   2) W17 类型迁移(先清后写表): 老文本 红绿灯 → 删, 废弃英文 命中主题 → 删(下一步以单选/多选重建)。
             #   3) 幂等补齐 schema 里但表上缺的字段(在涨分/订阅/主题标签/证据摘要 + 重建的红绿灯单选)。
+            #      **新建字段**自带 W20 显示格式(formatter)+ 描述(见 _reconcile_fields)。
+            #      W20 说明: 既有字段的 formatter/描述已在 2026-07-08 完善批一次性线上打好(逐字段 update),
+            #      不在每日主链重复 patch(省 token/避免多余请求); 只有新表重建或加新列才由此路带格式。
             _migrate_field_names(token, app_token, tid, FIELD_RENAMES)
             _migrate_select_fields(token, app_token, tid)
             _reconcile_fields(token, app_token, tid, fields)
