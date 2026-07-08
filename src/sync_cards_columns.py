@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """达人雷达 · 「当日推荐卡」表(cards 表)幂等加列 + 更新今日已存在行。
 
-盲投审计后, 推荐卡表要加 4 列: 起势分 / 潜力分 / 行动分级 / 身份标签。
+盲投审计后, 推荐卡表要加 4 列(2026-07-08 起列名随三词化: 行动分级->红绿灯)。一次性 bootstrap 脚本, 日常链不调用; 列清单若再改, 先对齐 schema.py。
 本脚本**不 append 新行**(那会重复), 而是:
   1) 幂等建字段(先查字段存在再建)。
   2) search 找到今天(日期=today)的行 -> batch_update 填新列。
@@ -28,7 +28,7 @@ FT_TEXT, FT_NUMBER, FT_MULTI = 1, 2, 4
 # W17(2026-07-08): cards 表新增两列 —— 订阅(双格式文本) + 主题标签(中文多选带色)。
 # 铁律: cards 表有历史, 旧列(命中主题英文文本 / 红绿灯文本)一律**不删不改类型**, 只 ADD 新列。
 NEW_FIELDS = [("起势分", FT_NUMBER), ("潜力分", FT_NUMBER), ("浪层分", FT_NUMBER), ("破圈比", FT_NUMBER),
-              ("行动分级", FT_TEXT), ("身份标签", FT_TEXT),
+              ("红绿灯", FT_TEXT), ("身份标签", FT_TEXT),
               (schema.COL_SUBS_TEXT, FT_TEXT), (schema.COL_THEME_TAGS, FT_MULTI)]
 # 主题标签多选预置选项(中文标签来自 schema.THEME_LABELS)。cards 表加此列时一次配好。
 _THEME_COLOR = {"POV原生": 5, "真实vlog": 6, "长途纪录": 7, "器材玩法": 9, "硬核技术": 10, "极限挑战": 11}
@@ -163,7 +163,7 @@ def main():
             continue
         matched += 1
         f = {
-            "行动分级": s.get("action_grade") or "",
+            "红绿灯": s.get("action_grade") or "",
             "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
             # W17: 主题标签(中文多选数组)。订阅(双格式)仅在有订阅数时写。
             schema.COL_THEME_TAGS: schema.theme_tags_zh(s.get("themes_hit") or []),
