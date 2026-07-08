@@ -26,22 +26,46 @@ ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import schema
 
-# 飞书字段类型: 1=多行文本 2=数字 5=日期 15=超链接
-FT_TEXT, FT_NUMBER, FT_DATE, FT_URL = 1, 2, 5, 15
+# 飞书字段类型: 1=多行文本 2=数字 3=单选 4=多选 5=日期 15=超链接
+FT_TEXT, FT_NUMBER, FT_SINGLE, FT_MULTI, FT_DATE, FT_URL = 1, 2, 3, 4, 5, 15
 
 FULL_RANKING_TABLE_NAME = "全池榜单"
 BILI_RANKING_TABLE_NAME = "B站榜单"
 
 # 列结构单一来源 = schema.py。这里只把列名映射到飞书字段类型(顺序即建表顺序)。
 # 三词化(2026-07-07): 总分->对路分, 行动分级->红绿灯, 新增在涨分; 起势/浪/破圈=工程证据列。
+# W17(2026-07-08): 红绿灯 → 单选(带颜色 🟢🟡🔴🏢); 主题标签 → 多选(中文标签, 各色); 新增 订阅(文本双格式)+ 证据摘要(文本给 AI)。
 # 建字段幂等: _ensure_table 会先查已存在字段, 只补缺的(老表也能加新列); 改名走 migrate_field_names。
 _FT = {
-    "排名": FT_NUMBER, "频道名": FT_TEXT, "频道链接": FT_URL, "订阅数": FT_NUMBER,
+    "排名": FT_NUMBER, "频道名": FT_TEXT, "频道链接": FT_URL,
+    "订阅数": FT_NUMBER, schema.COL_SUBS_TEXT: FT_TEXT,
     schema.COL_FIT: FT_NUMBER, schema.COL_RISING: FT_NUMBER, schema.COL_POTENTIAL: FT_NUMBER,
-    schema.COL_LIGHT: FT_TEXT, "身份标签": FT_TEXT, "拦截原因": FT_TEXT,
+    schema.COL_LIGHT: FT_SINGLE, "身份标签": FT_TEXT, "拦截原因": FT_TEXT,
     "起势分": FT_NUMBER, "浪层分": FT_NUMBER, "破圈比": FT_NUMBER,
-    "命中主题": FT_TEXT, "垂类": FT_TEXT, "语言": FT_TEXT, "档案": FT_URL, "入池日期": FT_TEXT,
+    schema.COL_THEME_TAGS: FT_MULTI, "垂类": FT_TEXT, "语言": FT_TEXT,
+    schema.COL_EVIDENCE: FT_TEXT, "档案": FT_URL, "入池日期": FT_TEXT,
 }
+
+# 预置选项 + 颜色(飞书 color index 0-54)。建字段时一次配好, 写入端只给选项名, 飞书自动上色。
+# 红绿灯单选四态: 🟢绿 / 🟡黄 / 🔴红 / 🏢蓝(官方联动)。
+_LIGHT_OPTIONS = [
+    {"name": "🟢", "color": 3},    # 绿
+    {"name": "🟡", "color": 1},    # 黄
+    {"name": "🔴", "color": 0},    # 红
+    {"name": "🏢官方联动", "color": 8},   # 蓝(区别于三色灯, Max: 别家公司变个颜色转官方 BD)
+]
+# 主题标签多选六项(中文标签来自 schema.THEME_LABELS), 各配一色便于一眼分辨。
+_THEME_COLOR = {
+    "POV原生": 5, "真实vlog": 6, "长途纪录": 7, "器材玩法": 9, "硬核技术": 10, "极限挑战": 11,
+}
+_THEME_OPTIONS = [{"name": lbl, "color": _THEME_COLOR.get(lbl, 4)} for lbl in schema.THEME_LABELS.values()]
+
+# 列名 -> 预置选项(仅 select/multi 列有)。_reconcile_fields 建这些列时带上 property.options。
+_FIELD_OPTIONS = {
+    schema.COL_LIGHT: _LIGHT_OPTIONS,
+    schema.COL_THEME_TAGS: _THEME_OPTIONS,
+}
+
 FULL_RANKING_FIELDS = [(n, _FT[n]) for n in schema.FULL_RANKING_COLUMNS]
 
 # B站榜单列集来自 schema(去掉档案 + 视频级证据)。
@@ -174,18 +198,75 @@ def _migrate_field_names(token, app_token, tid, renames):
 
 
 def _reconcile_fields(token, app_token, tid, fields):
-    """幂等补字段: 查现有字段名, 只建缺的。返回本次新建的字段名列表。"""
+    """幂等补字段: 查现有字段名, 只建缺的。返回本次新建的字段名列表。
+    W17: select/multi 字段(红绿灯/主题标签)建时带 property.options(预置选项 + 颜色), 飞书写入端只给选项名即可。"""
     existing = _list_field_names(token, app_token, tid)
     added = []
     for name, ftype in fields:
         if name in existing:
             continue
+        body = {"field_name": name, "type": ftype}
+        if name in _FIELD_OPTIONS:
+            body["property"] = {"options": _FIELD_OPTIONS[name]}
         c = _feishu_call("POST", "/bitable/v1/apps/%s/tables/%s/fields" % (app_token, tid),
-                         token=token, body={"field_name": name, "type": ftype})
+                         token=token, body=body)
         if c.get("code") == 0:
             added.append(name)
         time.sleep(0.1)
     return added
+
+
+def _migrate_select_fields(token, app_token, tid):
+    """W17 类型迁移(仅 先清后写 表 = 全池/B站, 有历史的 cards 表**不走此路**):
+    把老的**文本** 红绿灯 列换成 单选(带颜色), 并删除废弃的英文 命中主题 文本列(由中文多选 主题标签 取代)。
+
+    先清后写表每天整表重写, 删列/换类型不损历史(反正当天会清空重灌), 故允许:
+      - 红绿灯: 若现存为文本(type 1) → 删旧列; 下一步 _reconcile 会以单选(type 3)重建并配色。
+      - 命中主题: 存在即删(不再要英文 key 文本列, 中文 主题标签 多选替位)。
+    幂等: 只在'旧形态存在'时动手; 已是目标形态则跳过。返回操作记录 dict。"""
+    fields_meta = {}
+    page_token = None
+    for _ in range(50):
+        path = "/bitable/v1/apps/%s/tables/%s/fields?page_size=100" % (app_token, tid)
+        if page_token:
+            path += "&page_token=" + page_token
+        r = _feishu_call("GET", path, token=token)
+        if r.get("code") != 0:
+            break
+        data = r.get("data", {})
+        for it in data.get("items", []):
+            if it.get("field_name") and it.get("field_id") is not None:
+                fields_meta[it["field_name"]] = (it["field_id"], it.get("type"))
+        page_token = data.get("page_token")
+        if not data.get("has_more"):
+            break
+    ops = {"deleted": []}
+    # 红绿灯: 文本(1) → 删, 让 reconcile 以单选(3)重建带颜色。已是单选(3)则不动。
+    if schema.COL_LIGHT in fields_meta:
+        fid, ftype = fields_meta[schema.COL_LIGHT]
+        if ftype == FT_TEXT:
+            d = _feishu_call("DELETE", "/bitable/v1/apps/%s/tables/%s/fields/%s" % (app_token, tid, fid), token=token)
+            if d.get("code") == 0:
+                ops["deleted"].append("%s(旧文本→重建单选)" % schema.COL_LIGHT)
+            time.sleep(0.1)
+    # 命中主题(英文 key 文本列): 存在即删(中文 主题标签 多选替位)。
+    if "命中主题" in fields_meta:
+        fid, _ = fields_meta["命中主题"]
+        d = _feishu_call("DELETE", "/bitable/v1/apps/%s/tables/%s/fields/%s" % (app_token, tid, fid), token=token)
+        if d.get("code") == 0:
+            ops["deleted"].append("命中主题(英文列废弃→中文主题标签替位)")
+        time.sleep(0.1)
+    # W17 收尾: 老改名迁移(总分->对路分 / 行动分级->红绿灯)因目标列已是不同类型(数字/单选)导致 RENAME
+    # 反复 field validation failed, 留下**空的**旧名孤儿列。先清后写表数据已进新列, 孤儿列可安全删。
+    # 只在'旧名与新名同表并存'时删旧名(避免误删真正承载数据的列)。
+    for old_name, new_name in FIELD_RENAMES.items():
+        if old_name in fields_meta and new_name in fields_meta:
+            fid, _ = fields_meta[old_name]
+            d = _feishu_call("DELETE", "/bitable/v1/apps/%s/tables/%s/fields/%s" % (app_token, tid, fid), token=token)
+            if d.get("code") == 0:
+                ops["deleted"].append("%s(空孤儿列, 数据已在 %s)" % (old_name, new_name))
+            time.sleep(0.1)
+    return ops
 
 
 def _ensure_table(token, app_token, table_key, table_name, fields, tables_ledger, cfg):
@@ -196,10 +277,12 @@ def _ensure_table(token, app_token, table_key, table_name, fields, tables_ledger
     if tid:
         chk = _feishu_call("GET", "/bitable/v1/apps/%s/tables/%s/fields?page_size=1" % (app_token, tid), token=token)
         if chk.get("code") == 0:
-            # 表在: 先幂等改名迁移(老列名 总分/行动分级 -> 对路分/红绿灯, 保历史数据),
-            #        再幂等补齐 schema 里但表上缺的字段(在涨分等新列首跑在此补上)。
-            #        顺序要紧: 先改名(否则 reconcile 会把新名当"缺列"再建一个空列 = 重复)。
+            # 表在: 顺序要紧 ——
+            #   1) 改名迁移(老列名 总分/行动分级 -> 对路分/红绿灯, 保历史数据; 否则 reconcile 当缺列重建=重复)。
+            #   2) W17 类型迁移(先清后写表): 老文本 红绿灯 → 删, 废弃英文 命中主题 → 删(下一步以单选/多选重建)。
+            #   3) 幂等补齐 schema 里但表上缺的字段(在涨分/订阅/主题标签/证据摘要 + 重建的红绿灯单选)。
             _migrate_field_names(token, app_token, tid, FIELD_RENAMES)
+            _migrate_select_fields(token, app_token, tid)
             _reconcile_fields(token, app_token, tid, fields)
             return tid, False
         # 账本里的 id 已失效, 落空重建
@@ -246,6 +329,45 @@ def _date_field(iso_day):
     return iso_day or ""
 
 
+subs_dual = schema.subs_dual  # 单一来源 = schema.subs_dual(三表 + CSV 共用)。
+
+
+# 对路分档位口径(证据摘要 & AI 指南共用): 分数 -> 人话档。阈值取自 cards 推荐门槛惯例。
+def _fit_band(score):
+    if score is None:
+        return "对路未知"
+    if score >= 0.60:
+        return "高度对路"
+    if score >= 0.45:
+        return "对路"
+    if score >= 0.30:
+        return "弱对路"
+    return "疑似跑偏"
+
+
+def evidence_summary(s, theme_labels):
+    """W17 证据摘要: 一行拼好给飞书 AI 字段当原料(只用行内已验证数据, 不引外部事实)。
+    组成 = 对路分档 · 中文主题标签 · 在涨证据一句(有则) · 身份标签。缺项跳过, 用「·」连。"""
+    parts = ["对路: " + _fit_band(s.get("score"))]
+    if theme_labels:
+        parts.append("主题: " + "/".join(theme_labels))
+    ev = s.get("rising_evidence")
+    if isinstance(ev, str) and ev.strip():
+        parts.append("在涨: " + ev.strip()[:60])
+    elif s.get("rising") is not None and s.get("rising") > 0:
+        parts.append("在涨分 %.2f" % s["rising"])
+    flags = s.get("identity_flags")
+    if flags:
+        try:
+            import identity_filter
+            zh = identity_filter.flags_zh(flags)
+        except Exception:
+            zh = "、".join(flags)
+        if zh:
+            parts.append("身份: " + zh)
+    return " · ".join(parts)
+
+
 def _flags_zh(flags):
     """身份标签 -> 中文短标签串(复用 identity_filter 的映射, 导入失败则原样拼)。"""
     try:
@@ -266,22 +388,28 @@ def build_full_ranking_records(ranked, pool_by_url, dossier_links, top_dossier_n
         url = s.get("channel_url", "")
         p = pool_by_url.get(url, {})
         cid = url.rstrip("/").rsplit("/", 1)[-1]
+        theme_labels = schema.theme_tags_zh(s.get("themes_hit") or [])  # 中文多选标签数组
+        grade = s.get("action_grade") or ""
+        # 红绿灯单选选项名: 🏢 行的存量选项名是「🏢官方联动」(见 _LIGHT_OPTIONS), 其余=原 emoji。
+        light_opt = "🏢官方联动" if grade == "🏢" else grade
         f = {
             "排名": s.get("rank"),
             "频道名": s.get("channel_name", ""),
             "频道链接": {"link": url, "text": url},
-            schema.COL_LIGHT: s.get("action_grade") or "",   # 红绿灯(原行动分级)
+            schema.COL_LIGHT: light_opt,                          # 红绿灯(单选, 写选项名字符串)
             "身份标签": _flags_zh(s.get("identity_flags")),
-            "命中主题": "、".join(s.get("themes_hit") or []),
+            schema.COL_THEME_TAGS: theme_labels,                  # 主题标签(多选, 写选项名数组)
+            schema.COL_EVIDENCE: evidence_summary(s, theme_labels),  # 证据摘要(给 AI 当原料)
             "垂类": p.get("vertical") or "",
             "语言": p.get("lang") or p.get("country") or "",
             "入池日期": _date_field(p.get("first_seen") or p.get("last_refreshed")),
         }
-        # 拦截原因: 只有 🔴 行写首条原因(🟡 的核验原因也顺带写, 供人工看; 🟢 留空)
-        if s.get("action_grade") in ("🔴", "🟡") and s.get("grade_reasons"):
+        # 拦截原因: 🔴/🟡/🏢 行都写首条原因(🏢=官方联动原因, 供人工看; 🟢 留空)
+        if grade in ("🔴", "🟡", "🏢") and s.get("grade_reasons"):
             f["拦截原因"] = s["grade_reasons"][0]
         if s.get("subscribers") is not None:
             f["订阅数"] = s["subscribers"]
+            f[schema.COL_SUBS_TEXT] = subs_dual(s["subscribers"])  # 订阅(双格式文本)
         if s.get("score") is not None:
             f[schema.COL_FIT] = round(s["score"], 4)          # 对路分(原总分)
         if s.get("rising") is not None:

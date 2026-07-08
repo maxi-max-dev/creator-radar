@@ -22,10 +22,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.dirname(HERE)
 sys.path.insert(0, HERE)
 import identity_filter
+import schema
 
-FT_TEXT, FT_NUMBER = 1, 2
+FT_TEXT, FT_NUMBER, FT_MULTI = 1, 2, 4
+# W17(2026-07-08): cards 表新增两列 —— 订阅(双格式文本) + 主题标签(中文多选带色)。
+# 铁律: cards 表有历史, 旧列(命中主题英文文本 / 红绿灯文本)一律**不删不改类型**, 只 ADD 新列。
 NEW_FIELDS = [("起势分", FT_NUMBER), ("潜力分", FT_NUMBER), ("浪层分", FT_NUMBER), ("破圈比", FT_NUMBER),
-              ("行动分级", FT_TEXT), ("身份标签", FT_TEXT)]
+              ("行动分级", FT_TEXT), ("身份标签", FT_TEXT),
+              (schema.COL_SUBS_TEXT, FT_TEXT), (schema.COL_THEME_TAGS, FT_MULTI)]
+# 主题标签多选预置选项(中文标签来自 schema.THEME_LABELS)。cards 表加此列时一次配好。
+_THEME_COLOR = {"POV原生": 5, "真实vlog": 6, "长途纪录": 7, "器材玩法": 9, "硬核技术": 10, "极限挑战": 11}
+_FIELD_OPTIONS = {schema.COL_THEME_TAGS: [{"name": lbl, "color": _THEME_COLOR.get(lbl, 4)}
+                                          for lbl in schema.THEME_LABELS.values()]}
 
 
 def _call(method, path, token=None, body=None):
@@ -69,8 +77,11 @@ def _ensure_fields(token, app_token, tid):
     for name, ftype in NEW_FIELDS:
         if name in existing:
             continue
+        body = {"field_name": name, "type": ftype}
+        if name in _FIELD_OPTIONS:            # W17 多选列建时带预置选项 + 颜色
+            body["property"] = {"options": _FIELD_OPTIONS[name]}
         r = _call("POST", "/bitable/v1/apps/%s/tables/%s/fields" % (app_token, tid),
-                  token=token, body={"field_name": name, "type": ftype})
+                  token=token, body=body)
         if r.get("code") == 0:
             added.append(name)
         time.sleep(0.1)
@@ -154,7 +165,11 @@ def main():
         f = {
             "行动分级": s.get("action_grade") or "",
             "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
+            # W17: 主题标签(中文多选数组)。订阅(双格式)仅在有订阅数时写。
+            schema.COL_THEME_TAGS: schema.theme_tags_zh(s.get("themes_hit") or []),
         }
+        if s.get("subscribers") is not None:
+            f[schema.COL_SUBS_TEXT] = schema.subs_dual(s["subscribers"])
         if s.get("momentum") is not None:
             f["起势分"] = round(s["momentum"], 4)
         if s.get("potential") is not None:

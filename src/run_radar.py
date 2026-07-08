@@ -284,6 +284,7 @@ def build_table_rows(today, cards, scored, pool_by_url, dossier_links=None):
             "频道名": s.get("channel_name", c.get("channel_name", "")),
             "频道链接": url,
             "订阅数": s.get("subscribers"),
+            schema.COL_SUBS_TEXT: schema.subs_dual(s.get("subscribers")),  # 订阅(双格式文本 W17)
             "排名百分位": s.get("pct"),
             schema.COL_FIT: s.get("score"),            # 对路分(原总分)
             schema.COL_RISING: s.get("rising"),        # 在涨分(合成)
@@ -292,7 +293,8 @@ def build_table_rows(today, cards, scored, pool_by_url, dossier_links=None):
             "起势分": s.get("momentum"), "浪层分": s.get("trend"), "破圈比": s.get("breakout"),
             schema.COL_LIGHT: s.get("action_grade") or "",  # 红绿灯(原行动分级)
             "身份标签": identity_filter.flags_zh(s.get("identity_flags")),
-            "命中主题": s.get("themes_hit") or [],
+            "命中主题": s.get("themes_hit") or [],           # 工程 key(旧列, CSV 下沉档案用)
+            schema.COL_THEME_TAGS: schema.theme_tags_zh(s.get("themes_hit") or []),  # 主题标签(中文多选 W17)
             "是否新发现": p.get("source") == "auto-discover",
             "排名变动": s.get("rank_delta"),
             "档案": dl_map.get(cid, ""),
@@ -321,6 +323,7 @@ def write_cards_table(today, rows, out_dir):
         "频道名": lambda r: r["频道名"],
         "频道链接": lambda r: r["频道链接"],
         "订阅数": lambda r: r["订阅数"] if r["订阅数"] is not None else "",
+        schema.COL_SUBS_TEXT: lambda r: r.get(schema.COL_SUBS_TEXT, ""),
         schema.COL_FIT: lambda r: _fmt_num(r[schema.COL_FIT], 4),
         schema.COL_RISING: lambda r: _fmt_num(r[schema.COL_RISING], 4),
         schema.COL_POTENTIAL: lambda r: _fmt_num(r[schema.COL_POTENTIAL], 5),
@@ -333,7 +336,9 @@ def write_cards_table(today, rows, out_dir):
         "浪层分": lambda r: _fmt_num(r["浪层分"], 4),
         "破圈比": lambda r: _fmt_num(r["破圈比"], 3),
         "排名百分位": lambda r: f"{r['排名百分位']}%" if r["排名百分位"] is not None else "",
-        "命中主题": lambda r: "、".join(r["命中主题"]),
+        # 命中主题 CSV 单元格换中文标签(工程 key 下沉档案; Max: 日报/CSV 也换中文名)
+        "命中主题": lambda r: "、".join(schema.theme_tags_zh(r["命中主题"])),
+        schema.COL_THEME_TAGS: lambda r: "、".join(r.get(schema.COL_THEME_TAGS, [])),
         "是否新发现": lambda r: "是" if r["是否新发现"] else "否",
         "排名变动": lambda r: _fmt_delta(r["排名变动"]),
         "档案": lambda r: r.get("档案", ""),
@@ -703,14 +708,18 @@ def push_bitable(cfg, rows):
                 "日期": _date_ms(r["日期"]),
                 "频道名": r["频道名"],
                 "频道链接": {"link": r["频道链接"], "text": r["频道链接"]},
-                schema.COL_LIGHT: r.get(schema.COL_LIGHT, ""),        # 红绿灯(原行动分级)
+                schema.COL_LIGHT: r.get(schema.COL_LIGHT, ""),        # 红绿灯(cards 表保持文本列, 只写值; 🏢 照常写)
                 "身份标签": r.get("身份标签", ""),
                 "排名百分位": f"{r['排名百分位']}%" if r["排名百分位"] is not None else "",
-                "命中主题": "、".join(r["命中主题"]),
+                # W17: cards 表有历史 → 旧「命中主题」英文文本列**停写**(不删, 保历史); 改写新「主题标签」中文多选。
+                schema.COL_THEME_TAGS: schema.theme_tags_zh(r.get("命中主题") or []),
                 "是否新发现": "是" if r["是否新发现"] else "否",
                 "值得签1": r["值得签1"], "值得签2": r["值得签2"], "值得签3": r["值得签3"],
                 "风险": r["风险"], "首次合作建议": r["首次合作建议"],
             }
+            # 订阅(双格式文本, W17): 有订阅数才写。
+            if r.get(schema.COL_SUBS_TEXT):
+                f[schema.COL_SUBS_TEXT] = r[schema.COL_SUBS_TEXT]
             # 数值列(新名: 对路分/在涨分/潜力分 + 证据列 起势/浪/破圈)。None 不写(留空胜过写 0 误导)。
             for k in ("排名", "订阅数", schema.COL_FIT, schema.COL_RISING, schema.COL_POTENTIAL,
                       "语义分", "甜点分", "POV标记分", "起势分", "浪层分", "破圈比"):

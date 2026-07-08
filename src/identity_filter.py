@@ -36,6 +36,37 @@ ROOT = os.path.dirname(HERE)
 # 取 0.45(审计里语义分最低的真契合创作者约 0.45), 低于此更可能是误召回, 不给绿灯。
 SEM_FIT_MIN = 0.45
 
+# ---- W17(2026-07-08 Max 直接反馈): 官方联动 🏢 (official_channel) ----
+# 语义 = 「非竞品」的企业/机构/官方账号(央企国企/运营商/车企/品牌官号/车主俱乐部),
+# 不属于达人合作范围, 应转官方 BD 联动, 与 🔴「别碰」(竞品/搬运/僵尸)区分开。
+# 判定信号中文机构词表 + 英文 corporate 模式; 命中 → 展示「🏢官方联动」。
+# 校准锚点(Max 点名): 凯迪拉克车主/中国安能/中国电信 必落 🏢。
+# 防误伤: 个人运动员的「国家队/国家一级运动员」不算机构(那是荣誉不是雇主); 漫剧号「官方授权推广」
+#          是搬运号话术(留 🔴 reposter/marketing), 不算官号。故信号避开这两类裸词。
+# 词表下沉 config(identity.official_channel_pattern / _en_pattern)可调; 缺省用下列默认(离线也能跑)。
+_OFFICIAL_ZH_DEFAULT = (
+    r"中国(?:电信|移动|联通|石油|石化|石油天然气|银行|平安|人寿|国航|东方航空|南方航空|"
+    r"铁路|邮政|安能|中车|中铁|建筑|华能|大唐|华电|国电|能建)"
+    r"|运营商|央企|国资委|武警.{0,6}转隶|水电铁军"
+    r"|(?:有限|股份|科技|网络|文化|传媒|集团)(?:有限)?公司"
+    r"|高新技术企业|专精特新|国家级.{0,4}企业"
+    r"|品牌官方(?:账号|旗舰店)?|官方旗舰店|旗舰店官方|官方(?:唯一)?(?:授权)?总代理|中国区(?:唯一)?总代理"
+    r"|(?:头盔|轮胎|机油|装备|器材|相机|镜头|背包)官方"
+    r"|车主之家|车友会|车主俱乐部|车主之友|\d?S\s*店|经销商门店"
+)
+# 英文侧收紧: 只认强机构标记(官方旗舰店/授权经销/国企/车主俱乐部)。
+# 刻意**不**用裸 inc./corporation/co.,ltd —— 它们在创作者简介里高频误伤(founder of X Inc.、© NobodySurf)。
+# 也刻意**不**用裸 'official channel' —— 个人号常写 "Terje's official channel"(=我的真号)而非机构官号,
+#   会误伤职业运动员/独立制作。机构语义只认 官方旗舰店/官方商店 这类"卖货/授权"信号。
+# 中文机构词已足够精准, 三个锚点(凯迪拉克车主/中国安能/中国电信)也全中文, 英文只兜真·企业店铺。
+_OFFICIAL_EN_DEFAULT = (
+    r"\bofficial\s+(?:brand\s+)?(?:flagship\s+)?(?:store|shop)\b"
+    r"|\bflagship\s+store\b"
+    r"|\bauthori[sz]ed\s+(?:dealer|distributor|reseller)\b"
+    r"|\bstate[-\s]?owned\s+enterprise\b"
+    r"|\bowners?\s+club\b"
+)
+
 
 def _load_positives(cfg):
     """26 个正例名单 -> (channel_id 集, channel_url 集)。找不到文件返回空集(优雅降级)。"""
@@ -117,6 +148,9 @@ def build_identity_index(cfg):
         "reposter_guard_re": _c(idn.get("reposter_original_guard_pattern", "")),
         "marketing_re": _c(idn.get("marketing_finance_pattern", "")),
         "org_re": _c(idn.get("org_account_pattern", "")),
+        # W17 官方联动 🏢: config 有词表用 config, 缺省回落内置默认(离线也能判)。
+        "official_zh_re": _c(idn.get("official_channel_pattern") or _OFFICIAL_ZH_DEFAULT),
+        "official_en_re": _c(idn.get("official_channel_en_pattern") or _OFFICIAL_EN_DEFAULT),
         "dead_days": idn.get("dead_days", 365),
         "stale_days": idn.get("stale_days", 60),
         "dead_tiny_subs": idn.get("dead_tiny_subs", 500),
@@ -253,8 +287,20 @@ def annotate(row, index, sem=None, sweet=None, today=None):
             flags.append("competitor_mention")
             reasons.append(("yellow", "competitor_mention(简介提到竞品器材, 疑似用户非官方 → 人工确认)"))
 
-    # 3) brand_or_vendor: 品牌方/器材店/招商/厂商
-    if index["brand_vendor_re"].search(text):
+    # 2b) official_channel(W17 2026-07-08 Max 直接反馈): 「非竞品」企业/机构/官方账号 → 🏢官方联动。
+    #     语义 = 不属于达人合作范围, 转官方 BD 联动(央企国企/运营商/车企/品牌官号/车主俱乐部)。
+    #     与 🔴「别碰」(竞品/搬运/僵尸)区分。命中竞品的已在上面判 🔴, 这里只认非竞品(comp_hit=False)。
+    #     锚点: 凯迪车主之家/中国安能/中国电信 必落此类。它会**吸收** brand_or_vendor / org_account
+    #     两个重叠信号(否则凯迪车主之家会同时挂 brand_or_vendor 🔴), 由 🏢 统一表达。
+    #     防误伤: 词表避开裸「国家队/国家一级运动员」(个人荣誉非雇主)与「官方授权推广」(漫剧搬运话术)。
+    is_official = (not comp_hit) and bool(
+        index["official_zh_re"].search(text) or index["official_en_re"].search(text))
+    if is_official:
+        flags.append("official_channel")
+        reasons.append(("official", "official_channel(企业/机构/官方账号, 非竞品 → 不属达人合作, 转官方 BD 联动)"))
+
+    # 3) brand_or_vendor: 品牌方/器材店/招商/厂商。官方联动号已由 🏢 吸收, 此处不再重复挂 🔴。
+    if not is_official and index["brand_vendor_re"].search(text):
         flags.append("brand_or_vendor")
         reasons.append(("red", "brand_or_vendor(品牌/厂商/器材店/招商信号 → 拦截, 非创作者)"))
 
@@ -312,7 +358,9 @@ def annotate(row, index, sem=None, sweet=None, today=None):
         else:
             reasons.append(("yellow", f"stale(停更 {days} 天, >{index['stale_days']} → 核验是否弃坑)"))
 
-    if index["org_re"].search(text):
+    # org_account: 媒体/机构/俱乐部。官方联动号(🏢)已吸收此信号, 不再叠 🟡(中国安能=水电铁军
+    # 会命中 org 的「国家队」联想词, 但它已判 official → 归 🏢 不归 🟡)。
+    if not is_official and index["org_re"].search(text):
         flags.append("org_account")
         reasons.append(("yellow", "org_account(媒体/机构/俱乐部信号 → 走机构合作而非达人盲投)"))
 
@@ -324,11 +372,17 @@ def annotate(row, index, sem=None, sweet=None, today=None):
         reasons.append(("yellow", f"off_topic_suspect(打标层判 vertical={vertical}, 疑似非运动影像 → 人工核验内容相关性)"))
 
     # ---------- 判级 ----------
+    # 优先级: 🔴 真拦(竞品/搬运/营销/僵尸/已合作) > 🏢 官方联动(非竞品企业/机构, 转 BD) > 🟡 核验 > 🟢。
+    # 🏢 排在 🔴 之后: 若同一账号还真踩了别的硬红(如既是官号又已判死), 硬红优先(仍是"别碰")。
     reds = [lbl for g, lbl in reasons if g == "red"]
+    officials = [lbl for g, lbl in reasons if g == "official"]
     yellows = [lbl for g, lbl in reasons if g == "yellow"]
     if reds:
         grade = "🔴"
         grade_reasons = reds
+    elif officials:
+        grade = "🏢"
+        grade_reasons = officials
     elif yellows:
         grade = "🟡"
         grade_reasons = yellows
@@ -376,6 +430,7 @@ FLAG_LABELS = {
     "competitor": "竞品官方/在职",
     "competitor_mention": "提及竞品器材",
     "brand_or_vendor": "品牌/厂商/器材店",
+    "official_channel": "🏢官方联动",
     "reposter": "搬运/合集/代录",
     "marketing_or_finance": "营销/理财/玄学/带货",
     "dead_account": "僵尸/空号",
