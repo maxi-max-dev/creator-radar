@@ -29,7 +29,8 @@ FT_TEXT, FT_NUMBER, FT_MULTI = 1, 2, 4
 # 铁律: cards 表有历史, 旧列(命中主题英文文本 / 红绿灯文本)一律**不删不改类型**, 只 ADD 新列。
 NEW_FIELDS = [("起势分", FT_NUMBER), ("潜力分", FT_NUMBER), ("浪层分", FT_NUMBER), ("破圈比", FT_NUMBER),
               ("红绿灯", FT_TEXT), ("身份标签", FT_TEXT),
-              (schema.COL_SUBS_TEXT, FT_TEXT), (schema.COL_THEME_TAGS, FT_MULTI)]
+              (schema.COL_SUBS_TEXT, FT_TEXT), (schema.COL_THEME_TAGS, FT_MULTI),
+              (schema.COL_PLATFORM, FT_TEXT)]  # W22: 平台列(YouTube / B站 一眼分清)
 # 主题标签多选预置选项: 单一来源 = schema.THEME_OPTIONS(W21 收拢, 原本地副本已删)。cards 表加此列时一次配好。
 _FIELD_OPTIONS = {schema.COL_THEME_TAGS: schema.THEME_OPTIONS}
 

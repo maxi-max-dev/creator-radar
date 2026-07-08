@@ -109,8 +109,14 @@
   },
 
   "bitable": {
-    "notes": "飞书多维表格出口。B站榜单(第三张表)复用与 YouTube 线同一份 base 凭证(app_id/app_secret/app_token 相同)，表 id 存 credentials 同目录的 feishu_tables.json(bili_ranking_table_id 键)。敏感标识符不进 repo。",
-    "credentials_path": "~/.config/creator-radar/feishu.json"
+    "notes": "飞书多维表格出口。B站榜单(第三张表)复用与 YouTube 线同一份 base 凭证(app_id/app_secret/app_token 相同)，表 id 存 credentials 同目录的 feishu_tables.json(bili_ranking_table_id 键)。敏感标识符不进 repo。avatar_enrich=B站卡是否自动补头像(走 B站用户 card API 拿 face，节流≥3.5s，公开元数据绝不下视频)。",
+    "credentials_path": "~/.config/creator-radar/feishu.json",
+    "avatar_enrich": true
+  },
+
+  "bilibili": {
+    "notes": "W22(2026-07-08 Max「还不错，目前只有国外的，国内的呢」): B站进推荐卡开关。cards_per_day=每天从当日 B站 ranked 里选几张卡进 cards(达人推荐)表。只选 🟡(绝不 🔴/🏢)，按 fit 排名取前几名，跨日去重(出过卡的频道永不再推，账本 data/scoreboard/bili_cards_seen.json)。代码默认 2，这里上调到 3 让国内面孔一次多几张(8万/9千/73万粉的黄灯 UP 主，量级有梯度)。B站卡失败安全:任一步炸了不影响 YouTube 卡与主链。",
+    "cards_per_day": 3
   },
 
   "outputs": ["report"]

@@ -13,6 +13,7 @@ from radar_lib import load_config, load_pool, score_pool, fuse_rising
 import identity_filter
 import ai_review
 import schema
+import bili_cards
 
 # 引擎版本戳(打进 scoreboard picks, 让每期预测可追溯是哪版引擎下的注)。
 # fit 打分核仍是冻结考试池验证过的 v1.2; rising = 2026-07-07 三信号合成的在涨层(单段式融合)。
@@ -863,6 +864,7 @@ def run_bili_line(bili_cfg_path, today, budget=None, dry_run=False, main_cfg=Non
         print("AI 复核(B站):", json.dumps(res["ai_review"], ensure_ascii=False))
         res["top5"] = [{"rank": s["rank"], "name": s["channel_name"],
                         "subs": s.get("subscribers"), "score": s["score"]} for s in bscored[:5]]
+        res["scored"] = bscored   # W22: 供 push_bili_cards 选卡(B站进推荐卡)
         # 落一份 B站排序产物到 runs(便于复现与排查)
         bout = os.path.join(ROOT, "data", "runs", f"{today}-bilibili")
         os.makedirs(bout, exist_ok=True)
@@ -904,6 +906,28 @@ def append_bili_section(report_path, bili_res):
             tb = bili_res.get("table") or {}
             L += ["", f"_B站榜单已同步飞书（写入 {tb.get('written', '?')} 行）。_" if tb.get("ok")
                   else "_B站榜单飞书同步未完成。_", ""]
+        with open(report_path, "a") as f:
+            f.write("\n".join(L) + "\n")
+    except Exception:
+        pass
+
+
+def append_bili_cards_section(report_path, bcards_res):
+    """把「B站推荐卡」小节追加到日报末尾(在 B站雷达 之后): 今天给 cards 表补了哪几张 B站卡。
+    温和降级: 失败静默。让日报里一眼看到国内面孔进了推荐卡, 与 YouTube 卡区分。"""
+    try:
+        L = ["", "### 本日 B站推荐卡（进达人推荐表）", ""]
+        r = bcards_res or {}
+        if not r.get("ok"):
+            L += [f"_B站推荐卡本次未产出（{r.get('error', '未运行')}）。_", ""]
+        elif not r.get("picked"):
+            L += [f"_B站推荐卡本次 0 张（{r.get('note', '无符合条件的 🟡 新频道')}）。_", ""]
+        else:
+            names = r.get("names") or []
+            L.append(f"今天给达人推荐表补了 **{r.get('picked')}** 张 B站卡（平台=B站，红绿灯 🟡）：{'、'.join(names)}")
+            L.append("")
+            L.append("> B站无上传日期，红绿灯只到 🟡，活性请人工核一眼近期更新再定；完整档案/dossier 暂留空（关联只指向 YouTube 全池表）。")
+            L.append("")
         with open(report_path, "a") as f:
             f.write("\n".join(L) + "\n")
     except Exception:
@@ -1119,9 +1143,25 @@ def main():
     # 只在主 config 非 bilibili 时跑(避免自递归); --skip-bili 可关。温和降级不中断主链。
     # dry-run 下采集/打分照常跑(只读公开元数据), 只跳过榜单真实灌表(同上一条理由)。
     bili_res = None
+    bili_cards_res = None
     if not args.skip_bili and cfg.get("platform") != "bilibili" and os.path.exists(args.bili_config):
         bili_res = run_bili_line(args.bili_config, today, budget=args.budget, dry_run=args.dry_run, main_cfg=cfg)
         append_bili_section(report_path, bili_res)
+        # W22: B站进推荐卡(YouTube 卡已在上方 push 完, 这里给 cards 表补 2-3 张 B站黄灯卡)。
+        # 独立真实写路径(直读 bitable 凭证, 不受 cfg.outputs 管控), dry-run 下 push_bili_cards 内部跳过真发。
+        # 失败安全双保险: push_bili_cards 内部整块 try; 这里外面再包一层 bare try, 绝不影响 YouTube 卡或主链。
+        try:
+            if bili_res and bili_res.get("ok") and bili_res.get("scored"):
+                bcfg = load_config(args.bili_config)
+                # bitable 凭证/avatar_enrich 开关走 B站 config; 缺则借主 config(两者同一份 base 凭证)。
+                if not bcfg.get("bitable"):
+                    bcfg["bitable"] = cfg.get("bitable", {})
+                bili_cards_res = bili_cards.push_bili_cards(bcfg, bili_res["scored"], today, dry_run=args.dry_run)
+                append_bili_cards_section(report_path, bili_cards_res)
+                print("B站推荐卡:", json.dumps(bili_cards_res, ensure_ascii=False))
+        except Exception as e:
+            bili_cards_res = {"ok": False, "error": str(e)}
+            print("B站推荐卡异常(不致命):", e)
 
     git_res = "skipped: dry-run" if args.dry_run else commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
 
