@@ -43,7 +43,13 @@ def _upload_precision(d, ref=None):
       月级("N months ago") → 日等于抓取日的日, 年-月更早;
       日/周级或精确日期 → 与抓取日月-日不同(除非真的同月同日)。
     据此按'与抓取日的月-日重合度'反推精度下界。ref=抓取参照日(默认今天)。
-    保守方向: 宁可判粗(→ 下游 🟡)不判细, 真·同月同日上传的极少数按粗算不冤(只影响活性核验的松紧)。"""
+    保守方向: 宁可判粗(→ 下游 🟡)不判细, 真·同月同日上传的极少数按粗算不冤(只影响活性核验的松紧)。
+
+    ⚠️ 边界声明(R2-12): 本推断仅在**采集当日**成立(反推规律依赖'月-日 == 抓取日'的特征,
+    ref 必须是采集那一刻的当天)。**禁止对历史快照跨日重判精度**——一旦记录写进池子,
+    last_upload_precision 就是当日快照的定论, 后续任何天重新跑都不得用新的 ref 去覆盖它。
+    下游 annotate(identity_filter) 只**读取**存储的 last_upload_precision 字段(见其 _upload_precision(row),
+    只 row.get 不重算), 停更天数另按 last_upload_date→today 的 _days_since 独立算, 二者不耦合、不跨日重算精度。"""
     if d is None:
         return None
     ref = ref or date.today()
