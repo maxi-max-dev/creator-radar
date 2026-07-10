@@ -1176,10 +1176,11 @@ def main():
             print("B站推荐卡异常(不致命):", e)
 
     # W23 驾驶舱: 两平台日报/卡都落盘后, 追加静态仪表盘(读磁盘产物 → reports/dashboard.html, 单文件自包含)。
-    # 纯本地文件无外发, --dry-run 照常生成。整块 try 包住: 炸了只记日志, 绝不挡主链或下面的提交。
+    # --dry-run 照常生成但 network=False(零网络, 推荐卡 KPI 走本地口径); 在线跑时 W23.1 只读
+    # 飞书 cards 表核推荐卡真值(只读不写, 失败自动回退)。整块 try 包住: 炸了只记日志, 绝不挡主链或下面的提交。
     try:
         import dashboard
-        dash_path = dashboard.generate(date=today)
+        dash_path = dashboard.generate(date=today, network=not args.dry_run)
         print("dashboard:", dash_path)
     except Exception as e:
         print("驾驶舱生成异常(不致命):", e)

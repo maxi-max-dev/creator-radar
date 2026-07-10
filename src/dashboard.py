@@ -5,8 +5,10 @@
 给 Max 每天扫一眼 + 比赛演示当门面。
 
 铁律(与主链一致):
-  · 只读聚合, 绝不内嵌 2430 原始行——只嵌聚合数字 + 今日 15 张卡 + 5 个 picks。
-  · 纯本地文件, 零外发; 无任何飞书 URL/app_token/table_id(页面里只允许 deck 公开地址)。
+  · 只读聚合, 绝不内嵌 2430 原始行——只嵌聚合数字 + 今日卡 + 5 个 picks。
+  · 产物纯本地文件零外发; 生成时唯一网络调用=只读飞书 cards 表数行数(W23.1, 失败回退
+    本地口径, --dry-run/--no-network 零网络); 页面里无任何飞书 URL/app_token/table_id
+    (凭证只从 ~/.config/creator-radar/feishu.json 读, 页面链接只允许 deck 公开地址)。
   · 对外文字不用破折号; 署名只写 Max。
   · 冻结口径数字(盲测/拦截/密度)直接引用 docs/challenges.md, 不重算。
 
@@ -108,6 +110,76 @@ def _load(path):
         return None
 
 
+# ---------------------------------------------------------------------------
+# W23.1: 推荐卡 KPI 以飞书达人推荐表为真值(评委/Max 对表即对上)。
+# 凭证只读 ~/.config/creator-radar/feishu.json(repo 外, 不写死任何 id/token)。
+# 只读不写; 任何失败(断网/凭证缺/超时)返回 None, 上层回退本地口径, 绝不挡链。
+# 背景: 本地重建(YT cards.json 跨日去重 + B站账本)缺 7/5-7/7 手工回填时代的行,
+# 且 🔴 卡设计上不进表(run_radar 推荐卡出口过滤 L1092-95), 本地墙数与表行数天然有差。
+# ---------------------------------------------------------------------------
+FEISHU_CRED_PATH = os.path.expanduser("~/.config/creator-radar/feishu.json")
+
+
+def _feishu_cards_stats(today_str):
+    """读飞书 cards 表 -> {"rows": 总行数, "channels": 去重频道数, "today": 日期=今天的行数}; 失败返 None。"""
+    import urllib.request
+
+    def call(method, path, token=None, body=None):
+        url = "https://open.feishu.cn/open-apis" + path
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(url, data=data, method=method)
+        req.add_header("Content-Type", "application/json; charset=utf-8")
+        if token:
+            req.add_header("Authorization", "Bearer " + token)
+        with urllib.request.urlopen(req, timeout=15) as r:
+            return json.loads(r.read())
+
+    def as_str(v):  # records/search 返回形状: 文本=段列表 / 链接=dict / 其他=标量
+        if isinstance(v, dict):
+            return v.get("link") or v.get("text") or ""
+        if isinstance(v, list):
+            return "".join(x.get("text", "") if isinstance(x, dict) else str(x) for x in v)
+        return "" if v is None else str(v)
+
+    try:
+        cred = json.load(open(FEISHU_CRED_PATH))
+        t = call("POST", "/auth/v3/tenant_access_token/internal",
+                 body={"app_id": cred["app_id"], "app_secret": cred["app_secret"]})
+        token = t.get("tenant_access_token")
+        if not token:
+            return None
+        recs, pt = [], None
+        for _ in range(20):  # 分页上限护栏
+            body = {"page_size": 500}
+            if pt:
+                body["page_token"] = pt
+            r = call("POST", "/bitable/v1/apps/%s/tables/%s/records/search"
+                     % (cred["app_token"], cred["table_id"]), token=token, body=body)
+            d = r.get("data") or {}
+            recs += d.get("items") or []
+            pt = d.get("page_token")
+            if not d.get("has_more"):
+                break
+        if not recs:
+            return None
+        urls, n_today = set(), 0
+        for rec in recs:
+            f = rec.get("fields") or {}
+            u = as_str(f.get("频道链接")).strip()
+            if u:
+                urls.add(u)
+            dv = f.get("日期")  # date 字段=毫秒时间戳(写入端 _date_ms 取当地正午)
+            if isinstance(dv, (int, float)):
+                dd = datetime.fromtimestamp(dv / 1000).date().isoformat()
+            else:
+                dd = as_str(dv)[:10]
+            if dd == today_str:
+                n_today += 1
+        return {"rows": len(recs), "channels": len(urls), "today": n_today}
+    except Exception:
+        return None
+
+
 def _latest_daily(preferred=None):
     """最新一天的 YT daily 目录(含 ranked.json)。preferred 命中优先。"""
     dirs = {}
@@ -145,8 +217,9 @@ def _grade_dist(rows):
     return counts
 
 
-def aggregate(date_pref=None):
-    """把当日真实产物聚合成一个渲染就绪的 dict(全是小数字 + 今日榜单, 无原始行)。"""
+def aggregate(date_pref=None, network=True):
+    """把当日真实产物聚合成一个渲染就绪的 dict(全是小数字 + 今日榜单, 无原始行)。
+    network=False(dry-run/离线)时跳过飞书读数, 推荐卡 KPI 走本地口径。"""
     day_key, day_dir = _latest_daily(date_pref)
     yt = _load(os.path.join(day_dir, "ranked.json")) if day_dir else None
     yt = yt or []
@@ -231,6 +304,9 @@ def aggregate(date_pref=None):
     cards_cum = len(yt_urls) + len(carded)
     cards_today = len(yt_cards) + len(bili_cards)
 
+    # W23.1: 推荐卡 KPI 首选飞书表真值(45 行/26 频道那张); 失败回退本地口径。
+    feishu_stats = _feishu_cards_stats(day_key) if (network and day_key) else None
+
     # 记分板(首期 picks)
     picks_path = _latest_picks()
     picks_data = _load(picks_path) if picks_path else {}
@@ -272,6 +348,7 @@ def aggregate(date_pref=None):
         "bili_cards": bili_cards,
         "cards_cum": cards_cum,
         "cards_today": cards_today,
+        "feishu": feishu_stats,  # None = 回退本地口径
         "picks": picks,
         "picked_date": picked_date,
         "reveal": reveal,
@@ -364,8 +441,12 @@ def _kpi_row(a):
          f"YouTube {fmt_int(a['yt_total'])} · B站 {fmt_int(a['bili_total'])}", ""),
         ("可直接联系", f"🟢 {fmt_int(a['green_total'])}",
          f"占全池 {g_share}（B站 0，见下）", "good"),
-        ("推荐卡累计", fmt_int(a["cards_cum"]),
-         f"今日 +{a['cards_today']}（YT {len(a['yt_cards'])} · B站 {len(a['bili_cards'])}）", ""),
+        # W23.1: 首选飞书达人推荐表真值(与表一对就对上); 读不到回退本地重建并标注口径。
+        ("累计推荐", f"{fmt_int(a['feishu']['channels'])} 位达人",
+         f"{fmt_int(a['feishu']['rows'])} 张卡 · 今日 +{a['feishu']['today']}", "")
+        if a.get("feishu") else
+        ("累计推荐", f"{fmt_int(a['cards_cum'])} 位达人",
+         f"今日 +{a['cards_today']} · 本地口径", ""),
         ("盲测命中", FROZEN["blind_test"],
          f"前 5% 富集（考试池 {FROZEN['exam_pool']}）", ""),
         ("AI 复核拦截", FROZEN["intercept_ai"],
@@ -586,7 +667,7 @@ def _cards_section(a):
 <section class="panel">
   <div class="panel-head">
     <h2>今日推荐卡</h2>
-    <p class="sub">当天筛出、最值得先联系的账号。头像为公开频道图，缩至 64px 内嵌。</p>
+    <p class="sub">当天新筛出的线索账号，红绿灯如实标注：🔴 是雷达拦下的，拦了也展示，不进推荐表。头像为公开频道图，缩至 64px 内嵌。</p>
   </div>
   <div class="cards-subhead">YouTube · {len(a['yt_cards'])} 张</div>
   <div class="cards-grid">{yt}</div>{bili_block}
@@ -699,8 +780,9 @@ def render(a):
     )
 
 
-def generate(date=None, out=None):
-    a = aggregate(date_pref=date)
+def generate(date=None, out=None, network=True):
+    """network=False(主链 --dry-run)时零网络调用, 推荐卡 KPI 走本地口径。"""
+    a = aggregate(date_pref=date, network=network)
     html_str = render(a)
     out = out or os.path.join(REPORTS, "dashboard.html")
     os.makedirs(os.path.dirname(out), exist_ok=True)
@@ -938,8 +1020,9 @@ def main():
     ap = argparse.ArgumentParser(description="达人雷达驾驶舱 HTML 生成器")
     ap.add_argument("--date", default=None, help="指定 YT daily 日期(YYYY-MM-DD), 默认最新")
     ap.add_argument("--out", default=None, help="输出路径, 默认 reports/dashboard.html")
+    ap.add_argument("--no-network", action="store_true", help="跳过飞书读数, 推荐卡 KPI 走本地口径")
     args = ap.parse_args()
-    path = generate(date=args.date, out=args.out)
+    path = generate(date=args.date, out=args.out, network=not args.no_network)
     size = os.path.getsize(path)
     print(f"驾驶舱已生成: {path} ({size/1024:.0f} KB)")
 
