@@ -1,4 +1,8 @@
 {
+ "https://space.bilibili.com/1171681389": {
+  "date": "2026-07-10",
+  "status": "carded"
+ },
  "https://space.bilibili.com/1268638": {
   "date": "2026-07-09",
   "reason": "🤖AI复核疑似内容离题(conf 0.80): 频道内容聚焦上海迪士尼乐园的旅游打卡而非运动影像场景",
@@ -36,12 +40,20 @@
   "reason": "🤖AI复核疑似搬运/合集(conf 0.95): 标题反复出现他人创作者ID(andre_rankle/El Gringo等), 简介自称'花飞图书馆'; W18 审计❌同判",
   "status": "rejected"
  },
+ "https://space.bilibili.com/4835397": {
+  "date": "2026-07-10",
+  "status": "carded"
+ },
  "https://space.bilibili.com/484139816": {
   "date": "2026-07-08",
   "status": "carded"
  },
  "https://space.bilibili.com/541463818": {
   "date": "2026-07-08",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/640836742": {
+  "date": "2026-07-10",
   "status": "carded"
  },
  "https://space.bilibili.com/88136534": {
