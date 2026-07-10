@@ -31,8 +31,16 @@
   "reason": "🤖AI复核疑似内容离题(conf 0.70): 视频标题显示第一视角日常但内容为外卖助人场景，无运动影像相关主题",
   "status": "rejected"
  },
+ "https://space.bilibili.com/3546747049610032": {
+  "date": "2026-07-11",
+  "status": "carded"
+ },
  "https://space.bilibili.com/3691005578578655": {
   "date": "2026-07-09",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/379930099": {
+  "date": "2026-07-11",
   "status": "carded"
  },
  "https://space.bilibili.com/392367725": {
@@ -46,6 +54,10 @@
  },
  "https://space.bilibili.com/484139816": {
   "date": "2026-07-08",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/500799150": {
+  "date": "2026-07-11",
   "status": "carded"
  },
  "https://space.bilibili.com/541463818": {
