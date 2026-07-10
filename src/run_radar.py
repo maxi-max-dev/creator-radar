@@ -1175,6 +1175,20 @@ def main():
             bili_cards_res = {"ok": False, "error": str(e)}
             print("B站推荐卡异常(不致命):", e)
 
+    # W23 驾驶舱: 两平台日报/卡都落盘后, 追加静态仪表盘(读磁盘产物 → reports/dashboard.html, 单文件自包含)。
+    # 纯本地文件无外发, --dry-run 照常生成。整块 try 包住: 炸了只记日志, 绝不挡主链或下面的提交。
+    try:
+        import dashboard
+        dash_path = dashboard.generate(date=today)
+        print("dashboard:", dash_path)
+    except Exception as e:
+        print("驾驶舱生成异常(不致命):", e)
+        try:
+            with open(os.path.join(LOGS, "radar.log"), "a") as _df:
+                _df.write(f"{datetime.now().isoformat(timespec='seconds')} dashboard_error: {str(e)[:200]}\n")
+        except Exception:
+            pass
+
     git_res = "skipped: dry-run" if args.dry_run else commit_snapshots(today)  # 数据快照入库(先存后洗的"存"落到异地)
 
     os.makedirs(LOGS, exist_ok=True)
