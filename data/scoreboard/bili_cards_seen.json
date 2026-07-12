@@ -22,6 +22,15 @@
   "reason": "🤖AI复核疑似内容离题(conf 0.70): 近期视频标题提及'炫技'偏向游戏/技能展示，与运动影像主业不符",
   "status": "rejected"
  },
+ "https://space.bilibili.com/210464513": {
+  "date": "2026-07-12",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/31956598": {
+  "date": "2026-07-12",
+  "reason": "🤖AI复核疑似内容离题(conf 0.70): 视频标题聚焦电影美学与视觉艺术，无运动影像相关主题，符合off_topic",
+  "status": "rejected"
+ },
  "https://space.bilibili.com/338379427": {
   "date": "2026-07-08",
   "status": "carded"
@@ -37,6 +46,19 @@
  },
  "https://space.bilibili.com/3691005578578655": {
   "date": "2026-07-09",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/3706970800393089": {
+  "date": "2026-07-12",
+  "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.70): 频道名和视频标题高度指向品牌产品推广，订阅数低但内容偏向带货而非运动影像创作",
+  "status": "rejected"
+ },
+ "https://space.bilibili.com/3706970802490168": {
+  "date": "2026-07-12",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/3706989022546400": {
+  "date": "2026-07-12",
   "status": "carded"
  },
  "https://space.bilibili.com/379930099": {
