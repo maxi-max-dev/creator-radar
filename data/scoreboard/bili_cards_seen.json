@@ -8,6 +8,11 @@
   "reason": "🤖AI复核疑似内容离题(conf 0.80): 频道内容聚焦上海迪士尼乐园的旅游打卡而非运动影像场景",
   "status": "rejected"
  },
+ "https://space.bilibili.com/14116327": {
+  "date": "2026-07-13",
+  "reason": "🤖AI复核疑似内容离题(conf 0.80): 频道内容聚焦军事冲突题材而非运动影像，且无品牌/机构标识，但视频标题涉及FPV飞行可能与运动影像相关，存在主题模糊性",
+  "status": "rejected"
+ },
  "https://space.bilibili.com/14428532": {
   "date": "2026-07-09",
   "status": "carded"
@@ -25,6 +30,11 @@
  "https://space.bilibili.com/210464513": {
   "date": "2026-07-12",
   "status": "carded"
+ },
+ "https://space.bilibili.com/280413526": {
+  "date": "2026-07-13",
+  "reason": "🤖AI复核疑似内容离题(conf 0.70): 频道主轴偏向健身增肌而非运动影像，近期视频标题提及雪道可能涉及户外但未明确运动相机器材玩法",
+  "status": "rejected"
  },
  "https://space.bilibili.com/31956598": {
   "date": "2026-07-12",
@@ -70,6 +80,11 @@
   "reason": "🤖AI复核疑似搬运/合集(conf 0.95): 标题反复出现他人创作者ID(andre_rankle/El Gringo等), 简介自称'花飞图书馆'; W18 审计❌同判",
   "status": "rejected"
  },
+ "https://space.bilibili.com/457633964": {
+  "date": "2026-07-13",
+  "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.70): 频道名和简介明确关联摩托赛事业务，且标题涉及实操内容，但简介含机构合作信息及联系方式，倾向机构号",
+  "status": "rejected"
+ },
  "https://space.bilibili.com/4835397": {
   "date": "2026-07-10",
   "status": "carded"
@@ -85,6 +100,20 @@
  "https://space.bilibili.com/541463818": {
   "date": "2026-07-08",
   "status": "carded"
+ },
+ "https://space.bilibili.com/602135142": {
+  "date": "2026-07-13",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/617865071": {
+  "date": "2026-07-13",
+  "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.80): 频道名含品牌名'张雪机车'，简介提及赛事执行/推广且视频标题出现'全体同事'，符合机构号特征",
+  "status": "rejected"
+ },
+ "https://space.bilibili.com/631322763": {
+  "date": "2026-07-13",
+  "reason": "🤖AI复核疑似内容离题(conf 0.90): 视频内容为公交线路第一视角拍摄，属于四轮车评，与运动影像无关。",
+  "status": "rejected"
  },
  "https://space.bilibili.com/640836742": {
   "date": "2026-07-10",
