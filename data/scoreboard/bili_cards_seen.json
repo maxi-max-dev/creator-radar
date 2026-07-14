@@ -41,6 +41,11 @@
   "reason": "🤖AI复核疑似内容离题(conf 0.70): 视频标题聚焦电影美学与视觉艺术，无运动影像相关主题，符合off_topic",
   "status": "rejected"
  },
+ "https://space.bilibili.com/324309512": {
+  "date": "2026-07-14",
+  "reason": "🤖AI复核疑似内容离题(conf 0.90): 频道内容为游戏对线教学，属于游戏类而非运动影像，且无搬运信号，个人创作者特征明显",
+  "status": "rejected"
+ },
  "https://space.bilibili.com/338379427": {
   "date": "2026-07-08",
   "status": "carded"
@@ -54,8 +59,16 @@
   "date": "2026-07-11",
   "status": "carded"
  },
+ "https://space.bilibili.com/3546902733785382": {
+  "date": "2026-07-14",
+  "status": "carded"
+ },
  "https://space.bilibili.com/3691005578578655": {
   "date": "2026-07-09",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/3706950286052031": {
+  "date": "2026-07-14",
   "status": "carded"
  },
  "https://space.bilibili.com/3706970800393089": {
@@ -84,6 +97,10 @@
   "date": "2026-07-13",
   "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.70): 频道名和简介明确关联摩托赛事业务，且标题涉及实操内容，但简介含机构合作信息及联系方式，倾向机构号",
   "status": "rejected"
+ },
+ "https://space.bilibili.com/482596365": {
+  "date": "2026-07-14",
+  "status": "carded"
  },
  "https://space.bilibili.com/4835397": {
   "date": "2026-07-10",
