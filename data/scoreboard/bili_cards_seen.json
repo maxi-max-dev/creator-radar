@@ -59,6 +59,10 @@
   "reason": "🤖AI复核疑似内容离题(conf 0.70): 视频标题显示第一视角日常但内容为外卖助人场景，无运动影像相关主题",
   "status": "rejected"
  },
+ "https://space.bilibili.com/3546372903013032": {
+  "date": "2026-07-16",
+  "status": "carded"
+ },
  "https://space.bilibili.com/3546747049610032": {
   "date": "2026-07-11",
   "status": "carded"
@@ -79,6 +83,10 @@
   "date": "2026-07-14",
   "status": "carded"
  },
+ "https://space.bilibili.com/3706956900469172": {
+  "date": "2026-07-16",
+  "status": "carded"
+ },
  "https://space.bilibili.com/3706970800393089": {
   "date": "2026-07-12",
   "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.70): 频道名和视频标题高度指向品牌产品推广，订阅数低但内容偏向带货而非运动影像创作",
@@ -92,6 +100,11 @@
   "date": "2026-07-12",
   "status": "carded"
  },
+ "https://space.bilibili.com/3706989028837538": {
+  "date": "2026-07-16",
+  "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.70): 频道名含品牌名且视频标题聚焦产品参数推广，符合品牌官方号特征",
+  "status": "rejected"
+ },
  "https://space.bilibili.com/379930099": {
   "date": "2026-07-11",
   "status": "carded"
@@ -100,6 +113,10 @@
   "date": "2026-07-08",
   "reason": "🤖AI复核疑似搬运/合集(conf 0.95): 标题反复出现他人创作者ID(andre_rankle/El Gringo等), 简介自称'花飞图书馆'; W18 审计❌同判",
   "status": "rejected"
+ },
+ "https://space.bilibili.com/396470490": {
+  "date": "2026-07-16",
+  "status": "carded"
  },
  "https://space.bilibili.com/442669479": {
   "date": "2026-07-15",
