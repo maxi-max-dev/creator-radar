@@ -50,6 +50,14 @@
   "date": "2026-07-12",
   "status": "carded"
  },
+ "https://space.bilibili.com/22938752": {
+  "date": "2026-07-20",
+  "status": "carded"
+ },
+ "https://space.bilibili.com/256265108": {
+  "date": "2026-07-20",
+  "status": "carded"
+ },
  "https://space.bilibili.com/27318938": {
   "date": "2026-07-19",
   "status": "carded"
@@ -118,6 +126,10 @@
   "date": "2026-07-14",
   "status": "carded"
  },
+ "https://space.bilibili.com/3690978630175543": {
+  "date": "2026-07-20",
+  "status": "carded"
+ },
  "https://space.bilibili.com/3691005125593929": {
   "date": "2026-07-18",
   "status": "carded"
@@ -173,6 +185,11 @@
  "https://space.bilibili.com/403415910": {
   "date": "2026-07-19",
   "status": "carded"
+ },
+ "https://space.bilibili.com/42880383": {
+  "date": "2026-07-20",
+  "reason": "🤖AI复核疑似内容离题(conf 0.70): 频道内容偏向社会新闻与时事热点，与运动影像无关",
+  "status": "rejected"
  },
  "https://space.bilibili.com/442669479": {
   "date": "2026-07-15",
@@ -237,6 +254,11 @@
  "https://space.bilibili.com/88136534": {
   "date": "2026-07-09",
   "status": "carded"
+ },
+ "https://space.bilibili.com/93231204": {
+  "date": "2026-07-20",
+  "reason": "🤖AI复核疑似机构/品牌/带货(conf 0.80): 频道视频标题明确带货影石产品且无他人内容标记，订阅数偏低但内容偏向品牌推广，符合品牌官方号特征",
+  "status": "rejected"
  },
  "https://space.bilibili.com/99047538": {
   "date": "2026-07-19",
