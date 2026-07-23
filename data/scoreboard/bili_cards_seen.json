@@ -1,4 +1,8 @@
 {
+ "https://space.bilibili.com/1007689537": {
+  "date": "2026-07-23",
+  "status": "carded"
+ },
  "https://space.bilibili.com/1171681389": {
   "date": "2026-07-10",
   "status": "carded"
@@ -22,6 +26,10 @@
   "date": "2026-07-09",
   "status": "carded"
  },
+ "https://space.bilibili.com/1592966759": {
+  "date": "2026-07-23",
+  "status": "carded"
+ },
  "https://space.bilibili.com/169965283": {
   "date": "2026-07-18",
   "status": "carded"
@@ -29,6 +37,11 @@
  "https://space.bilibili.com/1723038803": {
   "date": "2026-07-17",
   "reason": "🤖AI复核疑似内容离题(conf 0.70): 频道简介提及'国外有趣视频'且近期视频标题涉及四驱车泥潭挑战，属于四轮车评范畴，不符合运动影像主题",
+  "status": "rejected"
+ },
+ "https://space.bilibili.com/1795135473": {
+  "date": "2026-07-23",
+  "reason": "🤖AI复核疑似内容离题(conf 0.70): 视频内容聚焦静态搭建庇护所与ASMR，缺乏运动影像的动态POV拍摄特征",
   "status": "rejected"
  },
  "https://space.bilibili.com/1867759108": {
@@ -72,6 +85,10 @@
   "reason": "🤖AI复核疑似内容离题(conf 0.90): 频道内容聚焦科技配件设计分析，非运动影像场景拍摄，偏离运动相机品牌需的户外运动POV内容",
   "status": "rejected"
  },
+ "https://space.bilibili.com/311671990": {
+  "date": "2026-07-23",
+  "status": "carded"
+ },
  "https://space.bilibili.com/31956598": {
   "date": "2026-07-12",
   "reason": "🤖AI复核疑似内容离题(conf 0.70): 视频标题聚焦电影美学与视觉艺术，无运动影像相关主题，符合off_topic",
@@ -80,6 +97,11 @@
  "https://space.bilibili.com/324309512": {
   "date": "2026-07-14",
   "reason": "🤖AI复核疑似内容离题(conf 0.90): 频道内容为游戏对线教学，属于游戏类而非运动影像，且无搬运信号，个人创作者特征明显",
+  "status": "rejected"
+ },
+ "https://space.bilibili.com/33257920": {
+  "date": "2026-07-23",
+  "reason": "🤖AI复核疑似内容离题(conf 0.80): 频道主轴围绕紫砂行业手工创作，与运动影像无关",
   "status": "rejected"
  },
  "https://space.bilibili.com/333223319": {
@@ -224,6 +246,11 @@
  "https://space.bilibili.com/541463818": {
   "date": "2026-07-08",
   "status": "carded"
+ },
+ "https://space.bilibili.com/550474269": {
+  "date": "2026-07-23",
+  "reason": "🤖AI复核疑似搬运/合集(conf 0.80): 频道名和简介明确提及'转存'和'代下载外网视频'，符合搬运号特征；主轴内容为舞台剧转存而非运动影像，且近期视频标题与运动场景无关",
+  "status": "rejected"
  },
  "https://space.bilibili.com/599126": {
   "date": "2026-07-18",
