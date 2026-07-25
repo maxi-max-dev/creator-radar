@@ -1,7 +1,7 @@
 ---
 channel_id: "UC_mKdO3JHkf3y3MqGpA8njA"
 channel_name: "Ridge Lenny"
-updated: 2026-07-24
+updated: 2026-07-25
 ---
 
 # Ridge Lenny
@@ -10,16 +10,16 @@ updated: 2026-07-24
 
 - 频道链接：https://www.youtube.com/channel/UC_mKdO3JHkf3y3MqGpA8njA
 - 订阅数：131,000
-- 雷达排名：第 3 名 / 全池 2476（前 0.1%）
+- 雷达排名：第 3 名 / 全池 2477（前 0.1%）
 - 对路分：0.65705（内容像不像影石会签的人; 证据: 语义 0.515 · 甜点 0.9807 · POV标记 1.0）
-- 在涨分：0.8851（是不是正在被越来越多陌生人看到; 潜力 = 对路 × 在涨 = 1.09322）
+- 在涨分：1.0（是不是正在被越来越多陌生人看到; 潜力 = 对路 × 在涨 = 1.14984）
 - 命中主题：pov_native、authentic_vlog、journey_narrative、gear_native、vertical_craft
 
 ## 在涨证据
 
-- 📈 破自己纪录：最近一条视频播放速度冲到自己历史的 2.1 倍（《Catching this fish was an absolute battl》）
-- 📈 骑在热点上：内容命中正在升温的「biggest、biggest waves、island」，跑赢自己基线 6.0 倍
-- 📈 播放远超粉丝盘：一条视频播放数达到粉丝总盘的 1.2 倍（算法在把他推给圈外人）
+- 📈 破自己纪录：最近一条视频播放速度冲到自己历史的 2.2 倍（《Catching this fish was an absolute battl》）
+- 📈 骑在热点上：内容命中正在升温的「biggest、biggest waves、bigwaves」，跑赢自己基线 8.1 倍
+- 📈 播放远超粉丝盘：一条视频播放数达到粉丝总盘的 1.6 倍（算法在把他推给圈外人）
 - ⚠️ 单视频驱动：在涨证据 >80% 来自同一条视频，热度可能是单点爆发而非持续起势，需人工看是否可复制。
 
 ## 订阅快照史
@@ -50,15 +50,15 @@ _未检出其他平台链接（不代表没有，仅代表频道公开文本里�
 
 ## 当日推荐卡
 
-_生成于 2026-07-24。_
+_生成于 2026-07-25。_
 
 **值得签：**
-- 命中4个品牌核心主题(POV_native/gear_native/vertical_craft/authentic_vlog)，文本语义相似度达51.5%
-- 订阅规模(13.1万)处于品牌理想规模高侧，甜点区匹配度达98.1%
-- 标题全词命中POV标记词密度100%，符合运动影像设备内容调性
+- 命中4个品牌核心主题（pov_native/gear_native/vertical_craft/journey_narrative）且语义相似度达51.5%
+- 订阅规模sweet_spot_score达0.98（正中品牌中腰部理想区间）
+- 标题全POV标记密度满分（pov_marker_score=1.0）符合运动影像核心场景
 
 **风险：**
-- 订阅规模高于品牌理想值上限，可能限制增长空间
+- 订阅数已高于品牌理想规模上限，可能缺乏增长空间
 
 **首次合作建议：**
-- 提供专业运动场景拍摄设备试用，共创极限运动POV内容
+- 提供品牌运动相机进行极限场景内容共创

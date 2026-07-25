@@ -1,7 +1,7 @@
 ---
 channel_id: "UCdVxscs__sOWHQ1DHbzli8A"
 channel_name: "360 Bike Rides"
-updated: 2026-07-24
+updated: 2026-07-25
 ---
 
 # 360 Bike Rides
@@ -10,14 +10,14 @@ updated: 2026-07-24
 
 - 频道链接：https://www.youtube.com/channel/UCdVxscs__sOWHQ1DHbzli8A
 - 订阅数：8,930
-- 雷达排名：第 6 名 / 全池 2476（前 0.2%）
+- 雷达排名：第 6 名 / 全池 2477（前 0.2%）
 - 对路分：0.64642（内容像不像影石会签的人; 证据: 语义 0.5748 · 甜点 0.6892 · POV标记 1.0）
-- 在涨分：0.3027（是不是正在被越来越多陌生人看到; 潜力 = 对路 × 在涨 = 0.79317）
+- 在涨分：0.229（是不是正在被越来越多陌生人看到; 潜力 = 对路 × 在涨 = 0.75744）
 - 命中主题：pov_native、authentic_vlog、journey_narrative、gear_native、vertical_craft
 
 ## 在涨证据
 
-- 📈 破自己纪录：最近一条视频播放速度冲到自己历史的 2.0 倍（《360° Pure Traffic Ride On ZX10R》）
+- 📈 破自己纪录：最近一条视频播放速度冲到自己历史的 1.7 倍（《360° Pure Traffic Ride On ZX10R》）
 - ⚠️ 单视频驱动：在涨证据 >80% 来自同一条视频，热度可能是单点爆发而非持续起势，需人工看是否可复制。
 
 ## 订阅快照史
@@ -48,15 +48,15 @@ _未检出其他平台链接（不代表没有，仅代表频道公开文本里�
 
 ## 当日推荐卡
 
-_生成于 2026-07-24。_
+_生成于 2026-07-25。_
 
 **值得签：**
-- 命中4个品牌核心主题（pov_native/gear_native/vertical_craft/authentic_vlog）且标题简介POV标记密度满分
-- 订阅规模处于品牌甜点区（sweet_spot_score 0.6892）且为新发现创作者（is_new_discovery: true）
-- 雷达全池排名第2（radar_percentile 0.2）展现高曝光潜力
+- 命中品牌主题pov_native和gear_native，语义相似度达0.5748
+- POV标记密度满分(1.0)，标题简介高频出现第一视角拍摄关键词
+- 订阅规模处于品牌理想甜点区(甜点分0.6892)，且为本轮新发现创作者
 
 **风险：**
-- 订阅规模低于品牌理想值（subs_vs_brand_ideal: 低于品牌理想规模）
+- 订阅规模低于品牌理想值，需评估增长潜力
 
 **首次合作建议：**
-- 提供Insta360 X5设备试用并同步推广链接
+- 设备试用合作，提供Insta360 X5运动相机进行内容创作

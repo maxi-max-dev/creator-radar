@@ -1,7 +1,7 @@
 ---
 channel_id: "UCnm9_xAmLhAQ3aYFzH5oqnA"
 channel_name: "威爾森WilsonWKJ"
-updated: 2026-07-24
+updated: 2026-07-25
 ---
 
 # 威爾森WilsonWKJ
@@ -10,7 +10,7 @@ updated: 2026-07-24
 
 - 频道链接：https://www.youtube.com/channel/UCnm9_xAmLhAQ3aYFzH5oqnA
 - 订阅数：6,470
-- 雷达排名：第 22 名 / 全池 2476（前 0.9%）
+- 雷达排名：第 22 名 / 全池 2477（前 0.9%）
 - 对路分：0.60684（内容像不像影石会签的人; 证据: 语义 0.538 · 甜点 0.6125 · POV标记 1.0）
 - 在涨分：0.0（是不是正在被越来越多陌生人看到; 潜力 = 对路 × 在涨 = 0.60684）
 - 命中主题：pov_native、authentic_vlog、gear_native、vertical_craft
@@ -39,15 +39,15 @@ _未检出其他平台链接（不代表没有，仅代表频道公开文本里�
 
 ## 当日推荐卡
 
-_生成于 2026-07-24。_
+_生成于 2026-07-25。_
 
 **值得签：**
-- 命中品牌核心主题pov_native和gear_native，内容方向高度契合运动影像相机垂类
-- POV标记密度满分，标题简介高频出现POV/onboard等关键词，符合品牌设备使用场景
-- 订阅规模处于品牌偏好中腰部甜点区（sweet_spot_score 0.61），有增长空间但未超限
+- 命中品牌核心主题pov_native及gear_native，POV标记密度达满分（pov_marker_score:1.0）
+- 订阅规模处于品牌偏好中腰部甜点区（sweet_spot_score:0.6125），低于品牌理想规模但具备增长空间（subs_vs_brand_ideal:低于品牌理想规模）
+- 频道文本精准匹配品牌主题查询的语义相似度达53.8%（semantic_score:0.538），且为本轮新发现创作者（is_new_discovery:true）
 
 **风险：**
-- 订阅数低于品牌理想规模下限，需关注规模扩张潜力
+- 订阅规模低于品牌理想值，需评估内容垂直度是否足够支撑规模扩张
 
 **首次合作建议：**
-- 提供运动场景POV拍摄设备试用，产出第一视角运动内容
+- 提供运动场景POV拍摄设备租赁服务，合作拍摄排球/冲浪等高契合度内容
