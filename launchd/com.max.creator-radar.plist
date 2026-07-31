@@ -8,11 +8,11 @@
     <key>ProgramArguments</key>
     <array>
         <string>/opt/homebrew/bin/python3</string>
-        <string>/Users/max/Documents/creator-radar/src/run_radar.py</string>
+        <string>/Users/max/code/creator-radar/src/run_radar.py</string>
     </array>
 
     <key>WorkingDirectory</key>
-    <string>/Users/max/Documents/creator-radar</string>
+    <string>/Users/max/code/creator-radar</string>
 
     <key>EnvironmentVariables</key>
     <dict>
@@ -29,8 +29,8 @@
     </dict>
 
     <key>StandardOutPath</key>
-    <string>/Users/max/Documents/creator-radar/logs/launchd.out.log</string>
+    <string>/Users/max/code/creator-radar/logs/launchd.out.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/max/Documents/creator-radar/logs/launchd.err.log</string>
+    <string>/Users/max/code/creator-radar/logs/launchd.err.log</string>
 </dict>
 </plist>

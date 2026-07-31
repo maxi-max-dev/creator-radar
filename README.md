@@ -159,7 +159,9 @@
 
 策略全在 `config/insta360.json` 的 `collect` / `explain` / `scoreboard` / `outputs` 四节：搜索词、每次预算、节流、推荐卡模型、结算窗口、分发出口。飞书多维表格出口已实装（`outputs` 含 `"bitable"`、`"feishu_docs"`，凭证在 repo 外 `~/.config/creator-radar/feishu.json`）。
 
-定时器：`launchd/com.max.creator-radar.plist`，每天 08:30 跑默认参数。安装：
+定时器：`launchd/com.max.creator-radar.plist`，每天 08:30 跑默认参数。常驻副本必须放在
+`~/code/creator-radar`（不要放在 iCloud 同步的 Documents；launchd 读取按需下载文件时
+可能收到 `Resource deadlock avoided`）。安装：
 
     cp launchd/com.max.creator-radar.plist ~/Library/LaunchAgents/
     launchctl load ~/Library/LaunchAgents/com.max.creator-radar.plist

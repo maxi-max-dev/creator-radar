@@ -30,12 +30,29 @@ NOTIFY = "/Users/max/.openclaw/workspace/scripts/notify-imessage.sh"
 
 
 def prev_ranked(today):
-    """找上一次 daily run 的 ranked.json(日期 < today)，用于排名 diff。没有则 None。"""
+    """找最近一份可读的历史 ranked.json，用于排名 diff。
+
+    历史快照只影响「名次变化」展示，不应阻断整条雷达主链。文件不存在、
+    JSON 不完整，或文件系统暂时返回 EAGAIN 时，跳过坏快照继续找更早的一份；
+    全部不可读时按首次运行温和降级。
+    """
     dirs = sorted(d for d in glob.glob(os.path.join(DAILY, "*")) if os.path.basename(d) < today)
     for d in reversed(dirs):
         p = os.path.join(d, "ranked.json")
-        if os.path.exists(p):
-            return {r["channel_url"]: r["rank"] for r in json.load(open(p))}
+        if not os.path.isfile(p):
+            continue
+        try:
+            with open(p, encoding="utf-8") as f:
+                rows = json.load(f)
+            if not isinstance(rows, list):
+                raise ValueError("ranked.json 顶层不是数组")
+            return {
+                r["channel_url"]: r["rank"]
+                for r in rows
+                if isinstance(r, dict) and r.get("channel_url") and r.get("rank") is not None
+            }
+        except (OSError, UnicodeError, json.JSONDecodeError, ValueError) as exc:
+            print(f"[prev_ranked] 跳过不可读快照 {p}: {exc}", file=sys.stderr)
     return None
 
 
