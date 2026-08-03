@@ -1,0 +1,50 @@
+{
+ "picked_date": "2026-07-07",
+ "settled_date": "2026-08-04",
+ "window_days": 28,
+ "engine_version": null,
+ "pool_median_growth_pct": 0.24,
+ "pool_median_views_growth_pct": null,
+ "verdicts": [
+  {
+   "channel_name": "Murtanio",
+   "channel_url": "https://www.youtube.com/channel/UC9jWcAMlUtBXdJytn6W0Scg",
+   "subscribers_baseline": 178000,
+   "subscribers_now": 178000,
+   "growth_pct": 0.0,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "THE SHAIKH 96",
+   "channel_url": "https://www.youtube.com/channel/UCw6bOfgGZ_ty6s--KqYhGcQ",
+   "subscribers_baseline": 79400,
+   "subscribers_now": 81800,
+   "growth_pct": 3.02,
+   "verdict": "跑赢"
+  },
+  {
+   "channel_name": "Schaaf",
+   "channel_url": "https://www.youtube.com/channel/UCqsNMYqStWMt3XxkQHQx6Ww",
+   "subscribers_baseline": 217000,
+   "subscribers_now": 217000,
+   "growth_pct": 0.0,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "STR1KEStudioz",
+   "channel_url": "https://www.youtube.com/channel/UCyHbxqcKbiijjmfL8e2io9w",
+   "subscribers_baseline": 32900,
+   "subscribers_now": 33100,
+   "growth_pct": 0.61,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "RevLimits",
+   "channel_url": "https://www.youtube.com/channel/UCZLBtPp0XzZZNDECYpi5n_A",
+   "subscribers_baseline": 149000,
+   "subscribers_now": 150000,
+   "growth_pct": 0.67,
+   "verdict": "跑平"
+  }
+ ]
+}
