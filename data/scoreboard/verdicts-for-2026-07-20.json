@@ -1,0 +1,90 @@
+{
+ "picked_date": "2026-07-20",
+ "settled_date": "2026-08-17",
+ "window_days": 28,
+ "engine_version": "v1.2-rising",
+ "pool_median_growth_pct": 0.12,
+ "pool_median_views_growth_pct": null,
+ "verdicts": [
+  {
+   "channel_name": "Ridge Lenny",
+   "channel_url": "https://www.youtube.com/channel/UC_mKdO3JHkf3y3MqGpA8njA",
+   "subscribers_baseline": 131000,
+   "subscribers_now": 148000,
+   "growth_pct": 12.98,
+   "verdict": "跑赢"
+  },
+  {
+   "channel_name": "Ella Berry",
+   "channel_url": "https://www.youtube.com/channel/UC-mTPJifUkmOgnDcsPIQapw",
+   "subscribers_baseline": 64400,
+   "subscribers_now": 64400,
+   "growth_pct": 0.0,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "360 Bike Rides",
+   "channel_url": "https://www.youtube.com/channel/UCdVxscs__sOWHQ1DHbzli8A",
+   "subscribers_baseline": 8930,
+   "subscribers_now": 8950,
+   "growth_pct": 0.22,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "Surfing With Noz",
+   "channel_url": "https://www.youtube.com/channel/UCoicMEw3njXscfwHlaAJVcQ",
+   "subscribers_baseline": 236000,
+   "subscribers_now": 243000,
+   "growth_pct": 2.97,
+   "verdict": "跑赢"
+  },
+  {
+   "channel_name": "Kai Noa",
+   "channel_url": "https://www.youtube.com/channel/UCFdhu2ZZ7GBbGliV8tZ0UJw",
+   "subscribers_baseline": 38400,
+   "subscribers_now": 38400,
+   "growth_pct": 0.0,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "Niccolò Canepa",
+   "channel_url": "https://www.youtube.com/channel/UCoVidg-UsgNpyjqyWWlWImw",
+   "subscribers_baseline": 67300,
+   "subscribers_now": 67500,
+   "growth_pct": 0.3,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "Dirk Schouten",
+   "channel_url": "https://www.youtube.com/channel/UC6PwvyoGGVmql0a2Ch5RJ9w",
+   "subscribers_baseline": 462000,
+   "subscribers_now": 466000,
+   "growth_pct": 0.87,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "威爾森WilsonWKJ",
+   "channel_url": "https://www.youtube.com/channel/UCnm9_xAmLhAQ3aYFzH5oqnA",
+   "subscribers_baseline": 6470,
+   "subscribers_now": 6460,
+   "growth_pct": -0.15,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "Brox_Rocks",
+   "channel_url": "https://www.youtube.com/channel/UCBabb5u7ksNx_JkmQQGbvwA",
+   "subscribers_baseline": 22300,
+   "subscribers_now": 22400,
+   "growth_pct": 0.45,
+   "verdict": "跑平"
+  },
+  {
+   "channel_name": "Aidan Brown",
+   "channel_url": "https://www.youtube.com/channel/UCLp-zGbkrbHXvxG9tfD8hYw",
+   "subscribers_baseline": 12000,
+   "subscribers_now": 12200,
+   "growth_pct": 1.67,
+   "verdict": "跑平"
+  }
+ ]
+}
