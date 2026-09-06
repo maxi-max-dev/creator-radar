@@ -1,0 +1,9 @@
+{
+ "picked_date": "2026-08-10",
+ "settled_date": "2026-09-07",
+ "window_days": 28,
+ "engine_version": "v1.2-rising",
+ "pool_median_growth_pct": 0.0,
+ "pool_median_views_growth_pct": null,
+ "verdicts": []
+}
